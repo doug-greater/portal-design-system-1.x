@@ -1,4 +1,6 @@
-# Greater Design System
+# Greater Design System — Overview
+
+> **For the full spec of every component and how to use it, see [`Greater Design System.md`](./Greater%20Design%20System.md) — that is the source of truth.** This file is the high-level orientation layer: company context, voice, visual foundations, and a file map.
 
 > Greater Industries builds AI that helps wholesalers and distributors make the smartest, most efficient, most profitable decisions across their entire business. From warehouse workers and truck drivers to sales reps and owners — Greater's portal is the cockpit that connects the people who power local economies.
 >
@@ -8,14 +10,14 @@
 
 ## Sources
 
-This is the **maintained design system** for Greater Portal — the canonical source of truth for tokens, components, voice, and UI. It originated from a Figma reference and live portal screens:
+This is the **maintained design system** for Greater Portal. The per-component source of truth is [`Greater Design System.md`](./Greater%20Design%20System.md); this overview covers the surrounding context (company, voice, visual foundations, file map). The system originated from a Figma reference and live portal screens:
 
 - **Portal 1.0 Design System scrape.fig** — `Page-1` (37 frames)
   - Foundation sections: `Typography`, `THE COLORS, DUKE. THE COLORS.`, `Glyphs`, `Buttons n stuff`, `Products Menu Portal Features`
   - Live screen exports from `https://portal.greater.co/*` (login, scenarios, orchestration, agent-configuration)
   - 285 local components, 35 page-scoped externals
 
-Everything in this repo — `colors_and_type.css`, the `preview/` spec cards, and the `ui_kits/portal/` build — is maintained here directly and is the reference that design and code should point to (not the original Figma).
+Everything in this repo — `colors_and_type.css`, the `preview/` spec cards, and the `ui_kits/portal/` build — is maintained here directly and is the reference that design and code should point to (not the original Figma), with `Greater Design System.md` as the authoritative component spec.
 
 The system has since been **extended well beyond that origin** with
 net-new components designed from first principles: the consolidated Filter
@@ -29,7 +31,9 @@ Header, and a full app shell with a collapsible Navigation Sidebar.
 
 ```
 /
-├── README.md                    ← this file
+├── README.md                    ← repo intro + AI-agent guidance
+├── Greater Design System.md      ← source of truth: full component specs
+├── DESIGN-SYSTEM-OVERVIEW.md     ← this file (orientation + foundations)
 ├── SKILL.md                     ← Claude-Code-compatible skill frontmatter
 ├── colors_and_type.css          ← all design tokens (CSS variables)
 ├── fonts/fonts.css              ← @import for Inter + Geist Mono
