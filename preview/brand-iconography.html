@@ -1,0 +1,85 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0">
+<style>
+body{margin:0;padding:24px;background:#fff;color:var(--p-ink);font-family:Inter}
+.note{font:400 13px/1.5 Inter;color:var(--p-text-2);max-width:640px;margin:0 0 16px}
+.note code{font-family:'Geist Mono',monospace;background:var(--g-off-white);padding:1px 5px;border-radius:2px;font-size:11px}
+.sec{font:500 11px/1.2 'Geist Mono',monospace;color:var(--p-muted);text-transform:uppercase;letter-spacing:.06em;margin:26px 0 14px}
+.grid{display:grid;grid-template-columns:repeat(8,1fr);gap:18px 10px;max-width:640px}
+.cell{display:flex;flex-direction:column;align-items:center;gap:5px}
+.ms{font-family:'Material Symbols Rounded';line-height:1;font-feature-settings:'liga';display:inline-flex;align-items:center;justify-content:center}
+.cell .ms{color:var(--p-text)}
+.cell span:not(.ms){font:400 10px/1.2 Inter;color:var(--p-muted);text-align:center}
+
+/* Account type avatar treatment */
+.actypes{display:grid;grid-template-columns:repeat(6,1fr);gap:18px 10px;max-width:640px}
+.ac-cell{display:flex;flex-direction:column;align-items:center;gap:7px}
+.ac-icon{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:#fff;border:1.5px solid #1C1C1E;box-sizing:border-box;color:#1C1C1E}
+.ac-cell .name{font:400 10px/1.2 'Geist Mono',monospace;color:var(--p-muted);text-align:center}
+.ac-cell .role{font:500 11px/1.2 Inter;color:var(--p-text);text-align:center}
+</style></head><body>
+
+<p class="note"><b>Icons: Material Symbols (Rounded), outline weight.</b> Reference names match Google's Material Symbols set. In production they're drawn with the <code>Material Symbols Rounded</code> webfont (<code>FILL 0</code>, <code>wght 400</code>, <code>opsz 24</code>); rendered here via Iconify for portability.</p>
+
+<div class="sec">Core UI</div>
+<div class="grid">
+  <div class="cell"><span class="ms" style="font-size:24px">search</span><span>search</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">filter_alt</span><span>filter_alt</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">expand_more</span><span>expand_more</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">unfold_more</span><span>unfold_more</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">storefront</span><span>storefront</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">inventory_2</span><span>inventory_2</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">location_on</span><span>location_on</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">more_horiz</span><span>more_horiz</span></div>
+
+  <div class="cell"><span class="ms" style="font-size:24px">close</span><span>close</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">check</span><span>check</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">info</span><span>info</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">arrow_outward</span><span>arrow_outward</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">fullscreen</span><span>fullscreen</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">account_circle</span><span>account_circle</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">bar_chart</span><span>bar_chart</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">settings</span><span>settings</span></div>
+
+  <div class="cell"><span class="ms" style="font-size:24px">home</span><span>home</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">apartment</span><span>apartment</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">route</span><span>route</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">schedule</span><span>schedule</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">notifications</span><span>notifications</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">help</span><span>help</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">edit</span><span>edit</span></div>
+  <div class="cell"><span class="ms" style="font-size:24px">delete</span><span>delete</span></div>
+</div>
+
+<div class="sec">Account types · used in the Account Type Icon avatar</div>
+<p class="note" style="margin:-4px 0 16px">These six map 1:1 to account categories and are rendered inside the white-fill / dark-stroke <b>Account Type Icon</b> (see Avatar &amp; Role Pills). Icon size = container × 0.5.</p>
+<div class="actypes">
+  <div class="ac-cell">
+    <span class="ac-icon"><span class="ms" style="font-size:26px">storefront</span></span>
+    <span class="role">Retail / Store</span><span class="name">storefront</span>
+  </div>
+  <div class="ac-cell">
+    <span class="ac-icon"><span class="ms" style="font-size:26px">fastfood</span></span>
+    <span class="role">Restaurant</span><span class="name">fastfood</span>
+  </div>
+  <div class="ac-cell">
+    <span class="ac-icon"><span class="ms" style="font-size:26px">shopping_cart</span></span>
+    <span class="role">Grocery</span><span class="name">shopping_cart</span>
+  </div>
+  <div class="ac-cell">
+    <span class="ac-icon"><span class="ms" style="font-size:26px">local_convenience_store</span></span>
+    <span class="role">C-Store</span><span class="name">local_convenience_store</span>
+  </div>
+  <div class="ac-cell">
+    <span class="ac-icon"><span class="ms" style="font-size:26px">local_bar</span></span>
+    <span class="role">Bar</span><span class="name">local_bar</span>
+  </div>
+  <div class="ac-cell">
+    <span class="ac-icon"><span class="ms" style="font-size:26px">attach_money</span></span>
+    <span class="role">Discount Store</span><span class="name">attach_money</span>
+  </div>
+</div>
+
+</body></html>

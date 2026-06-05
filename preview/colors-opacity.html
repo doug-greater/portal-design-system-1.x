@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><style>
+body{margin:0;padding:20px;background:#fff}
+.col{display:flex;gap:0;border-radius:6px;overflow:hidden;margin-bottom:10px;border:1px solid var(--p-border)}
+.step{flex:1;height:56px;display:flex;align-items:flex-end;padding:6px 8px;font:500 10px/1.2 'Geist Mono',monospace;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.step.dark{color:#333;text-shadow:none}
+.lbl{font:500 12px/1.2 Inter;color:var(--p-ink);margin:10px 0 4px}
+</style></head><body>
+<div class="lbl">Primary blue — opacity ladder</div>
+<div class="col">
+<div class="step" style="background:rgba(0,124,255,1)">100%</div>
+<div class="step" style="background:rgba(0,124,255,.6)">60%</div>
+<div class="step" style="background:rgba(0,124,255,.25)">25%</div>
+<div class="step dark" style="background:rgba(0,124,255,.10)">10%</div>
+<div class="step dark" style="background:rgba(0,124,255,.05)">5%</div>
+</div>
+<div class="lbl">Black — overlay ladder (on white)</div>
+<div class="col">
+<div class="step" style="background:rgba(0,0,0,1)">100%</div>
+<div class="step" style="background:rgba(0,0,0,.25)">25%</div>
+<div class="step dark" style="background:rgba(0,0,0,.10)">10%</div>
+<div class="step dark" style="background:rgba(0,0,0,.05)">5%</div>
+</div>
+</body></html>

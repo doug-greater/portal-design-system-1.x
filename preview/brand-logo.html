@@ -1,0 +1,72 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><style>
+body{margin:0;padding:24px;background:#fff;font-family:Inter;color:var(--p-ink)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:720px}
+.grid.wide{grid-template-columns:1fr 1fr;max-width:720px}
+.cell{border:1px solid var(--p-border);border-radius:8px;padding:22px 20px;display:flex;flex-direction:column;gap:14px;min-height:140px}
+.cell.dark{background:#0B0B0C;border-color:#0B0B0C}
+.cell.dark .cap,.cell.dark .tag{color:rgba(255,255,255,.7)}
+.stage{flex:1;display:flex;align-items:center;justify-content:flex-start}
+.cell.center .stage{justify-content:center}
+.cap{font:500 11px/1.2 'Geist Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--p-muted)}
+.tag{font:400 12px/1.4 Inter;color:var(--p-text-2)}
+.wm{height:32px;width:auto}
+.wm.lg{height:44px}
+.cr{height:56px;width:auto}
+.cr.sm{height:32px}
+.lockup{height:72px;width:auto;max-width:100%}
+.section-label{font:500 11px/1.2 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--p-muted);max-width:720px;margin:24px 0 10px}
+.section-label:first-child{margin-top:0}
+.note{max-width:720px;font:400 13px/1.5 Inter;color:var(--p-text-2);margin-top:16px}
+.note b{color:var(--p-ink);font-weight:600}
+.divider{max-width:720px;border:none;border-top:1px solid var(--p-border);margin:24px 0}
+</style></head><body>
+
+<div class="section-label">Full Lockup</div>
+<div class="grid wide">
+  <div class="cell">
+    <div class="cap">Lockup · primary</div>
+    <div class="stage"><img class="lockup" src="../assets/greater-logo-final.png" alt="Greater"></div>
+    <div class="tag">Marketing and corporate use. Presentations, reports, external materials, landing pages.</div>
+  </div>
+  <div class="cell dark">
+    <div class="cap">Lockup · knockout</div>
+    <div class="stage"><img class="lockup" src="../assets/greater-logo-ko-final.png" alt="Greater"></div>
+    <div class="tag">Dark backgrounds, photography overlays, co-branded materials on dark surfaces.</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section-label">Wordmark</div>
+<div class="grid">
+  <div class="cell">
+    <div class="cap">Wordmark · primary</div>
+    <div class="stage"><img class="wm lg" src="../assets/greater-logotype.png" alt="Greater"></div>
+    <div class="tag">Default in-product mark. Use in nav, auth screens, emails, documents.</div>
+  </div>
+  <div class="cell dark">
+    <div class="cap">Wordmark · knockout</div>
+    <div class="stage"><img class="wm lg" src="../assets/greater-logotype-ko.png" alt="Greater"></div>
+    <div class="tag">For dark surfaces, photography overlays, and dark-mode chrome.</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div class="section-label">Crow · standalone</div>
+<div class="grid">
+  <div class="cell">
+    <div class="cap">Crow · primary</div>
+    <div class="stage"><img class="cr" src="../assets/greater-crow.png" alt="Greater crow"></div>
+    <div class="tag">App icon, favicon, avatar, loading states, tab icon — where space is tight.</div>
+  </div>
+  <div class="cell dark center">
+    <div class="cap">Crow · knockout</div>
+    <div class="stage"><img class="cr" src="../assets/greater-crow-ko.png" alt="Greater crow"></div>
+    <div class="tag">Dark-mode favicon, inverse avatars.</div>
+  </div>
+</div>
+
+<p class="note"><b>In-product:</b> use the wordmark or crow alone — never the full lockup. The crow+wordmark lockup is reserved for marketing and external materials.</p>
+
+</body></html>

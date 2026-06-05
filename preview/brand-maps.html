@@ -1,0 +1,296 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Maps — Greater Design System</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="../maps.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+  body { margin: 0; padding: 32px; background: #fff; font-family: var(--font-sans); color: var(--p-ink); }
+  .wrap { max-width: 1120px; display: grid; gap: 28px; }
+  h2 { margin: 0; font: 600 16px/1.2 Inter; letter-spacing: -0.01em; color: var(--p-ink); }
+  .sub { font: 400 13px/1.5 Inter; color: var(--p-muted); max-width: 640px; margin: 6px 0 0; }
+  .card {
+    border: 1px solid var(--p-border);
+    border-radius: 10px;
+    padding: 20px;
+    display: grid;
+    gap: 16px;
+    background: #fff;
+  }
+  .cap {
+    font: 500 11px/1.2 'Geist Mono', monospace;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--p-muted);
+  }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .swatches { display: flex; gap: 16px; flex-wrap: wrap; }
+  .swatch { width: 140px; }
+  .swatch .chip { height: 56px; border-radius: 6px; border: 1px solid var(--p-border); }
+  .swatch .lbl { font: 500 12px/1.2 Inter; color: var(--p-ink); margin-top: 8px; }
+  .swatch .hex { font: 400 11px/1.2 'Geist Mono', monospace; color: var(--p-muted); margin-top: 2px; }
+
+  /* Pin specimen stage */
+  .pin-stage {
+    background: #EEE7DA;
+    background-image:
+      linear-gradient(0deg, rgba(255,255,255,.5) 0%, rgba(255,255,255,.5) 100%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M0 20H40M20 0V40' stroke='%23DDD' stroke-width='0.5'/></svg>");
+    background-size: 40px 40px;
+    border-radius: 8px;
+    padding: 28px;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+  }
+  .pin-spec { display: grid; gap: 8px; justify-items: center; }
+  .pin-spec .lbl { font: 500 12px Inter; color: var(--p-ink); }
+  .pin-spec .meta { font: 400 11px/1.3 'Geist Mono', monospace; color: var(--p-muted); text-align: center; }
+
+  /* Live map sample — give it a real height */
+  #live-map { height: 380px; }
+
+  .bullets { font: 400 13px/1.6 Inter; color: var(--p-text-2); margin: 0; padding-left: 18px; }
+  .bullets code { font: 400 12px/1 'Geist Mono', monospace; color: var(--p-ink); background: var(--p-surface-tint); padding: 1px 5px; border-radius: 3px; }
+  .kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; font: 400 12px/1.6 'Geist Mono', monospace; color: var(--p-text-2); }
+  .kv dt { color: var(--p-muted); }
+  .kv dd { margin: 0; color: var(--p-ink); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div>
+    <h2>Maps</h2>
+    <p class="sub">
+      Any time the portal needs a map — routes, account locations, territory planning — use Leaflet
+      with the CARTO Light All basemap. Two pin styles, one route stroke, a fixed attribution treatment.
+      Never satellite, never colorful tiles.
+    </p>
+  </div>
+
+  <!-- Live Leaflet sample -->
+  <div class="card">
+    <div class="cap">Live sample · TableView popover</div>
+    <div class="g-map" style="min-height: 380px;">
+      <div id="live-map"></div>
+      <div class="g-map-title">
+        <div>
+          <div>Thursday, Apr 23 · Kenny D’Amica</div>
+          <div class="sub">5 stops</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tokens -->
+  <div class="card">
+    <div class="cap">Tokens</div>
+    <div class="swatches">
+      <div class="swatch">
+        <div class="chip" style="background: #DDDDDD"></div>
+        <div class="lbl">Basemap fallback</div>
+        <div class="hex">--map-bg · #DDDDDD</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: #007CFF; opacity: .7"></div>
+        <div class="lbl">Route stroke</div>
+        <div class="hex">#007CFF · 70% · 3px</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: #282838"></div>
+        <div class="lbl">Pin ring (stop)</div>
+        <div class="hex">--map-pin-ring · #282838</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: #FFFFFF"></div>
+        <div class="lbl">Pin fill (stop)</div>
+        <div class="hex">--map-pin-fill · #FFFFFF</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: #DA1010"></div>
+        <div class="lbl">Unassigned pin ring</div>
+        <div class="hex">--map-pin-active-ring · #DA1010</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: #FFF8F8"></div>
+        <div class="lbl">Unassigned pin fill</div>
+        <div class="hex">--map-pin-active-fill · #FFF8F8</div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background: radial-gradient(circle, #007CFF 40%, rgba(0,124,255,.18) 70%, transparent 100%)"></div>
+        <div class="lbl">Active pin focus halo</div>
+        <div class="hex">--map-pin-focus-halo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pins -->
+  <div class="card">
+    <div class="cap">Pins</div>
+    <div class="pin-stage">
+      <div class="pin-spec">
+        <div class="g-map-pin"><div>1</div></div>
+        <div class="lbl">Numbered stop</div>
+        <div class="meta">28px · #282838 ring<br/>22px white core · Inter 600 11</div>
+      </div>
+      <div class="pin-spec">
+        <div class="g-map-pin"><div>12</div></div>
+        <div class="lbl">Stop · 2-digit</div>
+        <div class="meta">Same 28px frame<br/>Inter 600 11 scales cleanly</div>
+      </div>
+      <div class="pin-spec" style="padding: 0 12px;">
+        <div style="width:28px;height:28px;border-radius:50%;background:#007CFF;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px rgba(0,124,255,.18),0 0 0 8px rgba(0,124,255,.10),0 4px 10px rgba(0,124,255,.35);transform:scale(1.07);">
+          <div style="width:22px;height:22px;border-radius:50%;background:#007CFF;display:flex;align-items:center;justify-content:center;font:600 11px/1 Inter,sans-serif;color:#fff;">3</div>
+        </div>
+        <div class="lbl">Active / focused</div>
+        <div class="meta">#007CFF fill · white label<br/>Blue halo · +7% scale</div>
+      </div>
+      <div class="pin-spec">
+        <div style="width:32px;height:32px;border-radius:50%;background:#DA1010;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(218,16,16,.35);">
+          <div style="width:26px;height:26px;border-radius:50%;background:#FFF8F8;"></div>
+        </div>
+        <div class="lbl">Unassigned</div>
+        <div class="meta">32px · #DA1010 ring<br/>No number — not on a route</div>
+      </div>
+    </div>
+    <ul class="bullets" style="margin: 0;">
+      <li>Pins are Leaflet <code>divIcon</code>s — render <code>&lt;div class="g-map-pin"&gt;&lt;div&gt;1&lt;/div&gt;&lt;/div&gt;</code> and pass <code>className: 'g-map-pin-icon'</code> to zero out Leaflet's default marker chrome.</li>
+      <li>Add <code>.is-active</code> to the currently selected / in-focus stop — inverted blue fill + halo. Never more than one active pin per map.</li>
+      <li>Add <code>.is-unassigned</code> for stops that haven't been slotted into a route yet. These carry no number; the red ring is the "needs attention" signal.</li>
+      <li>Label font is Inter Bold — don't substitute. Default label color matches the ring (<code>#282838</code>); the active variant flips it to white.</li>
+    </ul>
+  </div>
+
+  <!-- Route polyline -->
+  <div class="card">
+    <div class="cap">Route polyline</div>
+    <div class="row2">
+      <svg viewBox="0 0 300 120" width="100%" style="background: #F5F3EE; border-radius: 6px; display: block;">
+        <path d="M30 80 L110 100 L140 40 L230 70" fill="none" stroke="#007CFF" stroke-opacity="0.7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <dl class="kv">
+        <dt>stroke</dt>          <dd>#007CFF (var(--p-primary))</dd>
+        <dt>stroke-opacity</dt>  <dd>0.7</dd>
+        <dt>stroke-width</dt>    <dd>3</dd>
+        <dt>stroke-linecap</dt>  <dd>round</dd>
+        <dt>stroke-linejoin</dt> <dd>round</dd>
+        <dt>fill</dt>            <dd>none</dd>
+      </dl>
+    </div>
+    <ul class="bullets">
+      <li>One continuous polyline per day's route. Don't split into per-leg segments.</li>
+      <li>Don't add arrowheads or gradients — order is conveyed by the numbered pins.</li>
+    </ul>
+  </div>
+
+  <!-- Attribution -->
+  <div class="card">
+    <div class="cap">Attribution</div>
+    <div style="background: #E8E6E1; border-radius: 6px; padding: 40px 0 0; position: relative; overflow: hidden; height: 100px;">
+      <div style="position: absolute; bottom: 0; right: 0; background: rgba(255,255,255,.8); padding: 2px 6px; font: 400 10px/1.4 Inter; color: #555;">
+        <span style="color: #007CFF;">Leaflet</span>
+        <span> | © </span>
+        <span style="color: #007CFF;">OpenStreetMap</span>
+        <span> contributors © </span>
+        <span style="color: #007CFF;">CARTO</span>
+      </div>
+    </div>
+    <ul class="bullets">
+      <li>Default Leaflet attribution control, restyled: <code>rgba(255,255,255,.8)</code> background strip, 10px Inter, <code>#555</code> text, primary-blue links.</li>
+      <li>Never remove attribution — OSM + CARTO both require it.</li>
+    </ul>
+  </div>
+
+  <!-- Usage -->
+  <div class="card">
+    <div class="cap">Usage</div>
+    <ul class="bullets">
+      <li>Load Leaflet 1.9.x CSS + JS from unpkg. Include <code>maps.css</code> <em>after</em> <code>leaflet.css</code>.</li>
+      <li>Tile URL: <code>https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png</code> — the <code>{r}</code> gets <code>@2x</code> on retina automatically.</li>
+      <li>Wrap the map container in <code>&lt;div class="g-map"&gt;</code> to pick up border, radius, elevation, and zoom-control + attribution restyling.</li>
+      <li>When embedding inline on a page (not a floating popover), add <code>.is-inline</code> to drop the shadow and soften the radius.</li>
+    </ul>
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+  // Boston-area route matching the existing Portal mock
+  const stops = [
+    { n: 1, name: "Winthrop Liquors",        coords: [42.3751, -70.9870] },
+    { n: 2, name: "Boston Downtown Market",  coords: [42.3555, -71.0605] },
+    { n: 3, name: "Melrose Beer Garden",     coords: [42.4584, -71.0662] },
+    { n: 4, name: "Waltham Package Store",   coords: [42.3765, -71.2356] },
+    { n: 5, name: "Newton Wine & Spirits",   coords: [42.3370, -71.2092] },
+  ];
+
+  const map = L.map('live-map', {
+    zoomControl: true,
+    scrollWheelZoom: false,
+  }).setView([42.385, -71.10], 10);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    subdomains: 'abcd',
+    attribution:
+      '<a href="https://leafletjs.com">Leaflet</a> | © ' +
+      '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © ' +
+      '<a href="https://carto.com/attributions">CARTO</a>',
+    maxZoom: 20,
+  }).addTo(map);
+
+  // Route polyline
+  L.polyline(stops.map(s => s.coords), {
+    color: '#007CFF',
+    opacity: 0.7,
+    weight: 3,
+    lineCap: 'round',
+    lineJoin: 'round',
+  }).addTo(map);
+
+  // Stop pins (skip #3 — it's drawn below as the focused pin)
+  stops.forEach((s, i) => {
+    if (i === 2) return;
+    L.marker(s.coords, {
+      icon: L.divIcon({
+        className: 'g-map-pin-icon',
+        html: `<div class="g-map-pin"><div>${s.n}</div></div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+      }),
+    }).addTo(map);
+  });
+
+  // Active / focused pin on stop 3 — inline styles to bypass Leaflet cascade
+  L.marker(stops[2].coords, {
+    icon: L.divIcon({
+      className: 'g-map-pin-icon',
+      html: `<div style="width:28px;height:28px;border-radius:50%;background:#007CFF;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px rgba(0,124,255,.18),0 0 0 8px rgba(0,124,255,.10),0 4px 10px rgba(0,124,255,.35);transform:scale(1.07);"><div style="width:22px;height:22px;border-radius:50%;background:#007CFF;display:flex;align-items:center;justify-content:center;font:600 11px/1 Inter,sans-serif;color:#fff;">3</div></div>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+    }),
+    zIndexOffset: 1000,
+  }).addTo(map);
+
+  // Unassigned pin — unnumbered, red ring, inline styles
+  L.marker([42.3500, -71.0720], {
+    icon: L.divIcon({
+      className: 'g-map-pin-icon',
+      html: `<div style="width:32px;height:32px;border-radius:50%;background:#DA1010;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(218,16,16,.35);"><div style="width:26px;height:26px;border-radius:50%;background:#FFF8F8;"></div></div>`,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+    }),
+  }).addTo(map);
+
+
+</script>
+
+</body>
+</html>

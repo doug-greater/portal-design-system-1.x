@@ -1,0 +1,324 @@
+# Greater Design System
+
+> Greater Industries builds AI that helps wholesalers and distributors make the smartest, most efficient, most profitable decisions across their entire business. From warehouse workers and truck drivers to sales reps and owners — Greater's portal is the cockpit that connects the people who power local economies.
+>
+> This folder is the shared visual language: tokens, components, voice, and enough working UI to pattern-match against when designing anything new.
+
+---
+
+## Sources
+
+This is the **maintained design system** for Greater Portal — the canonical source of truth for tokens, components, voice, and UI. It originated from a Figma reference and live portal screens:
+
+- **Portal 1.0 Design System scrape.fig** — `Page-1` (37 frames)
+  - Foundation sections: `Typography`, `THE COLORS, DUKE. THE COLORS.`, `Glyphs`, `Buttons n stuff`, `Products Menu Portal Features`
+  - Live screen exports from `https://portal.greater.co/*` (login, scenarios, orchestration, agent-configuration)
+  - 285 local components, 35 page-scoped externals
+
+Everything in this repo — `colors_and_type.css`, the `preview/` spec cards, and the `ui_kits/portal/` build — is maintained here directly and is the reference that design and code should point to (not the original Figma).
+
+The system has since been **extended well beyond that origin** with
+net-new components designed from first principles: the consolidated Filter
+Menu, the floating Selection Bar, User Avatars & Role Pills, the Account
+Type Icon, Permission Cards, the Confirmation Dialog, the Page Detail
+Header, and a full app shell with a collapsible Navigation Sidebar.
+
+---
+
+## Index
+
+```
+/
+├── README.md                    ← this file
+├── SKILL.md                     ← Claude-Code-compatible skill frontmatter
+├── colors_and_type.css          ← all design tokens (CSS variables)
+├── fonts/fonts.css              ← @import for Inter + Geist Mono
+├── assets/
+│   ├── greater-logotype.png     ← "Greater" wordmark (in-product logo)
+│   ├── greater-crow.png         ← raven-only mark (favicon / tight spots)
+│   ├── greater-crow-ko.png      ← raven mark, knockout (dark backgrounds)
+│   └── greater-logotype-ko.png  ← wordmark, knockout (dark backgrounds)
+├── preview/                     ← design-system cards (one HTML per concept)
+├── ui_kits/portal/              ← working hi-fi portal build
+└── slides/                      ← (none — no decks were attached)
+```
+
+---
+
+## Company / product context
+
+**Portal** — the product — is an internal-facing web app organized around these surfaces (inferred from scraped URLs):
+
+| Surface | Role |
+|---|---|
+| `/login` | Branded email-only sign-in (logo-forward). |
+| `/scenarios/:id/agent-configuration/*` | Configure AI agents — sales rep week defaults, call patterns, route planning. |
+| `/scenarios/:id/general-settings/*` | Scenario-level settings (work-week, constraints). |
+| `/orchestration/visualize-impact/*` | Line/area charts showing baseline vs. selected scenario impact ($ savings, workload). |
+| `/products` ("In the Market") | Inventory table — products × accounts × coverage, with category pills and placement counts. |
+| `/accounts` | Account directory + detail pages (Account Type Icon identity header). |
+| `/users` | User management — list, detail (Profile / Role & Permissions / Team), with role pills and permission cards. |
+
+The portal is **information-dense**: big data tables, filter chips, stat
+cards, comparison charts. It's designed for operators who live in the tool
+all day, not marketing surfaces. Copy is literal, never cute.
+
+Two visual languages coexist and the system supports both:
+
+- **Portal** — the shipping UI. Cool-gray neutrals, indigo-shifted blue
+  (`#155DFC`), 14/16px Inter, tight headlines (−0.025em), `E5E7EB` borders,
+  colored category pills (Beer=amber, Wine=purple, Spirits=orange…).
+- **Foundation** — the Figma token/spec page. Pure `#007CFF` primary,
+  absolute black headings, a five-accent palette plus a "seldom sky"
+  escape hatch, and a distinctive **neo-brutalist** button treatment
+  (1px black border + `2px 2px 0 #000` offset shadow) seen on the login
+  Next button.
+
+Prefer Portal values for product; Foundation for brand/marketing moments.
+
+---
+
+## Content fundamentals
+
+**Voice:** plainspoken, operational, slightly wry. The Figma section
+called "THE COLORS, DUKE. THE COLORS." signals that the team is willing
+to be a little playful behind the scenes, but product copy itself is
+straightforward and verb-first.
+
+- **Second-person, sparingly.** "Sign in to your account." / "Track
+  products and their availability across your accounts." Never cutesy
+  ("Hey! Let's get you signed in 👋"). No first-person.
+- **Title Case for UI chrome; sentence case for prose.** The product has
+  intentionally moved toward **Title Case** for a more formal register on
+  interface labels — page titles ("In the Market"), nav items, tab labels,
+  stat-card labels ("Active Placements", "Points of Distribution"), button
+  labels, filter attributes, and table action links. Reserve **sentence
+  case** for descriptive and body copy: page subtitles, helper text, info
+  banners, and error messages.
+  - Column headers: `PRODUCT`, `ACCOUNTS`, `IN MARKET`, `CATEGORY` — all caps, tracked.
+  - Overlines: `OVERLINE 1` — all caps.
+- **Numbers carry weight.** Stat cards lead with a large 20px bold number
+  colored by importance (`21.1k` in primary blue for the hero metric;
+  neutrals for secondary). Use abbreviations: `21.1k`, `$482.7k`, `1,258`.
+- **Inline status words** are colored: `Pending Discontinue` shows a red
+  `1`; `Discontinued & Draining` shows a gold `4`.
+- **Inline links.** Blue links carry **no underline** — the color is the
+  affordance; underline appears on hover only. Links shown in a
+  **subdued / gray** color (e.g. the `Show` link-verb after a stat-card
+  metric, or metadata-row actions) **are underlined** so they read as
+  interactive without the blue cue. Solid underline, never dotted.
+  Agreement / legal text is small (12px), centered, medium-gray, with
+  underlined link spans.
+- **Empty states & errors.** Field errors use `#E5484D` (danger red), 12px
+  Inter Medium, placed below the input. Info prompts use a soft blue
+  pill ("Select one or more products below, then press 'Continue'…").
+- **No emoji in product.** The portal is emoji-free. Emoji occasionally
+  show up in internal Figma labels (❤️) but never reach users.
+- **Brand name.** Always "Greater" or "Greater Industries" — never
+  abbreviated, never all-caps, never stylized.
+
+Examples taken verbatim from the Figma scrape:
+
+> "Sign in to your account"
+> "By clicking 'Next' you are agreeing to the Greater Industries **User Terms of Service** and **Privacy Policy**"
+> "Track products and their availability across your accounts."
+> "Select one or more products below, then press 'Continue' to choose a desired action for each product. (Step 1 of 4)"
+> "64 of 71 products"
+> "Thursday, Apr 23 • Kenny D'Amica   ·   5 stops"
+
+---
+
+## Visual foundations
+
+**Colors.** Black / dark-gray / medium-gray / light-gray / off-white /
+white forms the neutral spine. Primary is `#007CFF` foundation-blue OR
+`#155DFC` portal-blue — both resolve from `--p-primary` / `--g-primary-blue`.
+Five accents (green/red/gold/purple) plus "seldom sky" cover feedback and
+category pills. Tints are always computed as 25%/10%/5% of the accent over
+white, never ad-hoc.
+
+**Type.** Inter is the only UI family (Regular/Medium/Semibold/Bold/Light),
+with Geist Mono for IDs, codes, and tabular data. No serif, no display
+face. Headings use tight tracking (−0.025em at 24px, 0 at larger); caps
+labels use +5% tracking.
+
+**Backgrounds.** Surfaces are flat white with `#F9FAFB` for table headers
+and `#F3F4F6` for tab-strip wells. **No gradients in product.** No
+full-bleed imagery. No repeating patterns. The login screen is a sea of
+white with the raven logo centered — that restraint IS the brand.
+
+**Imagery.** The only illustration is the raven-on-wordmark. Map tiles
+(Leaflet + OpenStreetMap + CARTO light basemap) appear in the routing
+view with `#007CFF` polylines and 28px black-bordered numbered pin
+circles.
+
+**Animation.** None documented in the scrape — the portal reads as mostly
+static. Adopt: 120ms ease-out for hovers, 180ms for panels, no bounces,
+no springs. Treat motion as a garnish.
+
+**Hover / press states.**
+- Buttons: primary → `--p-primary-hover` (darken ~8%). Secondary → add
+  `--p-primary-tint` fill. Tertiary → underline text.
+- Table rows: on hover, fill with `--p-primary-tint` (`#EFF6FF`).
+- Icon buttons: `rgba(0,0,0,.05)` circular/rounded-4 fill on hover.
+- Press: no scale. Deepen hover color by ~4%.
+- **Foundation "neo" variant** (login Next): default = white-transparent
+  fill + 1px black border + `shadow-brutal`; hover = fill `#F0F7FF`.
+
+**Borders.** `1px solid #E5E7EB` for cards/tables; `1px solid #D1D5DC`
+for inputs; `1px dashed rgb(0,0,0)` at `0.5px` for Figma-only guide
+rails (don't ship). Radii: 4px (buttons), 6px (floating-label inputs /
+filters / stat cards), 8px (callouts / search bar / flyout), 10px
+(floating cards), 999px for pills.
+
+**Shadows.**
+- `--shadow-tooltip` for tooltips.
+- `--shadow-card` on stat cards / secondary buttons (flat whisper).
+- `--shadow-float` for elevated floating cards (TableView: route popover).
+- `--shadow-brutal` — `2px 2px 0 0 #000` — for brand-moment buttons only.
+
+**Transparency & blur.** Rare. Map attributions use
+`rgba(255,255,255,.8)` strips. Chart area fills use
+`linear-gradient(rgba(0,124,255,.6) → 0)`. No `backdrop-filter` seen.
+
+**Imagery color grade.** Monochrome raven (cool-grey facets). Maps keep
+CARTO's muted neutral palette — never full-color satellite.
+
+**Cards.** White fill, 1px `#E5E7EB` border. In-table rows carry no
+shadow; **stat cards use `--shadow-card`** to lift off a white page;
+`shadow-float` for detached popovers and the collapsed-nav flyout. Inner
+padding 16px. Corner radius 4px (table cells) / 6px (stat cards) /
+8px (flyout) / 10px (TableView popover).
+
+**Layout rules.** Max-content width in the portal is ~1320px, centered.
+Page gutter is 32px. Cards gap 16px. Stat rows layout as 3-up. Tables
+are full-width with a sticky-feeling 40px header and roomy body rows. The
+app shell is now fully built: a persistent left **Navigation Sidebar**
+(248px expanded / 72px collapsed, with a collapsed-icon **flyout** for
+sub-navigation) sits *outside* a viewport-locked scrolling content region,
+so the nav stays fixed while only content scrolls. See the Navigation
+Sidebar component.
+
+---
+
+## Iconography
+
+Greater uses **Material Symbols (Rounded)** for all in-product
+iconography. Default rendering: weight 400, optical size 24, fill 0
+(outlined), color inherits from text. Variable-font axes (`FILL`,
+`wght`, `GRAD`, `opsz`) are used sparingly — prefer outline 400/24 for
+everything unless there's a deliberate reason to switch.
+
+Load the stylesheet once per page:
+
+```html
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+```
+
+Render an icon by putting the glyph name as the text content:
+
+```html
+<span class="material-symbols-rounded">search</span>
+```
+
+Common icons used across Portal: `search`, `filter_alt`, `expand_more`,
+`unfold_more`, `storefront` (Products in Market), `inventory_2`
+(All Products), `location_on`, `more_horiz`, `close`, `check`, `info`,
+`arrow_outward`, `fullscreen`, `account_circle`, `bar_chart`,
+`settings`, `home`, `apartment`, `route`, `schedule`, `notifications`,
+`help`, `edit`, `delete`.
+
+Sizing: default 24px. Use 20px in dense tables/chips, 16px inside
+button labels, and 14px only in tight inline-with-caption contexts.
+
+**Unicode chars.** The bullet `•` is used as a separator ("Thursday, Apr
+23 • Kenny D'Amica"). En-dash `–` in ranges. No arrows via unicode —
+always SVG.
+
+**Logo asset.** The in-product logo is the wordmark
+`assets/greater-logotype.png`; use the raven mark `assets/greater-crow.png`
+for favicons and tight spots, with `*-ko.png` knockout variants on dark
+backgrounds. Never use the combined crow + wordmark marketing lockup
+inside the product. Don't skew, don't recolor.
+
+---
+
+## Flagged substitutions / caveats
+
+- **Fonts:** Inter + Geist Mono are pulled from Google Fonts. The Figma
+  file lists "Helvetica Neue" as a bit-part (map attribution); we don't
+  ship it — system-font fallback is fine.
+- **Icon set:** Material Symbols (Rounded) font, used everywhere in the UI kit.
+  Lucide and Iconify have been fully removed.
+- **Portal chrome (global nav, user menu):** not present in the original
+  Figma scrape — designed from first principles in this system. The UI kit
+  now ships a full app shell: a collapsible Navigation Sidebar (with
+  collapsed-icon flyout), org header + city selector, and a bottom utility
+  nav. Only the user menu remains a light placeholder.
+- **One full map/illustration:** TableView's Leaflet map uses a
+  placeholder CSS-gradient tile and numbered pins — not a real tile
+  layer.
+
+---
+
+## Component library
+
+Each concept is documented as a standalone card in `preview/`. Current
+coverage:
+
+- **Foundations** — Colors (neutrals, accents, the **10-color pill palette**, Intelligence gradient, opacity), Type
+  (headings, body, mono, voice), Spacing (scale, radii, shadows),
+  Iconography (**Material Symbols only**), Brand (logo, maps).
+- **Controls & forms** — Buttons (primary / secondary / warning / **neutral** / ghost /
+  neo), Inputs & Forms (floating-label field, search bar,
+  disabled states), Toggle / Checkbox / Radio.
+- **Navigation & filtering** — Page-level & segmented Tabs, Filter Chips,
+  the consolidated **Filter Menu**, the **Navigation Sidebar** (expanded
+  / collapsed + collapsed flyout), and **Row actions** — the **Menu** popover
+  primitive opened by either a **Split button** or a **Kebab** trigger.
+- **Overlays & feedback** — **Modal** (`default` + `confirm` variants) and **Drawer**
+  on a shared **Overlay** foundation, **Toast** (success / error, top-center),
+  **Loading & Skeleton**, and **Empty States**.
+- **Data display** — Tables, **Pagination** (footer count + page-size + pager),
+  Stat Cards, **Pills** (one tinted-label component for Category *and* Role on the
+  shared 10-color palette), the **Status Badge** (soft pill + dot, 6 tones),
+  Info Banners, the floating **Selection Bar**, and the **Date Picker** (single + range).
+- **Identity & detail** — **User Avatars & Role Pills** (dotless; ring = the role's
+  text color; both via the shared `.g-avatar` / `.g-role-pill` classes), the
+  **Account Type Icon**, and the **Page Detail Header**.
+- **Permissions** — **Permission Cards** and the **Confirmation Dialog** (now the
+  `confirm` variant of Modal).
+
+The full spec for every component lives in `Greater Design System.md`.
+
+---
+
+## UI kits
+
+- **`ui_kits/portal/`** — click-thru recreation of the Greater Portal. Open
+  `ui_kits/portal/index.html`: login → app shell → **Products / In the Market**
+  table and the full **Users / Permissions / Teams** page (the other nav sections
+  are intentionally grayed out for this preview), plus the routes map and scenario
+  configuration. Built entirely on the shared tokens + primitives:
+  - `primitives.jsx` — core (Icon, Button incl. neutral, Input, Toggle, Checkbox, Pill, Tabs, StatCard…).
+  - `overlays.jsx` — the Overlay foundation (MIcon · Scrim · focus-trap) + Modal, Drawer, **Menu**, **SplitButton**, **Kebab**.
+  - `feedback.jsx` — Toast (+ `window.toast`), Spinner, Skeleton, EmptyState.
+  - `tables.jsx` — Pagination · `dates.jsx` — Calendar / DateField.
+  - `FilterMenu.jsx`, `AppShell.jsx`, and screens: `LoginScreen`, `ProductsScreen`, `UsersScreen`, `RoutesScreen`, `ScenarioScreen`.
+  - `interactive-primitives.html` — a click-to-test harness for the behavioral components.
+  - **Icons are Material Symbols (font) only** — Lucide and Iconify have been removed.
+
+No slide template was attached, so `slides/` is intentionally empty.
+
+## Working with this system
+
+- **For production code:** lift tokens from `colors_and_type.css`; consume
+  components from `ui_kits/portal/*.jsx` as hi-fi reference implementations,
+  not as an `npm` package.
+- **For prototypes / mocks / slides:** import the CSS, copy the logo,
+  load Material Symbols from Google Fonts. Stick to Portal tokens
+  unless you're doing a brand-forward moment (then reach for the
+  Foundation quintet + the brutal shadow).
+- **For new components:** match the spacing base (4px), use
+  `--p-border` / `--p-primary` / `--p-ink`, and prefer 14px Inter Medium
+  for interactive labels.

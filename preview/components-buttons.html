@@ -1,0 +1,244 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0"><style>
+body{margin:0;padding:20px;background:#fff}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.lbl{font:500 11px/1.2 'Geist Mono',monospace;color:var(--p-muted);width:100%;margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+
+/* Portal buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 24px;min-width:96px;border-radius:4px;font:500 14px/1 Inter;cursor:pointer;border:1px solid transparent;background:#fff;transition:background .12s,border-color .12s,color .12s}
+
+/* Primary — blue fill */
+.btn-primary{background:#007CFF;color:#fff}
+.btn-primary:hover{background:#0066D6}
+.btn-primary[disabled]{background:rgba(0,124,255,.25);color:#fff;cursor:not-allowed}
+
+/* Secondary — blue stroke, white fill, blue text */
+.btn-secondary{background:#fff;color:#007CFF;border-color:#007CFF}
+.btn-secondary:hover{background:rgba(0,124,255,.05)}
+.btn-secondary[disabled]{color:rgba(0,124,255,.25);border-color:rgba(0,124,255,.25);cursor:not-allowed}
+
+/* Secondary warning — red stroke, white fill, red text */
+.btn-secondary-warn{background:#fff;color:#E5484D;border-color:#E5484D}
+.btn-secondary-warn:hover{background:rgba(229,72,77,.05)}
+.btn-secondary-warn[disabled]{color:rgba(229,72,77,.25);border-color:rgba(229,72,77,.25);cursor:not-allowed}
+
+/* Tertiary — no stroke, blue text (tighter padding since there's no fill) */
+.btn-tertiary{background:transparent;color:#007CFF;padding:0 16px;min-width:72px}
+.btn-tertiary:hover{background:rgba(0,124,255,.05)}
+.btn-tertiary[disabled]{color:rgba(0,124,255,.25);cursor:not-allowed}
+
+/* Neutral — gray stroke, dark text; for secondary actions beside a primary (e.g. Batch Actions) */
+.btn-neutral{background:#fff;color:#364153;border-color:#D1D5DC}
+.btn-neutral:hover{background:#F3F4F6}
+.btn-neutral[disabled]{background:#fff;color:#99A1AF;border-color:#E5E7EB;cursor:not-allowed}
+
+/* Foundation neo — seldom, white fill only */
+.btn-neo{display:inline-flex;align-items:center;justify-content:center;height:39px;padding:0 30px;min-width:120px;border-radius:4px;background:#fff;color:#000;border:1px solid #000;box-shadow:2px 2px 0 0 #000;font:500 16px/1 Inter;letter-spacing:.05em;cursor:pointer}
+.btn-neo:hover{background:#F0F7FF}
+
+/* ════════ Table row actions ════════ */
+.mi{font-family:'Material Symbols Rounded';line-height:1;font-feature-settings:'liga';display:inline-flex;align-items:center}
+.section{margin-top:34px;padding-top:22px;border-top:1px solid var(--p-border)}
+.section:first-of-type{border-top:none}
+.h{font:600 13px/1.3 Inter;color:var(--p-ink);margin:0 0 4px}
+.d{font:400 13px/1.6 Inter;color:var(--p-text-2);margin:0 0 16px;max-width:660px}
+
+/* Split button — slim, for data-table rows (28px so it never grows the row) */
+.split{display:inline-flex;height:28px;border-radius:6px;overflow:hidden;font:500 13px/1 Inter;vertical-align:middle;box-sizing:border-box}
+.split .main{display:inline-flex;align-items:center;gap:6px;padding:0 11px;cursor:pointer;border:none;background:transparent;font:inherit;color:inherit}
+.split .caret{display:inline-flex;align-items:center;justify-content:center;width:26px;cursor:pointer;border:none;background:transparent;color:inherit}
+.split .main .mi{font-size:15px}
+.split .caret .mi{font-size:17px}
+.split.primary{background:#007CFF;color:#fff}
+.split.primary .caret{border-left:1px solid rgba(255,255,255,.28)}
+.split.primary .main:hover,.split.primary .caret:hover{background:rgba(255,255,255,.14)}
+.split.error{background:#E5484D;color:#fff}
+.split.error .caret{border-left:1px solid rgba(255,255,255,.32)}
+.split.error .main:hover,.split.error .caret:hover{background:rgba(255,255,255,.14)}
+.split.secondary{background:#fff;color:#007CFF;border:1px solid #007CFF}
+.split.secondary .caret{border-left:1px solid #007CFF}
+.split.secondary .main:hover,.split.secondary .caret:hover{background:rgba(0,124,255,.06)}
+.split.open .caret{background:rgba(0,0,0,.10)}
+
+/* Menu popover (the dropdown the caret opens; also used standalone by the kebab) */
+.menu{display:inline-block;background:#fff;border:1px solid var(--p-border);border-radius:8px;box-shadow:var(--shadow-float);padding:4px;min-width:208px}
+.mitem{display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:6px;font:400 14px/1 Inter;color:var(--p-ink);cursor:pointer}
+.mitem:hover{background:var(--p-surface-alt)}
+.mitem .mi{font-size:18px;color:var(--p-muted)}
+.mitem.danger{color:var(--p-danger)}.mitem.danger .mi{color:var(--p-danger)}
+.mitem .kbd{margin-left:auto;font:400 11px 'Geist Mono',monospace;color:var(--p-placeholder)}
+.mdiv{height:1px;background:var(--p-border);margin:4px -4px}
+.mlabel{font:500 10px/1 Inter;letter-spacing:.07em;text-transform:uppercase;color:var(--p-muted);padding:9px 10px 5px}
+
+/* Kebab / overflow */
+.kebab{width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;color:var(--p-muted);cursor:pointer;border:none;background:transparent}
+.kebab:hover{background:rgba(0,0,0,.05);color:var(--p-text)}
+.kebab .mi{font-size:20px}
+
+/* In-row demo table */
+.tbl{border:1px solid var(--p-border);border-radius:8px;overflow:hidden;max-width:660px;margin-top:6px}
+.thd,.trw{display:grid;grid-template-columns:1.5fr 110px 160px;align-items:center;gap:12px;padding:0 16px}
+.thd{background:var(--p-surface-alt);height:38px;font:500 11px/1 Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--p-muted)}
+.trw{height:45px;border-top:1px solid var(--p-border);font:400 14px Inter;color:var(--p-ink)}
+.trw .id{font:400 12px 'Geist Mono',monospace;color:var(--p-muted)}
+.trw .right{display:flex;justify-content:flex-end;align-items:center}
+.trw.hov{background:var(--p-primary-tint)}
+.notes{font:400 13px/1.8 Inter;color:var(--p-text-2);max-width:680px}
+.notes b{color:var(--p-ink);font-weight:600}
+code{font:400 11px 'Geist Mono',monospace;background:#F3F4F6;padding:1px 5px;border-radius:2px}
+.tag{display:inline-block;font:600 9px/1 Inter;letter-spacing:.06em;text-transform:uppercase;color:#1447E6;background:#EFF6FF;border:1px solid #BFDBFE;padding:3px 7px;border-radius:999px;margin-left:8px;vertical-align:middle}
+.tag.rec{color:#047857;background:#ECFDF5;border-color:#A7F3D0}
+.tag.scoped{color:#1447E6;background:#EFF6FF;border-color:#BFDBFE}
+.tag.spar{color:#B45309;background:#FFFBEB;border-color:#FDE68A}
+.tag.avoid{color:#C8252B;background:#FEECEC;border-color:#F7CFCF}
+.rule{border-collapse:collapse;width:100%;max-width:680px;font:400 13px Inter;margin-top:4px}
+.rule th{text-align:left;font:500 10px/1 Inter;letter-spacing:.07em;text-transform:uppercase;color:var(--p-muted);padding:0 12px 8px;border-bottom:1px solid var(--p-border)}
+.rule td{padding:10px 12px;border-bottom:1px solid var(--p-border);color:var(--p-text-2);vertical-align:top}
+.rule tr:last-child td{border-bottom:none}
+.rule td:first-child{color:var(--p-ink);font-weight:500;width:40%}
+.rule b{color:var(--p-ink);font-weight:600}
+.cap{font:400 12px/1.5 Inter;color:var(--p-muted);margin:6px 0 0}
+.notes p{margin:0 0 8px}
+</style></head><body>
+
+<div class="lbl">Primary — blue fill</div>
+<div class="row">
+  <button class="btn btn-primary">Confirm</button>
+  <button class="btn btn-primary">Save changes</button>
+  <button class="btn btn-primary" disabled>Finalize for Simulation</button>
+</div>
+
+<div class="lbl">Secondary — blue stroke</div>
+<div class="row">
+  <button class="btn btn-secondary">Edit Section</button>
+  <button class="btn btn-secondary">Save as Draft</button>
+  <button class="btn btn-secondary" disabled>Next</button>
+</div>
+
+<div class="lbl">Secondary · warning — red stroke</div>
+<div class="row">
+  <button class="btn btn-secondary-warn">Delete</button>
+  <button class="btn btn-secondary-warn">Discontinue</button>
+  <button class="btn btn-secondary-warn" disabled>Delete</button>
+</div>
+
+<div class="lbl">Tertiary — ghost, blue text</div>
+<div class="row">
+  <button class="btn btn-tertiary">Go Back</button>
+  <button class="btn btn-tertiary">Show more</button>
+  <button class="btn btn-tertiary" disabled>Go Back</button>
+</div>
+
+<div class="lbl">Neutral — gray stroke, dark text (secondary actions alongside a primary, e.g. Batch Actions)</div>
+<div class="row">
+  <button class="btn btn-neutral">Batch Actions</button>
+  <button class="btn btn-neutral">Export</button>
+  <button class="btn btn-neutral" disabled>Export</button>
+</div>
+
+<div class="lbl">Foundation — neo-brutalist (seldom; brand moments only)</div>
+<div class="row">
+  <button class="btn-neo">Next</button>
+</div>
+
+<!-- ════════════════ ROW ACTIONS ════════════════ -->
+<div class="section">
+  <p class="h">Row actions — when to use which</p>
+  <p class="d">The <b>Menu</b> is the single <i>primitive</i> (a floating list of actions). The <b>split button</b> and <b>kebab</b> are just two <i>triggers</i> that open that same Menu — build the Menu once, then pick the trigger a row needs. (The visible button's <b>intent</b> — primary or error — is just the existing button colors at a slim 28px size.)</p>
+  <table class="rule">
+    <tr><th>Situation</th><th>Use</th></tr>
+    <tr><td>Is there one action worth <i>encouraging</i> on the row?</td><td>No → <b>kebab</b> only · Yes → a visible button</td></tr>
+    <tr><td>Does that action have a few <i>related variants</i>?</td><td>Yes → <b>split button</b> (caret opens the Menu) · No → plain slim <b>button</b></td></tr>
+    <tr><td>Also some <i>unrelated</i> utilities?</td><td>Add a <b>kebab</b> beside the button — not a second button</td></tr>
+    <tr><td>No action to push at all?</td><td>Make the <b>row</b> open a detail / drawer</td></tr>
+  </table>
+  <p class="cap">Every “→ Menu” above opens the <i>same</i> Menu popover — that's why it's one primitive, not one per trigger.</p>
+</div>
+
+<!-- ════════════════ MENU (the primitive) ════════════════ -->
+<div class="section">
+  <p class="h">The primitive · Menu popover</p>
+  <p class="d"><b>Both</b> the split button's caret and the kebab open this exact surface — it is not separate from either. Anchored under its trigger; a list of actions with an optional leading icon, a section label, a divider, and a destructive item last.</p>
+  <div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap">
+    <div style="display:flex;flex-direction:column;align-items:flex-start;gap:0">
+      <span class="split primary open" style="margin-bottom:6px"><button class="main">Continue draft</button><button class="caret"><span class="mi">expand_more</span></button></span>
+      <div class="menu">
+        <div class="mitem"><span class="mi">edit</span>Continue editing</div>
+        <div class="mitem"><span class="mi">content_copy</span>Duplicate plan</div>
+        <div class="mitem"><span class="mi">person</span>Reassign owner</div>
+        <div class="mdiv"></div>
+        <div class="mitem danger"><span class="mi">delete</span>Discard draft</div>
+      </div>
+    </div>
+    <div class="menu" style="min-width:224px">
+      <div class="mlabel">Schedule</div>
+      <div class="mitem"><span class="mi">bolt</span>Approve and schedule<span class="kbd">⏎</span></div>
+      <div class="mitem"><span class="mi">schedule</span>Schedule for later</div>
+      <div class="mdiv"></div>
+      <div class="mlabel">More</div>
+      <div class="mitem"><span class="mi">download</span>Export plan</div>
+      <div class="mitem"><span class="mi">visibility</span>View details</div>
+      <div class="mdiv"></div>
+      <div class="mitem danger"><span class="mi">block</span>Cancel plan</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ SPLIT BUTTON (trigger) ════════════════ -->
+<div class="section">
+  <p class="h">Trigger · Split button</p>
+  <p class="d">A visible button + a caret that opens the Menu. Use it to <b>encourage one action</b> and offer its <i>related variants</i> in the dropdown. Built at <b>28px</b> so it sits in a 45px row without growing it. The button's <i>intent</i> — primary or error — is the only thing that changes between the examples below.</p>
+  <div class="row">
+    <span class="split primary"><button class="main">Continue draft</button><button class="caret"><span class="mi">expand_more</span></button></span>
+    <span class="split error"><button class="main"><span class="mi">report</span> Edits needed</button><button class="caret"><span class="mi">expand_more</span></button></span>
+    <span class="split primary"><button class="main"><span class="mi">check_circle</span> Approve and schedule</button><button class="caret"><span class="mi">expand_more</span></button></span>
+  </div>
+  <p class="cap"><b style="color:var(--p-text)">Primary</b> steers the happy path. <b style="color:var(--p-text)">Error</b> is scoped to “the encouraged action fixes a problem” — never a status label (use a Status Badge for that).</p>
+</div>
+
+<!-- ════════════════ KEBAB / OVERFLOW (trigger) ════════════════ -->
+<div class="section">
+  <p class="h">Trigger · Kebab (overflow)</p>
+  <p class="d">A single <code>more_horiz</code> button pinned to the right of the row. Cleanest option, but the lowest discoverability — render it <b>always visible</b> (not hover-only) when its actions matter, and never hide a row's <i>primary</i> action behind it.</p>
+  <div class="row">
+    <button class="kebab"><span class="mi">more_horiz</span></button>
+    <span style="font:400 13px Inter;color:var(--p-muted)">← resting</span>
+    <span style="width:24px"></span>
+    <button class="kebab" style="background:rgba(0,0,0,.05);color:var(--p-text)"><span class="mi">more_horiz</span></button>
+    <span style="font:400 13px Inter;color:var(--p-muted)">← hover / open</span>
+  </div>
+</div>
+
+<!-- ════════════════ IN A ROW ════════════════ -->
+<div class="section">
+  <p class="h">In context — and a hard rule on visibility</p>
+  <p class="d"><b>Row actions are always visible at rest — never revealed on hover.</b> Hover-only actions fail discoverability, touch, and keyboard. Hover may <i>tint</i> the row (and darken a control), but it must never change <i>which</i> controls exist. Every row below shows its actions at rest.</p>
+  <div class="tbl">
+    <div class="thd"><span>Orchestration plan</span><span>Owner</span><span style="text-align:right">Actions</span></div>
+    <div class="trw"><span>Northeast · Wk 17</span><span class="id">Kenny D.</span><span class="right"><span class="split primary"><button class="main">Continue draft</button><button class="caret"><span class="mi">expand_more</span></button></span></span></div>
+    <div class="trw"><span>Harbor route · Wk 18</span><span class="id">Marcus B.</span><span class="right"><span class="split error"><button class="main"><span class="mi">report</span> Edits needed</button><button class="caret"><span class="mi">expand_more</span></button></span></span></div>
+    <div class="trw"><span>Midtown · Wk 16</span><span class="id">Lena R.</span><span class="right" style="gap:8px"><button class="btn btn-tertiary" style="height:28px;padding:0 10px;min-width:0;font-size:13px">Reassign</button><button class="kebab"><span class="mi">more_horiz</span></button></span></div>
+    <div class="trw hov"><span>Downtown · Wk 15</span><span class="id">Kenny D.</span><span class="right" style="gap:8px"><button class="btn btn-tertiary" style="height:28px;padding:0 10px;min-width:0;font-size:13px">Reassign</button><button class="kebab"><span class="mi">more_horiz</span></button></span></div>
+  </div>
+  <div style="margin-top:12px;display:flex;flex-direction:column;gap:5px">
+    <p class="cap" style="margin:0"><b style="color:var(--p-text)">Row 1 — Split button (primary):</b> strong steer + related variants under the caret.</p>
+    <p class="cap" style="margin:0"><b style="color:var(--p-text)">Row 2 — Split button (error):</b> the encouraged action resolves a problem.</p>
+    <p class="cap" style="margin:0"><b style="color:var(--p-text)">Rows 3 &amp; 4 — Plain button + Kebab.</b> The whole row still opens the detail on click, so there is <b style="color:var(--p-text)">no “View” button</b> (that would duplicate the row click) — the visible control is a real action (“Reassign”), with the rest in the kebab. <b style="color:var(--p-text)">Row 4 is the same row hovered</b> — only the background tints; the controls were already there at rest.</p>
+  </div>
+</div>
+
+<!-- ════════════════ RULES ════════════════ -->
+<div class="section">
+  <p class="h">Rules — precise version</p>
+  <div class="notes">
+    <p><b>1. Default to no control.</b> If a row exists to be opened, make the whole row navigate to its detail / drawer — and do <b>not</b> add a “View”/“Open” button, which only duplicates the row click. A <i>genuine</i> action (Reassign, Export, Duplicate) is different and may still appear. Action controls stop the row click — they perform their action, they don’t also navigate.</p>
+    <p><b>2. If a row needs actions, they live in a Menu</b> (the one popover primitive). Decide only how it opens:</p>
+    <p style="margin:0 0 8px 18px">• <b>Kebab</b> (<code>more_horiz</code>, pinned right, always visible) when the actions are peers with no single one to encourage, or space is tight.</p>
+    <p style="margin:0 0 8px 18px">• <b>Split button</b> (labeled button + caret) when one action is worth encouraging — the button performs it in one click; the caret opens the Menu of its related alternatives.</p>
+    <p><b>3. Button intent</b> is the visible button's color: <b>primary</b> for the encouraged happy-path action; <b>error</b> only when that action resolves a problem (clicking it opens the fix). Never use a red button to merely signal a bad state — that is a Status Badge, not a button.</p>
+    <p><b>4. One trigger per row,</b> 28px tall, right-aligned in the last column. Unrelated extra actions go inside the Menu, never as a second button. Never hide a row's single most important action behind a kebab alone.</p>
+    <p><b>5. Always visible — never hover-only.</b> Row actions render at rest. Do not reveal them on hover (it fails discoverability, touch, and keyboard); hover may tint the row but must not change which controls are present.</p>
+    <p style="margin-top:12px"><b>Components:</b> Menu popover (primitive) · Kebab (trigger) · Split button (trigger) · plain 28px button. Everything else is a configuration of these.</p>
+  </div>
+</div>
+
+</body></html>

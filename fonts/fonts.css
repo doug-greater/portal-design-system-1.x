@@ -1,0 +1,6 @@
+/* Greater uses Inter (primary) and Geist Mono (accents).
+   Both are pulled from Google Fonts / upstream CDN since the design
+   file ships only binary references. Self-hosting is recommended for
+   production; swap the @import URLs for local ttf/woff2 files.          */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');

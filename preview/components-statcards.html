@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><style>
+body{margin:0;padding:24px;background:#fff}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:660px}
+.card{background:#fff;border:1px solid var(--p-border);border-radius:6px;padding:14px 16px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow-card)}
+.num{font:700 20px/1 'Geist Mono',monospace}
+.num.blue{color:var(--p-primary)}
+.num.green{color:var(--p-success)}
+.num.red{color:var(--p-danger)}
+.num.gold{color:var(--p-warning)}
+.num.ink{color:var(--p-ink)}
+.lbl{font:400 14px/1.3 Inter;color:var(--p-text-2)}
+.sub{
+  margin-left:auto;
+  font:500 12px/1 Inter;
+  color:var(--p-muted);
+  cursor:pointer;
+  text-decoration:underline;
+  text-decoration-color:#C4C9D2;
+  text-decoration-thickness:1px;
+  text-underline-offset:2px;
+}
+.sub:hover{color:var(--p-ink);text-decoration-color:var(--p-ink)}
+</style></head><body>
+<div class="grid">
+  <div class="card"><span class="num blue">21.1k</span><span class="lbl">Cases in Market</span></div>
+  <div class="card"><span class="num ink">1,258</span><span class="lbl">Active Placements</span></div>
+  <div class="card"><span class="num ink">50</span><span class="lbl">Points of Distribution</span></div>
+  <div class="card"><span class="num green">1</span><span class="lbl">Pending Additions</span><span class="sub">Show</span></div>
+  <div class="card"><span class="num red">1</span><span class="lbl">Pending Discontinue</span><span class="sub">Show</span></div>
+  <div class="card"><span class="num gold">4</span><span class="lbl">Discontinued &amp; Draining</span><span class="sub">Show</span></div>
+</div>
+</body></html>

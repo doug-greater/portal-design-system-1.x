@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Greater — Navigation Sidebar</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--p-surface-alt);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .page {
+    padding: 48px 40px 64px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .page-eyebrow {
+    font: 500 11px/1 var(--font-sans);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--p-muted);
+    margin: 0 0 10px;
+  }
+  .page-title {
+    font: 600 24px/1.2 var(--font-sans);
+    color: var(--p-ink);
+    margin: 0 0 8px;
+    letter-spacing: -0.025em;
+  }
+  .page-desc {
+    font: 400 14px/1.6 var(--font-sans);
+    color: var(--p-muted);
+    margin: 0;
+    max-width: 560px;
+  }
+  .sec-label {
+    font: 500 11px/1 var(--font-sans);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--p-muted);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font: 500 10px/1.4 var(--font-sans);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .badge-w  { background: var(--p-primary-soft); color: var(--p-primary-ink); }
+  .badge-n  { background: var(--g-off-white);    color: var(--p-muted); }
+  .badge-new { background: #ECFDF5; color: #047857; }
+  .skel {
+    height: 12px;
+    border-radius: 6px;
+    background: var(--p-border);
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+  @keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:.5} }
+  @keyframes flyout-in {
+    from { opacity: 0; transform: translateX(-7px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .gr-row:hover   { background: rgba(0,124,255,0.05) !important; }
+  .gr-sub-btn:not([disabled]):hover .gr-sub[data-on="0"] { background: rgba(0,124,255,0.05) !important; }
+  .gr-util:hover  { background: #F3F4F6 !important; }
+  .gr-collapse-btn:hover { background: #F3F4F6 !important; }
+  .flyout-child:hover { background: #EFF6FF !important; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header style="margin-bottom:40px">
+    <p class="page-eyebrow">Components</p>
+    <h1 class="page-title">Navigation Sidebar</h1>
+    <p class="page-desc">Persistent left-rail navigation with expandable groups, utility links, and an icon-only collapsed state. Width transitions between 248px and 72px. In the collapsed state, hovering any parent icon opens a <strong>flyout panel</strong> — all sub-items are reachable without re-expanding the rail.</p>
+  </header>
+  <div id="root"></div>
+</div>
+
+<script type="text/babel" data-presets="react">
+
+/* ── Material Symbols SVG helper ── */
+const _svgCache = {};
+function MS({ name, size = 20, color = 'currentColor' }) {
+  const [svg, setSvg] = React.useState(_svgCache[name] || null);
+  React.useEffect(() => {
+    if (_svgCache[name]) { setSvg(_svgCache[name]); return; }
+    const url = `https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsrounded/${name}/default/24px.svg`;
+    fetch(url).then(r => r.text()).then(text => {
+      const clean = text
+        .replace(/fill="[^"]*"/g, 'fill="currentColor"')
+        .replace(/width="[^"]*"/, `width="${size}"`)
+        .replace(/height="[^"]*"/, `height="${size}"`);
+      _svgCache[name] = clean;
+      setSvg(clean);
+    }).catch(() => {});
+  }, [name]);
+  return svg
+    ? <span dangerouslySetInnerHTML={{ __html: svg }} style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:size, height:size, color, fill:color, flexShrink:0 }} />
+    : <span style={{ display:'inline-flex', width:size, height:size, flexShrink:0 }} />;
+}
+
+/* ── Mini toggle ── */
+function OpsToggle({ checked, onChange }) {
+  return (
+    <span role="switch" aria-checked={checked} onClick={e => { e.stopPropagation(); onChange(!checked); }}
+      style={{ position:'relative', display:'inline-flex', alignItems:'center', width:36, height:20, borderRadius:999, cursor:'pointer', flexShrink:0, background: checked ? 'rgba(0,124,255,0.15)' : 'rgba(0,0,0,0.10)', transition:'background 150ms' }}>
+      <span style={{ position:'absolute', left: checked ? 18 : 2, width:16, height:16, borderRadius:'50%', background: checked ? '#007CFF' : '#fff', boxShadow:'0 1px 3px rgba(0,0,0,.18)', transition:'left 150ms ease-out, background 150ms' }} />
+    </span>
+  );
+}
+
+/* ── Constants ── */
+const BRAND_BLUE   = '#007CFF';
+const INK          = '#101828';
+const GRAY_600     = '#4A5565';
+const GRAY_800     = '#1E2939';
+const BORDER_LIGHT = '#E5E7EB';
+
+const NAV_ITEMS = [
+  { id:'insights',     label:'Insights',     icon:'insights', children:[
+    { id:'business-weekly',     label:'Business Weekly' },
+    { id:'daily-pulse',         label:'Daily Pulse' },
+    { id:'account-spotlight',   label:'Account Spotlight' },
+    { id:'sales-rep-spotlight', label:'Sales Rep Spotlight' },
+    { id:'sales-ordering',      label:'Sales Ordering' },
+    { id:'sales-timing',        label:'Sales Timing' },
+    { id:'inventory-in-market', label:'Inventory in Market' },
+    { id:'manager-view',        label:'Manager View' },
+  ]},
+  { id:'sales',          label:'Sales',          icon:'paid',    children:[
+    { id:'planned-assignments', label:'Planned Assignments' },
+    { id:'past-activity',       label:'Past Activity' },
+  ]},
+  { id:'orchestration',  label:'Orchestration',  icon:'graph_7', children:[
+    { id:'view-plans',       label:'View Plans' },
+    { id:'visualize-impact', label:'Visualize Impact' },
+  ]},
+  { id:'accounts', label:'Accounts', icon:'storefront', children:null },
+  { id:'users',    label:'Users',    icon:'group',      children:null },
+];
+
+/* ══════════════════════════════════════════════════
+   FLYOUT PANEL — reused in static previews too
+══════════════════════════════════════════════════ */
+function FlyoutPanel({ item, currentRoute, onSelect, style = {} }) {
+  if (!item) return null;
+  return (
+    <div style={{
+      width: 208,
+      background: '#fff',
+      border: `1px solid ${BORDER_LIGHT}`,
+      borderRadius: 8,
+      boxShadow: 'var(--shadow-float)',
+      overflow: 'hidden',
+      ...style,
+    }}>
+      {/* Section label */}
+      <div style={{ padding:'9px 14px 8px', font:'500 11px/1 var(--font-sans)', letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--p-muted)', borderBottom: item.children ? `1px solid ${BORDER_LIGHT}` : 'none' }}>
+        {item.label}
+      </div>
+      {/* Children */}
+      {item.children && (
+        <ul style={{ margin:0, padding:'4px 0', listStyle:'none' }}>
+          {item.children.map(c => {
+            const on = currentRoute === c.id;
+            return (
+              <li key={c.id}>
+                <button
+                  className={on ? '' : 'flyout-child'}
+                  onClick={() => onSelect?.(c.id)}
+                  style={{ width:'100%', border:'none', padding:'7px 14px', background: on ? '#007CFF' : 'transparent', color: on ? '#fff' : '#101828', font:`${on ? 600 : 400} 13px/20px var(--font-sans)`, cursor:'pointer', textAlign:'left', transition:'background 100ms', display:'flex', alignItems:'center', gap:8 }}>
+                  {on && <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(255,255,255,.7)', flexShrink:0 }} />}
+                  {c.label}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   SIDEBAR COMPONENT
+══════════════════════════════════════════════════ */
+function Sidebar({ collapsed, onToggleCollapse, currentRoute, onNavigate, interactive = false, highlightItemId = null }) {
+  const [expanded, setExpanded] = React.useState({ insights:false, sales:true, orchestration:false });
+  const [opsTools, setOpsTools]   = React.useState(true);
+  const [flyout, setFlyout]       = React.useState(null); // { item, x, y }
+  const closeRef  = React.useRef(null);
+
+  const toggle = id => setExpanded(s => ({ ...s, [id]: !s[id] }));
+
+  /* Close flyout whenever sidebar expands */
+  React.useEffect(() => {
+    if (!collapsed) { clearTimeout(closeRef.current); setFlyout(null); }
+  }, [collapsed]);
+
+  const openFlyout = (item, e) => {
+    if (!interactive || !collapsed) return;
+    clearTimeout(closeRef.current);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setFlyout({ item, x: rect.right + 6, y: rect.top - 6 });
+  };
+
+  const scheduleClose = () => { closeRef.current = setTimeout(() => setFlyout(null), 150); };
+  const cancelClose   = () => clearTimeout(closeRef.current);
+
+  /* ── Parent nav row ── */
+  const ParentRow = ({ item }) => {
+    const isOpen      = expanded[item.id];
+    const hasKids     = !!item.children;
+    const groupActive = hasKids && item.children.some(c => c.id === currentRoute);
+    const isActive    = (!hasKids && currentRoute === item.id) || groupActive;
+    const isFlyoutOpen = flyout?.item?.id === item.id;
+    const isHighlighted = !interactive && highlightItemId === item.id;
+
+    const handleClick = () => {
+      if (!interactive) return;
+      if (collapsed) { if (!hasKids) onNavigate?.(item.id); }
+      else { hasKids ? toggle(item.id) : onNavigate?.(item.id); }
+    };
+
+    if (collapsed) {
+      return (
+        <li style={{ listStyle:'none' }}>
+          <button onClick={handleClick}
+            onMouseEnter={e => openFlyout(item, e)}
+            onMouseLeave={scheduleClose}
+            title={!interactive ? item.label : undefined}
+            style={{ width:'100%', border:'none', background:'transparent', padding:'2px 0', cursor: interactive ? 'pointer' : 'default' }}>
+            <div style={{
+              display:'flex', alignItems:'center', justifyContent:'center',
+              width:40, height:40, margin:'0 auto', borderRadius:6,
+              background: isActive ? 'rgba(0,124,255,0.10)' : (isFlyoutOpen || isHighlighted) ? 'rgba(0,124,255,0.08)' : 'transparent',
+              transition:'background 100ms',
+            }}>
+              <MS name={item.icon} size={22} color={isActive || isFlyoutOpen || isHighlighted ? BRAND_BLUE : '#364153'} />
+            </div>
+          </button>
+        </li>
+      );
+    }
+
+    return (
+      <li style={{ listStyle:'none' }}>
+        <button onClick={handleClick} style={{ width:'100%', border:'none', background:'transparent', padding:0, cursor: interactive ? 'pointer' : 'default' }}>
+          <div className="gr-row" style={{ display:'flex', alignItems:'center', padding:'8px 8px', borderRadius:6, gap:10, transition:'background 100ms', minWidth:0 }}>
+            <MS name={item.icon} size={20} color={isActive ? BRAND_BLUE : '#364153'} />
+            <span style={{ flex:1, minWidth:0, textAlign:'left', font:'400 14px/1.25 var(--font-sans)', color: isActive ? BRAND_BLUE : INK, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{item.label}</span>
+            {hasKids && (
+              <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:20, height:20, transform: isOpen ? 'rotate(180deg)' : 'none', transition:'transform 200ms' }}>
+                <MS name="expand_more" size={16} color="#6A7282" />
+              </span>
+            )}
+          </div>
+        </button>
+        {hasKids && isOpen && (
+          <ul style={{ margin:'1px 0 2px', padding:0, listStyle:'none' }}>
+            {item.children.map(c => {
+              const on = currentRoute === c.id;
+              return (
+                <li key={c.id}>
+                  <button className="gr-sub-btn" onClick={() => interactive && onNavigate?.(c.id)}
+                    style={{ width:'100%', border:'none', padding:0, cursor: interactive ? 'pointer' : 'default', background:'transparent' }}>
+                    <div className="gr-sub" data-on={on ? '1' : '0'} style={{ display:'flex', alignItems:'center', padding:'6px 8px 6px 34px', borderRadius:6, background: on ? BRAND_BLUE : 'transparent', color: on ? '#fff' : GRAY_800, font:`${on ? 500 : 400} 13px/20px var(--font-sans)`, transition:'background 100ms', minHeight:30 }}>
+                      {c.label}
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </li>
+    );
+  };
+
+  /* ── Utility row ── */
+  const UtilRow = ({ icon, label, external, trailing }) => {
+    if (collapsed) {
+      return (
+        <li style={{ listStyle:'none' }}>
+          <button title={label}
+            onMouseEnter={e => openFlyout({ id:`util-${label}`, label, icon, children:null }, e)}
+            onMouseLeave={scheduleClose}
+            style={{ width:'100%', border:'none', background:'transparent', padding:'2px 0', cursor:'default' }}>
+            <div className="gr-util" style={{ display:'flex', alignItems:'center', justifyContent:'center', width:40, height:34, margin:'0 auto', borderRadius:6 }}>
+              <MS name={icon} size={18} color={GRAY_600} />
+            </div>
+          </button>
+        </li>
+      );
+    }
+    return (
+      <li style={{ listStyle:'none' }}>
+        <button style={{ width:'100%', border:'none', background:'transparent', padding:0, cursor:'default' }}>
+          <div className="gr-util" style={{ display:'flex', alignItems:'center', padding:'0 8px', minHeight:32, borderRadius:6, gap:10, font:'400 13px/20px var(--font-sans)', color:GRAY_600 }}>
+            <MS name={icon} size={18} color={GRAY_600} />
+            <span style={{ flex:1, minWidth:0, textAlign:'left', color:GRAY_600, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{label}</span>
+            {external && <MS name="open_in_new" size={13} color="#99A1AF" />}
+            {trailing}
+          </div>
+        </button>
+      </li>
+    );
+  };
+
+  return (
+    <aside style={{ position:'relative', width: collapsed ? 72 : 248, minWidth: collapsed ? 72 : 248, flexShrink:0, background:'#fff', height:'100%', borderRight:`1px solid ${BORDER_LIGHT}`, display:'flex', flexDirection:'column', overflow:'visible', transition:'width 200ms ease, min-width 200ms ease' }}>
+
+      {/* ── Live flyout panel (position:fixed escapes all clipping) ── */}
+      {flyout && collapsed && (
+        <div onMouseEnter={cancelClose} onMouseLeave={scheduleClose}
+          style={{ position:'fixed', left:flyout.x, top:flyout.y, zIndex:9999, animation:'flyout-in 120ms ease-out' }}>
+          <FlyoutPanel
+            item={flyout.item}
+            currentRoute={currentRoute}
+            onSelect={id => { onNavigate?.(id); clearTimeout(closeRef.current); setFlyout(null); }}
+          />
+        </div>
+      )}
+
+      {/* ── Collapse/expand toggle ── */}
+      {interactive && (
+        <button onClick={onToggleCollapse} className="gr-collapse-btn" title={collapsed ? 'Expand' : 'Collapse'}
+          style={{ position:'absolute', top:28, right:-13, zIndex:10, width:26, height:26, borderRadius:'50%', border:`1px solid ${BORDER_LIGHT}`, background:'#fff', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', boxShadow:'0 1px 3px rgba(0,0,0,.10)', transition:'background 120ms' }}>
+          <MS name={collapsed ? 'chevron_right' : 'chevron_left'} size={16} color={GRAY_600} />
+        </button>
+      )}
+
+      {/* ── Logo / org header ── */}
+      <div style={{ flexShrink:0, padding: collapsed ? '28px 12px 0' : '28px 20px 0 20px', display:'flex', flexDirection:'column', gap:14, paddingBottom:20, alignItems: collapsed ? 'center' : 'stretch' }}>
+        <a href="#" onClick={e => e.preventDefault()} style={{ display:'inline-flex', flexShrink:0 }}>
+          {collapsed
+            ? <img src="../assets/greater-crow.png"     alt="Greater" style={{ height:28, width:'auto', display:'block' }} />
+            : <img src="../assets/greater-logotype.png" alt="Greater" style={{ height:28, width:'auto', display:'block' }} />
+          }
+        </a>
+        {!collapsed && (
+          <div style={{ minWidth:0 }}>
+            <p style={{ margin:'0 0 8px', font:'400 13px/20px var(--font-sans)', color:INK, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>Coastal Beverage Company</p>
+            <button type="button" style={{ display:'flex', alignItems:'center', width:'100%', minHeight:28, padding:'3px 4px 3px 8px', gap:4, borderRadius:8, border:'0.5px solid #D1D5DB', background:'#fff', font:'500 12px/20px var(--font-sans)', color:INK, cursor:'default', overflow:'hidden', minWidth:0 }}>
+              <span style={{ flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', textAlign:'left' }}>Elizabeth City</span>
+              <MS name="arrow_drop_down" size={18} color={GRAY_800} />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* ── Primary nav ── */}
+      <nav style={{ flex:1, minHeight:0, overflowY:'auto', overflowX:'visible', padding: collapsed ? '0 12px 8px' : '0 16px 8px 16px' }}>
+        <ul style={{ margin:0, padding:0, listStyle:'none', display:'flex', flexDirection:'column', gap:2 }}>
+          {NAV_ITEMS.map(n => <ParentRow key={n.id} item={n} />)}
+        </ul>
+      </nav>
+
+      {/* ── Utility nav ── */}
+      <div style={{ flexShrink:0, borderTop:`1px solid ${BORDER_LIGHT}`, padding: collapsed ? '8px 12px 16px' : '8px 16px 16px 16px' }}>
+        <ul style={{ margin:0, padding:0, listStyle:'none', display:'flex', flexDirection:'column', gap:1 }}>
+          {!collapsed && <UtilRow icon="engineering" label="Ops Tools" trailing={<OpsToggle checked={opsTools} onChange={setOpsTools} />} />}
+          <UtilRow icon="public"  label="Help Center" external />
+          <UtilRow icon="person"  label="Greater CBC" />
+          <UtilRow icon="logout"  label="Sign Out" />
+        </ul>
+      </div>
+
+    </aside>
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   APP
+══════════════════════════════════════════════════ */
+function App() {
+  const [liveCollapsed, setLiveCollapsed] = React.useState(false);
+  const [liveRoute, setLiveRoute]         = React.useState('planned-assignments');
+
+  /* ── Anatomy ── */
+  const anatomy = [
+    { num:1, name:'Logo / Wordmark',     desc:'Full logotype expanded; crow mark collapsed. Links to home.' },
+    { num:2, name:'Org Header',          desc:'Org name + city selector. Hidden when collapsed.' },
+    { num:3, name:'Parent Nav Row',      desc:'Icon + label + chevron. Click toggles children or navigates.' },
+    { num:4, name:'Child Nav Item',      desc:'Indented 34px. Solid #007CFF fill when active.' },
+    { num:5, name:'Collapse Toggle',     desc:'26px circle, overlapping the right edge at top:28px, right:−13px.' },
+    { num:6, name:'Ops Tools Toggle',    desc:'Mini switch in bottom utility area. Hidden when collapsed.' },
+    { num:7, name:'Utility Links',       desc:'Help Center (external), account, sign out. Icon-only collapsed.' },
+    { num:8, name:'Collapsed Flyout',    desc:'Hover a parent icon → floating panel reveals all sub-items without expanding the rail. 150ms grace period lets mouse travel from icon to panel.', highlight: true },
+  ];
+
+  /* ── Specs ── */
+  const specs = [
+    { label:'Width — Expanded',   value:'248px' },
+    { label:'Width — Collapsed',  value:'72px' },
+    { label:'Transition',         value:'width 200ms ease' },
+    { label:'Background',         value:'#FFFFFF' },
+    { label:'Border-right',       value:'1px solid #E5E7EB' },
+    { label:'Nav item height',    value:'40px (parent), 30px (child)' },
+    { label:'Active child bg',    value:'#007CFF' },
+    { label:'Group hover bg',     value:'rgba(0,124,255,.05)' },
+    { label:'Font — parent',      value:'Inter 400 14px' },
+    { label:'Font — child',       value:'Inter 400/500 13px' },
+    { label:'Icon set',           value:'Material Symbols Rounded 20px' },
+    { label:'Toggle button',      value:'26×26px circle, −13px right' },
+    { label:'Flyout width',       value:'208px' },
+    { label:'Flyout border-radius','value':'8px' },
+    { label:'Flyout shadow',      value:'--shadow-float' },
+    { label:'Flyout trigger',     value:'mouseenter (parent icon, collapsed)' },
+    { label:'Flyout close delay', value:'150ms (grace period)' },
+    { label:'Flyout animation',   value:'translateX(−7px)→0 + opacity, 120ms ease-out' },
+    { label:'Flyout positioning', value:'position:fixed (escapes all overflow clipping)' },
+  ];
+
+  /* ── Static flyout preview ── */
+  /* Sales icon is NAV_ITEMS[1], index 1.
+     Logo section height ≈ 76px, each item slot ≈ 46px (44px button + 2px gap)
+     Sales top ≈ 76 + 1*46 = 122px relative to sidebar top */
+  const FLYOUT_PREVIEW_ITEM = NAV_ITEMS.find(n => n.id === 'insights'); // 8 children = good demo
+
+  return (
+    <>
+      {/* ══ Section 1: Two static states + anatomy ══ */}
+      <div style={{ display:'flex', gap:32, alignItems:'flex-start', marginBottom:40, flexWrap:'wrap' }}>
+
+        {/* Expanded */}
+        <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+          <div className="sec-label">Expanded <span className="badge badge-w">248px</span></div>
+          <div style={{ background:'#fff', border:'1px solid var(--p-border)', borderRadius:12, overflow:'hidden', boxShadow:'var(--shadow-card)', height:520 }}>
+            <div style={{ height:'100%', position:'relative', width:248 }}>
+              <Sidebar collapsed={false} currentRoute="planned-assignments" interactive={false} />
+            </div>
+          </div>
+        </div>
+
+        {/* Collapsed */}
+        <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+          <div className="sec-label">Collapsed <span className="badge badge-n">72px</span></div>
+          <div style={{ background:'#fff', border:'1px solid var(--p-border)', borderRadius:12, overflow:'hidden', boxShadow:'var(--shadow-card)', height:520 }}>
+            <div style={{ height:'100%', position:'relative', width:72 }}>
+              <Sidebar collapsed={true} currentRoute="planned-assignments" interactive={false} />
+            </div>
+          </div>
+        </div>
+
+        {/* Anatomy */}
+        <div style={{ flex:1, minWidth:260, display:'flex', flexDirection:'column', gap:10 }}>
+          <div className="sec-label">Anatomy</div>
+          <div style={{ background:'#fff', border:'1px solid var(--p-border)', borderRadius:12, overflow:'hidden', boxShadow:'var(--shadow-card)' }}>
+            {anatomy.map((a, i) => (
+              <div key={i} style={{ display:'grid', gridTemplateColumns:'24px 1fr', gap:10, alignItems:'start', padding:'11px 16px', borderBottom: i < anatomy.length-1 ? '1px solid var(--p-border)' : 'none', background: a.highlight ? '#F0F9FF' : 'transparent' }}>
+                <div style={{ width:20, height:20, borderRadius:'50%', background: a.highlight ? BRAND_BLUE : 'var(--p-ink)', color:'#fff', font:'600 10px/20px var(--font-sans)', textAlign:'center', flexShrink:0, marginTop:1 }}>{a.num}</div>
+                <div>
+                  <div style={{ font:'600 13px/1.3 var(--font-sans)', color:'var(--p-ink)', marginBottom:2 }}>{a.name}</div>
+                  <div style={{ font:'400 12px/1.5 var(--font-sans)', color:'var(--p-muted)' }}>{a.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ══ Section 2: Collapsed flyout spec ══ */}
+      <div style={{ marginBottom:40 }}>
+        <div className="sec-label">Collapsed Flyout <span className="badge badge-new">New</span></div>
+
+        <div style={{ display:'flex', gap:24, alignItems:'flex-start', flexWrap:'wrap' }}>
+
+          {/* Frame A: icon hover state */}
+          <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+            <div style={{ font:'400 12px/1 var(--font-sans)', color:'var(--p-muted)', letterSpacing:'0.03em' }}>① Hover icon</div>
+            <div style={{ background:'#fff', border:'1px solid var(--p-border)', borderRadius:12, overflow:'hidden', boxShadow:'var(--shadow-card)', display:'flex', height:380 }}>
+              <div style={{ width:72, height:'100%', position:'relative', flexShrink:0 }}>
+                <Sidebar collapsed={true} currentRoute="planned-assignments" interactive={false} highlightItemId="insights" />
+              </div>
+              {/* Dimmed content area */}
+              <div style={{ width:180, height:'100%', background:'#F5F7FA', borderLeft:'1px solid var(--p-border)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <span style={{ font:'400 12px var(--font-sans)', color:'var(--p-placeholder)', textAlign:'center', padding:'0 16px' }}>page content</span>
+              </div>
+            </div>
+            <p style={{ margin:0, font:'400 12px/1.5 var(--font-sans)', color:'var(--p-muted)', maxWidth:252 }}>Icon tints blue. Flyout opens immediately on hover.</p>
+          </div>
+
+          {/* Arrow */}
+          <div style={{ display:'flex', alignItems:'center', paddingTop:40, color:'var(--p-placeholder)', fontSize:20 }}>→</div>
+
+          {/* Frame B: flyout open */}
+          <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+            <div style={{ font:'400 12px/1 var(--font-sans)', color:'var(--p-muted)', letterSpacing:'0.03em' }}>② Flyout open — navigate without expanding</div>
+            <div style={{ background:'#fff', border:'1px solid var(--p-border)', borderRadius:12, overflow:'visible', boxShadow:'var(--shadow-card)', display:'flex', height:380, position:'relative' }}>
+              <div style={{ width:72, height:'100%', position:'relative', flexShrink:0, borderRight:`1px solid ${BORDER_LIGHT}`, borderRadius:'12px 0 0 12px', background:'#fff', overflow:'hidden' }}>
+                <Sidebar collapsed={true} currentRoute="planned-assignments" interactive={false} highlightItemId="insights" />
+              </div>
+              {/* Content area */}
+              <div style={{ flex:1, background:'#F5F7FA', borderRadius:'0 12px 12px 0', position:'relative' }}>
+                {/* Static flyout panel positioned at Insights icon Y (~76px from sidebar top) */}
+                <div style={{ position:'absolute', left:6, top:68, zIndex:10 }}>
+                  <FlyoutPanel item={FLYOUT_PREVIEW_ITEM} currentRoute="business-weekly" onSelect={() => {}} />
+                </div>
+              </div>
+            </div>
+            <p style={{ margin:0, font:'400 12px/1.5 var(--font-sans)', color:'var(--p-muted)', maxWidth:420 }}>
+              Flyout lists all sub-items. Active item highlighted in blue. Mouse can travel from icon to panel — 150ms grace period prevents accidental closure. Click to navigate; flyout closes.
+            </p>
+          </div>
+
+          {/* Frame C: leaf label */}
+          <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+            <div style={{ font:'400 12px/1 var(--font-sans)', color:'var(--p-muted)', letterSpacing:'0.03em' }}>③ Leaf item — label tooltip</div>
+            <div style={{ background:'#fff', border:'1px solid var(--p-border)', borderRadius:12, overflow:'visible', boxShadow:'var(--shadow-card)', display:'flex', height:380, position:'relative' }}>
+              <div style={{ width:72, height:'100%', position:'relative', flexShrink:0, borderRight:`1px solid ${BORDER_LIGHT}`, borderRadius:'12px 0 0 12px', background:'#fff', overflow:'hidden' }}>
+                <Sidebar collapsed={true} currentRoute="planned-assignments" interactive={false} highlightItemId="accounts" />
+              </div>
+              <div style={{ flex:1, background:'#F5F7FA', borderRadius:'0 12px 12px 0', position:'relative' }}>
+                {/* Leaf tooltip — Accounts is 3rd nav item, Y ≈ 76 + 3*46 = 214px */}
+                <div style={{ position:'absolute', left:6, top:206, zIndex:10 }}>
+                  <FlyoutPanel item={{ id:'accounts', label:'Accounts', icon:'storefront', children:null }} currentRoute="accounts" onSelect={() => {}} />
+                </div>
+              </div>
+            </div>
+            <p style={{ margin:0, font:'400 12px/1.5 var(--font-sans)', color:'var(--p-muted)', maxWidth:252 }}>Items with no children show their label only. Click navigates directly.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* ══ Section 3: Interactive demo ══ */}
+      <div style={{ marginBottom:40 }}>
+        <div className="sec-label">Interactive Demo</div>
+        <div style={{ background:'#fff', border:'1px solid var(--p-border)', borderRadius:12, overflow:'visible', boxShadow:'var(--shadow-card)', height:520, display:'flex' }}>
+          {/* Live sidebar */}
+          <div style={{ height:'100%', position:'relative', flexShrink:0, overflow:'visible' }}>
+            <Sidebar
+              collapsed={liveCollapsed}
+              onToggleCollapse={() => setLiveCollapsed(c => !c)}
+              currentRoute={liveRoute}
+              onNavigate={setLiveRoute}
+              interactive={true}
+            />
+          </div>
+          {/* Content area */}
+          <div style={{ flex:1, background:'var(--p-surface-alt)', padding:28, display:'flex', flexDirection:'column', gap:16, overflowY:'auto', borderLeft:`1px solid ${BORDER_LIGHT}` }}>
+            <div>
+              <p style={{ margin:'0 0 4px', font:'500 11px/1 var(--font-sans)', letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--p-muted)' }}>Active route</p>
+              <p style={{ margin:0, font:'600 18px/1.3 var(--font-sans)', color:'var(--p-ink)', letterSpacing:'-0.02em' }}>
+                {liveRoute.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+              </p>
+            </div>
+            <div style={{ display:'flex', gap:12 }}>
+              {[80, 60, 72].map((w,i) => (
+                <div key={i} style={{ background:'#fff', border:'1px solid var(--p-border)', borderRadius:6, padding:'14px 16px', flex:1, display:'flex', flexDirection:'column', gap:8 }}>
+                  <div className="skel" style={{ width:`${w}%` }} />
+                  <div className="skel" style={{ width:'40%', height:20, borderRadius:4 }} />
+                </div>
+              ))}
+            </div>
+            {[90,75,85,60,70,80,55].map((w,i) => <div key={i} className="skel" style={{ width:`${w}%` }} />)}
+            <p style={{ margin:'8px 0 0', font:'400 12px/1.5 var(--font-sans)', color:'var(--p-placeholder)' }}>
+              {liveCollapsed
+                ? '← Hover the icons to open flyout sub-menus · Click ›  to expand'
+                : 'Click nav items to navigate · Click ‹ to collapse, then hover icons for flyout'
+              }
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ══ Section 4: Specs ══ */}
+      <div>
+        <div className="sec-label">Specs</div>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:8 }}>
+          {specs.map((s,i) => (
+            <div key={i} style={{ background:'#fff', border:'1px solid var(--p-border)', borderRadius:8, padding:'12px 14px', borderLeft: i >= 12 ? `3px solid ${BRAND_BLUE}` : '1px solid var(--p-border)' }}>
+              <div style={{ font:'500 10px/1 var(--font-sans)', letterSpacing:'0.05em', textTransform:'uppercase', color: i >= 12 ? BRAND_BLUE : 'var(--p-muted)', marginBottom:6 }}>{s.label}</div>
+              <div style={{ font:'400 12px/1.5 var(--font-mono)', color:'var(--p-ink)' }}>{s.value}</div>
+            </div>
+          ))}
+        </div>
+        <p style={{ margin:'12px 0 0', font:'400 12px/1.5 var(--font-sans)', color:'var(--p-muted)' }}>
+          Specs with a blue left border are new flyout-specific tokens.
+        </p>
+      </div>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

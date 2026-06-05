@@ -1,0 +1,298 @@
+/* =======================================================================
+   Greater Design System — Colors & Type
+   =======================================================================
+   The Greater portal uses TWO coexisting visual languages:
+
+   (A) "Portal" — the current product UI: neutral grays, indigo-shifted
+       blue #155DFC for primary accents, colored category pills, tight
+       14–16px Inter. StatCards, tables, filter bars.
+   (B) "Foundation" — the Figma color section (authoritative tokens):
+       a pure blue primary #007CFF, black headings, warm accent quintet
+       (blue/green/red/gold/purple) + seldom sky.
+
+   Both are modeled here. When in doubt, prefer the PORTAL tokens — that's
+   what ships. Fall back to FOUNDATION tokens for marketing / onboarding /
+   brand moments. Many portal semantic tokens resolve to FOUNDATION values.
+   ======================================================================= */
+
+:root {
+  /* ---------- Foundation: neutrals ---------- */
+  --g-black:        #000000;   /* absolute black, headlines           */
+  --g-dark-gray:    #5F5E5E;   /* dark gray — secondary text          */
+  --g-medium-gray:  #8A8A8A;   /* medium gray — placeholder text      */
+  --g-light-gray:   #DADADA;   /* light gray — inactive / dividers    */
+  --g-off-white:    #F5F5F5;   /* off-white — surface backgrounds     */
+  --g-white:        #FFFFFF;
+
+  /* Foundation "transparency ladder" — overlays on black */
+  --g-black-100: rgba(0,0,0,1);
+  --g-black-25:  rgba(0,0,0,.25);  /* inactive buttons           */
+  --g-black-10:  rgba(0,0,0,.10);  /* label-tag backgrounds      */
+  --g-black-05:  rgba(0,0,0,.05);  /* selected row backgrounds   */
+
+  /* ---------- Foundation: accent quintet ---------- */
+  --g-primary-blue:    #007CFF;
+  --g-secondary-green: #00BC57;
+  --g-secondary-red:   #E5484D;   /* True Red */
+  --g-tertiary-gold:   #DB9E03;
+  --g-tertiary-purple: #7B68EE;
+  --g-seldom-sky:      #55A7FF;
+
+  /* Tinted surfaces (25%/10%/5% of the accent) */
+  --g-blue-25:   rgba(0,124,255,.25);
+  --g-blue-10:   rgba(0,124,255,.10);
+  --g-blue-05:   rgba(0,124,255,.05);
+  --g-red-10:    rgba(229,72,77,.12);
+  --g-green-10:  rgba(0,188,87,.12);
+  --g-gold-10:   rgba(219,158,3,.12);
+  --g-purple-10: rgba(123,104,238,.12);
+
+  /* ---------- Portal: neutral ramp (cool, slightly warmer than iOS) ---------- */
+  --p-ink:          #101828;   /* headings                            */
+  --p-text:         #364153;   /* body text, icon defaults            */
+  --p-text-2:       #4A5565;   /* body secondary                      */
+  --p-muted:        #6A7282;   /* metadata / captions                 */
+  --p-placeholder:  #99A1AF;   /* input placeholder / muted count     */
+  --p-border:       #E5E7EB;   /* 1px dividers, table borders         */
+  --p-border-strong:#D1D5DC;   /* input borders                       */
+  --p-surface:      #FFFFFF;
+  --p-surface-alt:  #F9FAFB;   /* table header zebra                  */
+  --p-surface-tint: #F3F4F6;   /* tab-strip background                */
+
+  /* ---------- Portal: primary blue ---------- */
+  --p-primary:       #007CFF;
+  --p-primary-hover: #0066D6;
+  --p-primary-soft:  #DBEAFE;  /* pill bg for active count badges     */
+  --p-primary-tint:  #EFF6FF;  /* row hover / info backgrounds        */
+  --p-primary-ink:   #155DFC;  /* link text                           */
+
+  /* ---------- Portal: semantic category pills ---------- */
+  --p-pill-beer-bg:    #FFFBEB;  --p-pill-beer-fg:    #BB4D00;  /* amber   */
+  --p-pill-wine-bg:    #F5F3FF;  --p-pill-wine-fg:    #6B21A8;  /* purple  */
+  --p-pill-spirits-bg: #FFF7ED;  --p-pill-spirits-fg: #C2410C;  /* orange  */
+  --p-pill-rtd-bg:     #EFF6FF;  --p-pill-rtd-fg:     #1447E6;  /* blue    */
+  --p-pill-nonalc-bg:  #ECFDF5;  --p-pill-nonalc-fg:  #047857;  /* green   */
+
+  /* ---------- Portal: feedback ---------- */
+  --p-success:       #00BC57;
+  --p-warning:       #DB9E03;
+  --p-danger:        #E5484D;
+  --p-danger-strong: #DC2626;
+
+  /* ---------- Intelligence Gradient — AI / Confidence / Predictive features ---------- */
+  --g-intel-start:    #007CFF;
+  --g-intel-mid:      #5359F1;
+  --g-intel-end:      #F153A9;
+  --g-intel-gradient: linear-gradient(90deg, #007CFF 0%, #5359F1 50%, #F153A9 100%);
+  --g-intel-tint:     linear-gradient(90deg, rgba(0,124,255,.10) 0%, rgba(83,89,241,.10) 50%, rgba(241,83,169,.10) 100%);
+
+  /* ---------- Radii ---------- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;      /* buttons, pills-with-text, inputs        */
+  --radius-md: 6px;      /* filter chips, stat cards                */
+  --radius-lg: 8px;      /* prompt callouts, large cards            */
+  --radius-xl: 10px;     /* elevated floating cards (TableView)     */
+  --radius-pill: 999px;  /* badges, "tag"                           */
+
+  /* ---------- Elevation ---------- */
+  --shadow-tooltip: 0 2px 6px 0 rgba(0,0,0,.15);
+  --shadow-card:    0 1px 2px -1px rgba(0,0,0,.10), 0 1px 3px 0 rgba(0,0,0,.10);
+  --shadow-float:   0 4px 6px -4px rgba(0,0,0,.10), 0 10px 15px -3px rgba(0,0,0,.10);
+  --shadow-brutal:  2px 2px 0 0 rgb(0,0,0);  /* for Greater-brand "neo" buttons */
+
+  /* ---------- Spacing (4px base) ---------- */
+  --space-0-5: 2px;
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-12:  48px;
+  --space-16:  64px;
+
+  /* ---------- Type families ---------- */
+  --font-sans: "Inter", "Inter Fallback", -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* ---------- Type — raw sizes (px) ---------- */
+  --fs-10: 10px;  /* legal / fine print                             */
+  --fs-11: 11px;  /* subtitle-2, micro-labels                       */
+  --fs-12: 12px;  /* overline, table-header caps, mono              */
+  --fs-14: 14px;  /* body, section title caps                       */
+  --fs-16: 16px;  /* default page body                              */
+  --fs-18: 18px;  /* headline 3 / sign-in heading                   */
+  --fs-20: 20px;  /* headline 2 / stat values                       */
+  --fs-24: 24px;  /* headline 1 (page title)                        */
+  --fs-32: 32px;  /* Headline 1 display (reporting)                 */
+  --fs-40: 40px;  /* hero                                           */
+  --fs-48: 48px;  /* brand                                          */
+
+  /* ---------- Letter-spacing presets (% of font size) ---------- */
+  --tracking-tight:   -0.02em;   /* large headings                  */
+  --tracking-normal:   0;
+  --tracking-wide:     0.05em;   /* buttons, "105% letter spacing"  */
+  --tracking-caps:     0.05em;
+  --tracking-micro:    0.025em;  /* 14px filter labels              */
+
+  /* ---------- Semantic tokens — fg / bg aliases ---------- */
+  --fg-1: var(--p-ink);          /* strongest text                  */
+  --fg-2: var(--p-text);
+  --fg-3: var(--p-muted);
+  --fg-4: var(--p-placeholder);
+  --fg-link: var(--p-primary);
+  --fg-invert: var(--g-white);
+
+  --bg-1: var(--p-surface);
+  --bg-2: var(--p-surface-alt);
+  --bg-3: var(--p-surface-tint);
+  --bg-hover: var(--p-primary-tint);
+
+  --border-1: var(--p-border);
+  --border-2: var(--p-border-strong);
+  --border-focus: var(--p-primary);
+}
+
+/* =======================================================================
+   Semantic typography — drop these class names on elements
+   ======================================================================= */
+
+/* Headline 1 — reporting / detail page title (Figma spec: Inter Bold 32) */
+.g-h1-display {
+  font: 700 var(--fs-32)/1.05 var(--font-sans);
+  letter-spacing: 0;
+  color: var(--fg-1);
+}
+
+/* Page title used across the PORTAL (Inter Bold 24, tight tracking) */
+.g-h1 {
+  font: 600 var(--fs-24)/1.33 var(--font-sans);
+  letter-spacing: -0.025em;
+  color: var(--fg-1);
+}
+
+/* Headline 2 — compact page title (Inter Semibold 20) */
+.g-h2 {
+  font: 600 var(--fs-20)/1.2 var(--font-sans);
+  letter-spacing: 0;
+  color: var(--fg-1);
+}
+
+/* Headline 3 — secondary info (Inter Regular 18, 105% tracking) */
+.g-h3 {
+  font: 400 var(--fs-18)/1.33 var(--font-sans);
+  letter-spacing: 0.05em;
+  color: var(--fg-1);
+}
+
+/* Section title / column header — Inter Medium 14 UPPERCASE */
+.g-section-title {
+  font: 500 var(--fs-14)/1.15 var(--font-sans);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fg-1);
+}
+
+/* Subtitle under H1 — Inter Medium 14 UPPERCASE medium-gray */
+.g-subtitle-1 {
+  font: 500 var(--fs-14)/1.15 var(--font-sans);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--g-medium-gray);
+}
+
+/* Fine print / legal */
+.g-subtitle-2 {
+  font: 400 var(--fs-11)/1.3 var(--font-sans);
+  color: var(--g-medium-gray);
+}
+
+/* Body 1 — standard page & table content */
+.g-body-1 { font: 400 var(--fs-16)/1.4 var(--font-sans); color: var(--fg-2); }
+
+/* Body 2 — emphasized */
+.g-body-2 { font: 700 var(--fs-16)/1.4 var(--font-sans); color: var(--fg-1); }
+
+/* Body 3 — subdued */
+.g-body-3 { font: 400 var(--fs-16)/1.4 var(--font-sans); color: var(--g-medium-gray); }
+
+/* Body 4 — toggle descriptions (105% tracking) */
+.g-body-4 { font: 400 var(--fs-16)/1.4 var(--font-sans); letter-spacing: 0.025em; color: var(--fg-2); }
+
+/* Overline — 12px Inter Regular dark-gray, 105% tracking, caps */
+.g-overline {
+  font: 400 var(--fs-12)/1.2 var(--font-sans);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--g-dark-gray);
+}
+
+/* Overline-tag — overline on soft-gray pill */
+.g-overline-tag {
+  font: 400 var(--fs-12)/1.2 var(--font-sans);
+  letter-spacing: 0.05em;
+  color: var(--g-dark-gray);
+  background: var(--g-off-white);
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+}
+
+/* Text hyperlink — Inter Medium, primary blue */
+.g-link {
+  display: inline;
+  font-weight: 500;
+  color: var(--p-primary);
+  text-decoration: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='3' viewBox='0 0 6 3'><circle cx='1.5' cy='1.5' r='1.5' fill='%23007CFF'/></svg>");
+  background-repeat: repeat-x;
+  background-position: 0 100%;
+  background-size: 6px 3px;
+  padding-bottom: 4px;
+}
+.g-link:hover { color: var(--p-primary-hover); }
+
+/* Error message */
+.g-error { font: 500 var(--fs-12)/1.2 var(--font-sans); color: var(--p-danger); }
+
+/* Mono / code */
+.g-mono, code, kbd, pre { font-family: var(--font-mono); font-size: var(--fs-12); }
+
+/* Inline info/warning callouts */
+.g-info {
+  background: var(--p-primary-tint);
+  border-radius: var(--radius-lg);
+  padding: 8px 8px;
+  font: 400 var(--fs-14)/1.4 var(--font-sans);
+  color: var(--fg-1);
+}
+.g-info.danger { background: var(--g-red-10); }
+
+/* Tooltip (used on hover popovers) */
+.g-tooltip-headline { font: 500 var(--fs-14)/1 var(--font-sans); color: var(--p-ink); }
+.g-tooltip-body     { font: 400 var(--fs-14)/1.4 var(--font-sans); color: var(--g-dark-gray); }
+
+/* ── Shared component shells (single source of truth; cards reference these) ── */
+
+/* Role Pill — flat tinted label, NO dot. Pass background/color inline per palette color. */
+.g-role-pill { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: var(--radius-pill); font: 500 var(--fs-12)/1.5 var(--font-sans); letter-spacing: .02em; white-space: nowrap; }
+.g-role-pill.sm { padding: 1px 8px; font-size: var(--fs-11); }
+
+/* Avatar — initials circle. Pass size (width/height/font-size) + background/color inline; ring via box-shadow. */
+.g-avatar { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-family: var(--font-sans); font-weight: 600; letter-spacing: .01em; flex-shrink: 0; }
+
+/* Base body reset */
+html, body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-16);
+  color: var(--fg-2);
+  background: var(--bg-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Selection uses primary blue */
+::selection { background: var(--p-primary-soft); color: var(--p-ink); }

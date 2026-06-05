@@ -1,0 +1,186 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0">
+<style>
+body { margin: 0; padding: 28px; background: #fff; font: 400 14px Inter; color: var(--p-ink); display: flex; flex-direction: column; gap: 34px; }
+.sec { font: 500 11px/1.2 'Geist Mono', monospace; color: var(--p-muted); text-transform: uppercase; letter-spacing: .08em; margin: 0 0 14px; }
+.mi { font-family: 'Material Symbols Rounded'; line-height: 1; font-feature-settings: 'liga'; display: inline-flex; align-items: center; }
+.row { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start; }
+
+/* ── Trigger field ── */
+.field { position: relative; width: 240px; }
+.field > label { position: absolute; top: -7px; left: 10px; padding: 0 4px; background: #fff; font: 400 12px/1 Inter; color: var(--p-muted); z-index: 2; }
+.field > .ctl { width: 100%; height: 44px; border: 1px solid var(--p-border-strong); border-radius: 6px; padding: 0 14px 0 40px; font: 400 15px Inter; color: var(--p-ink); background: #fff; box-sizing: border-box; display: flex; align-items: center; }
+.field.focus > .ctl { border-color: var(--p-primary); box-shadow: 0 0 0 3px rgba(0,124,255,.15); }
+.field > .lead { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--p-muted); }
+.field > .lead .mi { font-size: 20px; }
+.field.wide { width: 280px; }
+
+/* ── Calendar popover ── */
+.cal { width: 280px; background: #fff; border: 1px solid var(--p-border); border-radius: 10px; box-shadow: var(--shadow-float); padding: 14px; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.cal-title { font: 600 14px/1 Inter; color: var(--p-ink); }
+.cal-nav { width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; color: var(--p-muted); cursor: pointer; }
+.cal-nav:hover { background: var(--p-surface-tint); }
+.cal-nav .mi { font-size: 20px; }
+.dow { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 2px; }
+.dow span { text-align: center; font: 500 11px/1 Inter; color: var(--p-muted); padding: 6px 0; }
+.days { display: grid; grid-template-columns: repeat(7, 1fr); }
+.cell { height: 36px; display: flex; align-items: center; justify-content: center; position: relative; }
+.day { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font: 500 13px/1 Inter; color: var(--p-text); cursor: pointer; }
+.day:hover { background: var(--p-surface-tint); }
+.cell.muted .day { color: var(--p-placeholder); }
+.cell.today .day { box-shadow: inset 0 0 0 1.5px var(--p-primary); color: var(--p-primary); }
+.cell.sel .day { background: var(--p-primary); color: #fff; }
+.cell.sel .day:hover { background: var(--p-primary-hover); }
+/* range band */
+.cell.in { background: var(--p-primary-tint); }
+.cell.in.start { border-radius: 999px 0 0 999px; }
+.cell.in.end { border-radius: 0 999px 999px 0; }
+.cell.in .day, .cell.in.end .day, .cell.in.start .day { background: transparent; color: var(--p-text); }
+.cell.in.start .day, .cell.in.end .day { background: var(--p-primary); color: #fff; }
+
+/* range layout w/ presets */
+.rangepop { display: flex; background: #fff; border: 1px solid var(--p-border); border-radius: 10px; box-shadow: var(--shadow-float); overflow: hidden; }
+.presets { width: 150px; border-right: 1px solid var(--p-border); background: var(--p-surface-alt); padding: 8px; display: flex; flex-direction: column; gap: 2px; }
+.preset { padding: 8px 10px; border-radius: 6px; font: 500 13px/1 Inter; color: var(--p-text); cursor: pointer; }
+.preset:hover { background: #fff; }
+.preset.active { background: #fff; color: var(--p-primary); box-shadow: var(--shadow-card); }
+.rangepop .cal { border: none; box-shadow: none; border-radius: 0; }
+
+.notes { font: 400 13px/1.8 Inter; color: var(--p-text-2); max-width: 600px; }
+.notes b { color: var(--p-ink); font-weight: 600; }
+code { font: 400 11px 'Geist Mono', monospace; background: #F3F4F6; padding: 1px 5px; border-radius: 2px; color: var(--p-text); }
+</style></head>
+<body>
+
+<div>
+  <div class="sec">Trigger fields</div>
+  <div class="row">
+    <div class="field"><label>Date</label><span class="lead"><span class="mi">calendar_today</span></span><div class="ctl">Jun 11, 2026</div></div>
+    <div class="field wide focus"><label>Date range</label><span class="lead"><span class="mi">date_range</span></span><div class="ctl">Apr 20 – Apr 26, 2026</div></div>
+  </div>
+</div>
+
+<div>
+  <div class="sec">Single date · current month, today ringed</div>
+  <div class="cal">
+    <div class="cal-head">
+      <span class="cal-nav"><span class="mi">chevron_left</span></span>
+      <span class="cal-title">June 2026</span>
+      <span class="cal-nav"><span class="mi">chevron_right</span></span>
+    </div>
+    <div class="dow"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+    <div class="days">
+      <div class="cell muted"><span class="day">31</span></div>
+      <div class="cell"><span class="day">1</span></div>
+      <div class="cell"><span class="day">2</span></div>
+      <div class="cell"><span class="day">3</span></div>
+      <div class="cell today"><span class="day">4</span></div>
+      <div class="cell"><span class="day">5</span></div>
+      <div class="cell"><span class="day">6</span></div>
+      <div class="cell"><span class="day">7</span></div>
+      <div class="cell"><span class="day">8</span></div>
+      <div class="cell"><span class="day">9</span></div>
+      <div class="cell"><span class="day">10</span></div>
+      <div class="cell sel"><span class="day">11</span></div>
+      <div class="cell"><span class="day">12</span></div>
+      <div class="cell"><span class="day">13</span></div>
+      <div class="cell"><span class="day">14</span></div>
+      <div class="cell"><span class="day">15</span></div>
+      <div class="cell"><span class="day">16</span></div>
+      <div class="cell"><span class="day">17</span></div>
+      <div class="cell"><span class="day">18</span></div>
+      <div class="cell"><span class="day">19</span></div>
+      <div class="cell"><span class="day">20</span></div>
+      <div class="cell"><span class="day">21</span></div>
+      <div class="cell"><span class="day">22</span></div>
+      <div class="cell"><span class="day">23</span></div>
+      <div class="cell"><span class="day">24</span></div>
+      <div class="cell"><span class="day">25</span></div>
+      <div class="cell"><span class="day">26</span></div>
+      <div class="cell"><span class="day">27</span></div>
+      <div class="cell"><span class="day">28</span></div>
+      <div class="cell"><span class="day">29</span></div>
+      <div class="cell"><span class="day">30</span></div>
+      <div class="cell muted"><span class="day">1</span></div>
+      <div class="cell muted"><span class="day">2</span></div>
+      <div class="cell muted"><span class="day">3</span></div>
+      <div class="cell muted"><span class="day">4</span></div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="sec">Date range · presets + band selection</div>
+  <div class="rangepop">
+    <div class="presets">
+      <div class="preset">Today</div>
+      <div class="preset">Yesterday</div>
+      <div class="preset">This week</div>
+      <div class="preset active">Last 7 days</div>
+      <div class="preset">This month</div>
+      <div class="preset">Last 30 days</div>
+    </div>
+    <div class="cal" style="width:280px">
+      <div class="cal-head">
+        <span class="cal-nav"><span class="mi">chevron_left</span></span>
+        <span class="cal-title">April 2026</span>
+        <span class="cal-nav"><span class="mi">chevron_right</span></span>
+      </div>
+      <div class="dow"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+      <div class="days">
+        <div class="cell muted"><span class="day">29</span></div>
+        <div class="cell muted"><span class="day">30</span></div>
+        <div class="cell muted"><span class="day">31</span></div>
+        <div class="cell"><span class="day">1</span></div>
+        <div class="cell"><span class="day">2</span></div>
+        <div class="cell"><span class="day">3</span></div>
+        <div class="cell"><span class="day">4</span></div>
+        <div class="cell"><span class="day">5</span></div>
+        <div class="cell"><span class="day">6</span></div>
+        <div class="cell"><span class="day">7</span></div>
+        <div class="cell"><span class="day">8</span></div>
+        <div class="cell"><span class="day">9</span></div>
+        <div class="cell"><span class="day">10</span></div>
+        <div class="cell"><span class="day">11</span></div>
+        <div class="cell"><span class="day">12</span></div>
+        <div class="cell"><span class="day">13</span></div>
+        <div class="cell"><span class="day">14</span></div>
+        <div class="cell"><span class="day">15</span></div>
+        <div class="cell"><span class="day">16</span></div>
+        <div class="cell"><span class="day">17</span></div>
+        <div class="cell"><span class="day">18</span></div>
+        <div class="cell"><span class="day">19</span></div>
+        <div class="cell in start"><span class="day">20</span></div>
+        <div class="cell in"><span class="day">21</span></div>
+        <div class="cell in"><span class="day">22</span></div>
+        <div class="cell in"><span class="day">23</span></div>
+        <div class="cell in"><span class="day">24</span></div>
+        <div class="cell in"><span class="day">25</span></div>
+        <div class="cell in end"><span class="day">26</span></div>
+        <div class="cell"><span class="day">27</span></div>
+        <div class="cell"><span class="day">28</span></div>
+        <div class="cell"><span class="day">29</span></div>
+        <div class="cell"><span class="day">30</span></div>
+        <div class="cell muted"><span class="day">1</span></div>
+        <div class="cell muted"><span class="day">2</span></div>
+        <div class="cell muted"><span class="day">3</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="sec">Anatomy &amp; rules</div>
+  <div class="notes">
+    <p style="margin:0 0 6px"><b>Trigger:</b> the standard 44px floating-label field with a leading icon — <code>calendar_today</code> for single, <code>date_range</code> for range. Value formats as <code>Jun 11, 2026</code> / <code>Apr 20 – Apr 26, 2026</code> (en-dash range, per voice).</p>
+    <p style="margin:0 0 6px"><b>Popover:</b> <code>radius 10px</code>, 1px <code>--p-border</code>, <code>--shadow-float</code>, anchored 8px below the field. Week starts Sunday. Weekday header is <code>500 11px --p-muted</code>; day cells are 36px with a 32px circular hit target.</p>
+    <p style="margin:0 0 6px"><b>States:</b> today = 1.5px inset <code>--p-primary</code> ring + primary text. Selected = solid <code>--p-primary</code> circle, white text. Adjacent-month days use <code>--p-placeholder</code>. Hover = <code>--p-surface-tint</code>.</p>
+    <p style="margin:0 0 6px"><b>Range:</b> endpoints are solid primary circles; the span between fills with a <code>--p-primary-tint</code> band, rounded only at the two ends. Pair the calendar with a left preset rail (Today, This week, Last 7 / 30 days, This month) — operators pick these far more than exact dates.</p>
+    <p style="margin:0"><b>Behavior:</b> apply on second click for ranges (start → end); close on outside-click and <code>Escape</code>. Disable out-of-bounds days at <code>--p-placeholder</code> with no hover.</p>
+  </div>
+</div>
+
+</body></html>

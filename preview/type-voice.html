@@ -1,0 +1,66 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><style>
+body{margin:0;padding:24px;background:#fff;color:var(--p-ink);font-family:Inter;display:flex;flex-direction:column;gap:26px}
+.sec{font:500 11px/1.2 'Geist Mono',monospace;color:var(--p-muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px}
+.row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.col{display:flex;flex-direction:column;gap:12px}
+.note{font:400 13px/1.5 Inter;color:var(--p-text-2);max-width:640px;margin:8px 0 0}
+.note code{font:400 11px 'Geist Mono',monospace;background:#F3F4F6;padding:1px 5px;border-radius:2px}
+
+/* ── Inline links ── */
+/* Primary: blue is the affordance — NO underline at rest, underline on hover only */
+.link{color:#007CFF;font:500 14px/1.4 Inter;text-decoration:none;cursor:pointer}
+.link:hover{color:#0066D6;text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+
+/* Subdued: a link rendered in a muted/neutral color (e.g. on stat cards) MUST be
+   underlined so it reads as interactive without the blue cue. */
+.link-subtle{color:var(--p-muted);font:500 13px/1.4 Inter;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;text-decoration-color:#C4C9D2;cursor:pointer}
+.link-subtle:hover{color:var(--p-ink);text-decoration-color:var(--p-ink)}
+
+/* demo stat card */
+.stat{display:inline-flex;align-items:baseline;gap:10px;background:#fff;border:1px solid var(--p-border);border-radius:6px;padding:14px 16px}
+.stat .v{font:700 20px/1 'Geist Mono',monospace;color:var(--p-ink)}
+.stat .l{font:400 14px/1.3 Inter;color:var(--p-text-2)}
+.stat .a{margin-left:6px}
+
+.err{font:500 12px/1.2 Inter;color:var(--p-danger)}
+.info{background:var(--p-primary-tint);border-radius:8px;padding:8px 10px;font:400 14px/1.4 Inter;color:var(--p-ink);max-width:560px}
+.info.danger{background:rgba(255,107,107,.08);color:var(--p-ink)}
+.field{display:flex;flex-direction:column;gap:4px}
+.field input{width:260px;padding:8px 10px;border:1px solid var(--p-border-strong);border-radius:4px;font:400 14px Inter}
+</style></head><body>
+
+<div>
+  <div class="sec">Inline links · primary (blue)</div>
+  <div class="row">
+    <a class="link" href="#">View account details</a>
+    <a class="link" href="#">Reset password →</a>
+    <span style="font:400 14px/1.5 Inter;color:var(--p-text)">Inline in a sentence, you can <a class="link" href="#">manage permissions</a> at any time.</span>
+  </div>
+  <p class="note">Blue (<code>#007CFF</code>) is itself the link affordance, so <b>no underline at rest</b>. Weight 500. Underline appears <b>on hover</b> only (<code>text-underline-offset: 2px</code>), alongside the darker <code>#0066D6</code> hover color.</p>
+</div>
+
+<div>
+  <div class="sec">Inline links · subdued (neutral color)</div>
+  <div class="row">
+    <span class="stat"><span class="v">1,258</span><span class="l">Active Placements</span><a class="link-subtle a" href="#">Show</a></span>
+    <span class="stat"><span class="v">4</span><span class="l">Discontinued &amp; Draining</span><a class="link-subtle a" href="#">Show</a></span>
+  </div>
+  <div class="row" style="margin-top:4px">
+    <span style="font:400 14px/1.5 Inter;color:var(--p-text)">Last synced 4 min ago · <a class="link-subtle" href="#">Refresh now</a></span>
+  </div>
+  <p class="note">When a link is rendered in a muted / neutral color (gray, as on stat cards or metadata rows), it loses the blue cue — so it <b>must be underlined</b> to read as interactive. Solid <code>1px</code> underline, <code>text-decoration-color: #C4C9D2</code>, <code>offset 2px</code>. On hover it darkens to <code>--p-ink</code>. Never use a dotted underline.</p>
+</div>
+
+<div>
+  <div class="sec">Voice · banners &amp; feedback</div>
+  <div class="col">
+    <div class="info">Select one or more products below, then press 'Continue' to choose a desired action for each product. (Step 1 of 4)</div>
+    <div class="info danger">4 products are draining inventory and will be discontinued this cycle.</div>
+    <div class="field">
+      <input placeholder="you@company.com">
+      <span class="err">Enter a valid company email.</span>
+    </div>
+  </div>
+</div>
+
+</body></html>

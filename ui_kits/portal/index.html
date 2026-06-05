@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Greater Portal — UI Kit</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="../../fonts/fonts.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<link rel="stylesheet" href="../../maps.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0&display=block">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+body{margin:0;background:var(--p-surface-alt);min-height:100vh}
+*{box-sizing:border-box}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="primitives.jsx"></script>
+<script type="text/babel" src="overlays.jsx"></script>
+<script type="text/babel" src="feedback.jsx"></script>
+<script type="text/babel" src="tables.jsx"></script>
+<script type="text/babel" src="dates.jsx"></script>
+<script type="text/babel" src="FilterMenu.jsx"></script>
+<script type="text/babel" src="LoginScreen.jsx"></script>
+<script type="text/babel" src="AppShell.jsx"></script>
+<script type="text/babel" src="ProductsScreen.jsx"></script>
+<script type="text/babel" src="RoutesScreen.jsx"></script>
+<script type="text/babel" src="ScenarioScreen.jsx"></script>
+<script type="text/babel" src="UsersScreen.jsx"></script>
+
+<script type="text/babel" data-presets="react">
+function App() {
+  const [authed, setAuthed] = React.useState(() => localStorage.getItem('gr-authed') === '1');
+  const [route, setRoute] = React.useState(() => localStorage.getItem('gr-route') || 'in-the-market');
+
+  React.useEffect(() => {
+    localStorage.setItem('gr-authed', authed ? '1' : '0');
+    localStorage.setItem('gr-route', route);
+  }, [authed, route]);
+
+  if (!authed) {
+    return <LoginScreen onSignIn={() => setAuthed(true)} />;
+  }
+  const screens = {
+    'in-the-market': <ProductsScreen />,
+    routes:   <RoutesScreen />,
+    scenarios:<ScenarioScreen />,
+    users:    <UsersScreen />,
+    home:     <div className="g-h1">Home — start from the sidebar.</div>,
+    accounts: <div className="g-h1">Accounts — not in kit.</div>,
+    orchestration: <div className="g-h1">Orchestration — not in kit.</div>,
+  };
+  return (
+    <AppShell currentRoute={route} onNavigate={setRoute}>
+      {screens[route] ?? screens['in-the-market']}
+    </AppShell>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

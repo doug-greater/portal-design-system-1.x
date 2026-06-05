@@ -1,0 +1,225 @@
+/* =======================================================================
+   Greater Design System — Maps
+   =======================================================================
+   Basemap + overlay language used wherever a map appears in Portal.
+   Reference: RoutesScreen / TableView route popover.
+
+   Stack:
+   - Leaflet 1.9.x for the engine
+   - CARTO "Light All" @2x retina tiles (muted neutral, never satellite)
+   - #007CFF polylines for routes (portal primary, 70% opacity)
+   - Two pin styles: numbered stop (ink) + active location (red)
+
+   Include this file AFTER colors_and_type.css and AFTER leaflet.css.
+   ======================================================================= */
+
+:root {
+  /* ----- Basemap ----- */
+  --map-bg:                 #DDDDDD;   /* fallback while tiles load   */
+  --map-tile-url:           "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+  --map-attribution-bg:     rgba(255, 255, 255, 0.8);
+  --map-attribution-fg:     #555555;
+
+  /* ----- Route polyline ----- */
+  --map-route-stroke:       #007CFF;   /* = var(--p-primary)          */
+  --map-route-opacity:      0.7;
+  --map-route-width:        3px;
+
+  /* ----- Numbered stop pin (default) ----- */
+  --map-pin-size:           28px;
+  --map-pin-ring:           #282838;   /* near-black ink, slight cool */
+  --map-pin-fill:           #FFFFFF;
+  --map-pin-inner-size:     22px;
+  --map-pin-label-font:     600 11px/1 var(--font-sans);
+  --map-pin-label-color:    #282838;
+
+  /* ----- Unassigned pin (no route assignment yet) ----- */
+  --map-pin-active-size:       32px;
+  --map-pin-active-ring:       #DA1010;
+  --map-pin-active-fill:       #FFF8F8;
+  --map-pin-active-inner-size: 26px;
+  --map-pin-active-shadow:     0 2px 8px rgba(218, 16, 16, 0.35);
+
+  /* ----- Active / focused pin halo (overlays a numbered pin) ----- */
+  --map-pin-focus-halo:        0 0 0 4px rgba(0, 124, 255, 0.18),
+                               0 0 0 8px rgba(0, 124, 255, 0.10),
+                               0 4px 10px rgba(0, 124, 255, 0.35);
+
+  /* ----- Container chrome ----- */
+  --map-radius:             var(--radius-xl);   /* 10px floating card */
+  --map-border:             1px solid var(--p-border);
+  --map-shadow:             var(--shadow-float);
+}
+
+/* =======================================================================
+   Container
+   ======================================================================= */
+
+.g-map {
+  position: relative;
+  background: var(--map-bg);
+  border: var(--map-border);
+  border-radius: var(--map-radius);
+  overflow: hidden;
+  box-shadow: var(--map-shadow);
+  min-height: 360px;
+}
+
+/* When a map is embedded inline (not a floating popover), use card-style chrome */
+.g-map.is-inline {
+  border-radius: var(--radius-md);
+  box-shadow: none;
+}
+
+.g-map .leaflet-container {
+  background: var(--map-bg);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* =======================================================================
+   Attribution — matches Leaflet default layout, restyled to Greater
+   ======================================================================= */
+
+.g-map .leaflet-control-attribution {
+  background: var(--map-attribution-bg);
+  color: var(--map-attribution-fg);
+  padding: 2px 6px;
+  font: 400 10px/1.4 var(--font-sans);
+  border-radius: 0;
+}
+
+.g-map .leaflet-control-attribution a {
+  color: var(--p-primary);
+  text-decoration: none;
+}
+
+/* =======================================================================
+   Zoom control — Portal-tokenized
+   ======================================================================= */
+
+.g-map .leaflet-bar {
+  border: 1px solid var(--p-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+}
+
+.g-map .leaflet-bar a {
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  background: var(--p-surface);
+  color: var(--p-ink);
+  border-bottom: 1px solid var(--p-border);
+  font-weight: 500;
+}
+
+.g-map .leaflet-bar a:last-child { border-bottom: 0; }
+.g-map .leaflet-bar a:hover     { background: var(--p-primary-tint); color: var(--p-primary); }
+
+/* =======================================================================
+   Pin components
+   =======================================================================
+   Render pins as a leaflet DivIcon whose innerHTML is:
+
+     <div class="g-map-pin"><div>{N}</div></div>
+
+   or the "active" variant:
+
+     <div class="g-map-pin is-active"><div></div></div>
+
+   Sizes match the capture: 28px stop, 32px active.
+   ======================================================================= */
+
+/* Default numbered stop pin — 28px, ink ring, white core */
+.g-map-pin {
+  width:  28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #282838;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.g-map-pin > div {
+  width:  22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 11px/1 Inter, sans-serif;
+  color: #282838;
+}
+
+/* Active / focused pin — inverted to blue, numbered, with halo.
+   Apply to the currently-selected stop. Never more than one per map. */
+.g-map-pin.is-active {
+  background: #007CFF !important;
+  box-shadow:
+    0 0 0 4px rgba(0, 124, 255, 0.18),
+    0 0 0 8px rgba(0, 124, 255, 0.10),
+    0 4px 10px rgba(0, 124, 255, 0.35) !important;
+  transform: scale(1.07);
+  transform-origin: center;
+}
+
+.g-map-pin.is-active > div {
+  background: #007CFF !important;
+  color: #ffffff !important;
+}
+
+/* Unassigned stop — no number, red ring.
+   Use for stops not yet slotted into a route. */
+.g-map-pin.is-unassigned {
+  width:  32px !important;
+  height: 32px !important;
+  background: #DA1010 !important;
+  box-shadow: 0 2px 8px rgba(218, 16, 16, 0.35) !important;
+  transform: none;
+}
+
+.g-map-pin.is-unassigned > div {
+  width:  26px !important;
+  height: 26px !important;
+  background: #FFF8F8 !important;
+  color: transparent !important;
+  font-size: 0 !important;
+}
+
+/* Leaflet wraps DivIcons in .leaflet-marker-icon with its own border etc.;
+   zero that out so only .g-map-pin renders. */
+.g-map .leaflet-marker-icon.g-map-pin-icon {
+  background: transparent;
+  border: 0;
+}
+
+/* =======================================================================
+   Floating title card (overlays the map — e.g. "Thursday, Apr 23 ·
+   Kenny D'Amica · 5 stops"). Optional, used on route popovers.
+   ======================================================================= */
+
+.g-map-title {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 400;
+  background: var(--p-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-float);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font: 500 14px/1.2 var(--font-sans);
+  color: var(--p-ink);
+}
+.g-map-title .sub {
+  font: 400 12px/1.2 var(--font-sans);
+  color: var(--p-muted);
+  margin-top: 2px;
+}

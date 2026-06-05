@@ -1,0 +1,79 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><style>
+body{margin:0;padding:16px;background:#fff;font:400 14px Inter;color:var(--p-ink)}
+.tbl-wrap{border:1px solid var(--p-border);border-radius:8px;overflow:hidden;display:inline-block;max-width:100%}
+table{border-collapse:collapse;width:auto;table-layout:auto}
+th,td{text-align:left;vertical-align:middle;padding:10px 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-bottom:1px solid var(--p-border)}
+/* Auto-size columns but cap individual cell widths so runaway content doesn't explode the layout */
+th,td{max-width:300px}
+th{position:relative;background:#F9FAFB;font:500 11px/1 Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--p-muted);padding-right:22px;user-select:none}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--p-primary-tint)}
+.id{font-family:'Geist Mono',monospace;font-size:12px;color:var(--p-muted)}
+.nm{font-weight:500}
+.pill{display:inline-flex;padding:2px 10px;border-radius:999px;font:500 12px/1.5 Inter}
+.mono{font-family:'Geist Mono',monospace;font-size:13px;color:var(--p-text)}
+.ico{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:2px;background:var(--p-primary-soft);color:var(--p-primary)}
+/* Resize handle */
+.rh{position:absolute;top:6px;bottom:6px;right:0;width:6px;cursor:col-resize;border-right:1px solid transparent}
+.rh:hover,.rh.drag{border-right-color:var(--p-primary)}
+.note{margin:14px 0 0;font:400 12px/1.4 Inter;color:var(--p-text-2);max-width:720px}
+.note code{font-family:'Geist Mono',monospace;background:var(--g-off-white);padding:1px 5px;border-radius:2px;font-size:11px}
+</style></head><body>
+
+<div class="tbl-wrap">
+<table id="t">
+  <thead><tr>
+    <th>Product<span class="rh"></span></th>
+    <th>Name<span class="rh"></span></th>
+    <th>Accts<span class="rh"></span></th>
+    <th>In Market<span class="rh"></span></th>
+    <th>Category<span class="rh"></span></th>
+    <th>Size / Pkg<span class="rh"></span></th>
+    <th></th>
+  </tr></thead>
+  <tbody>
+    <tr><td class="id">P0057</td><td class="nm">Absolut Vodka Original</td><td class="mono">16</td><td class="mono">241.7 cs</td><td><span class="pill" style="background:var(--p-pill-spirits-bg);color:var(--p-pill-spirits-fg)">Spirits</span></td><td class="mono">750ml</td><td><span class="ico"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span></td></tr>
+    <tr><td class="id">P0015</td><td class="nm">Amstel Light</td><td class="mono">13</td><td class="mono">229.1 cs</td><td><span class="pill" style="background:var(--p-pill-beer-bg);color:var(--p-pill-beer-fg)">Beer</span></td><td class="mono">12oz</td><td></td></tr>
+    <tr><td class="id">P0041</td><td class="nm">Barefoot Pinot Grigio</td><td class="mono">13</td><td class="mono">263.1 cs</td><td><span class="pill" style="background:var(--p-pill-wine-bg);color:var(--p-pill-wine-fg)">Wine</span></td><td class="mono">750ml</td><td></td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="note"><b>Behavior:</b> columns auto-size to content width with a <code>max-width: 300px</code> cap so a long value doesn't blow out the layout. Drag the right edge of any header to resize — handle highlights on hover. On overflow, cell content truncates with an ellipsis.</p>
+
+<script>
+// Freeze the table to layout:fixed once a user starts resizing, then drive widths explicitly.
+const table = document.getElementById('t');
+let lockedFixed = false;
+function lockFixed(){
+  if(lockedFixed) return;
+  const ths = table.querySelectorAll('th');
+  ths.forEach(th => { th.style.width = th.getBoundingClientRect().width + 'px'; });
+  table.style.tableLayout = 'fixed';
+  lockedFixed = true;
+}
+document.querySelectorAll('.rh').forEach(handle => {
+  handle.addEventListener('pointerdown', e => {
+    lockFixed();
+    const th = handle.parentElement;
+    const startX = e.clientX;
+    const startW = th.getBoundingClientRect().width;
+    handle.classList.add('drag');
+    handle.setPointerCapture(e.pointerId);
+    const onMove = ev => {
+      const w = Math.max(40, startW + (ev.clientX - startX));
+      th.style.width = w + 'px';
+      th.style.maxWidth = 'none';
+    };
+    const onUp = () => {
+      handle.classList.remove('drag');
+      handle.removeEventListener('pointermove', onMove);
+      handle.removeEventListener('pointerup', onUp);
+    };
+    handle.addEventListener('pointermove', onMove);
+    handle.addEventListener('pointerup', onUp);
+  });
+});
+</script>
+
+</body></html>

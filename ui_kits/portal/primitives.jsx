@@ -1,0 +1,213 @@
+// Portal UI Kit — shared primitives
+// Exposed globally so other <script type="text/babel"> files can use them.
+
+const { useState, useEffect, useRef } = React;
+
+/* ---------------- Icon (Material Symbols Rounded font) ---------------- */
+// `name` is a Material Symbols glyph name (e.g. "search", "expand_more"). Outline by default.
+function Icon({ name, size = 16, color, fill = 0, style }) {
+  return (
+    <span className="material-symbols-rounded" style={{
+      fontFamily: "'Material Symbols Rounded'", fontSize: size, lineHeight: 1,
+      fontVariationSettings: `'FILL' ${fill}`, color,
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      userSelect: 'none', flexShrink: 0, ...style,
+    }}>{name}</span>
+  );
+}
+
+/* ---------------- Logo ---------------- */
+// In-product logo = wordmark only (never the full crow+wordmark lockup).
+function Logo({ width = 110 }) {
+  return <img src="../../assets/greater-logotype.png" alt="Greater" style={{ width, height: 'auto', display: 'block' }} />;
+}
+// Crow mark, for favicon / avatar / tight spots.
+function Crow({ size = 24 }) {
+  return <img src="../../assets/greater-crow.png" alt="" style={{ height: size, width: 'auto', display: 'block' }} />;
+}
+
+/* ---------------- Button ---------------- */
+function Button({ variant = 'primary', size = 'md', icon, iconRight, children, onClick, disabled, style, type }) {
+  const base = {
+    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+    height: size === 'sm' ? 30 : size === 'lg' ? 40 : 36,
+    padding: size === 'sm' ? '0 16px' : size === 'lg' ? '0 28px' : '0 24px',
+    minWidth: size === 'sm' ? 72 : size === 'lg' ? 120 : 96,
+    borderRadius: 4, cursor: disabled ? 'not-allowed' : 'pointer',
+    font: '500 14px/1 Inter, sans-serif', border: '1px solid transparent',
+    transition: 'background .12s, border-color .12s', opacity: disabled ? 0.45 : 1,
+    whiteSpace: 'nowrap',
+  };
+  const variants = {
+    primary:   { background: '#007CFF', color: '#fff' },
+    secondary: { background: '#fff', color: '#007CFF', borderColor: '#007CFF' },
+    warning:   { background: '#fff', color: '#E5484D', borderColor: '#E5484D' },
+    neutral:   { background: '#fff', color: '#364153', borderColor: '#D1D5DC' },
+    ghost:     { background: 'transparent', color: '#007CFF', padding: '0 16px', minWidth: 72 },
+    neo:       { background: '#fff', color: '#000', border: '1px solid #000', boxShadow: '2px 2px 0 0 #000', letterSpacing: '.05em', height: 39, padding: '0 30px', minWidth: 120, fontSize: 16 },
+  };
+  const [hover, setHover] = useState(false);
+  const hoverBg = {
+    primary:   '#0066D6',
+    secondary: 'rgba(0,124,255,.05)',
+    warning:   'rgba(229,72,77,.05)',
+    neutral:   '#F3F4F6',
+    ghost:     'rgba(0,124,255,.05)',
+    neo:       '#F0F7FF',
+  }[variant];
+  const disabledStyle = disabled ? ({
+    primary:   { background: 'rgba(0,124,255,.25)', color: '#fff', opacity: 1 },
+    secondary: { color: 'rgba(0,124,255,.25)', borderColor: 'rgba(0,124,255,.25)', opacity: 1 },
+    warning:   { color: 'rgba(229,72,77,.25)', borderColor: 'rgba(229,72,77,.25)', opacity: 1 },
+    neutral:   { background: '#fff', color: '#99A1AF', borderColor: '#E5E7EB', opacity: 1 },
+    ghost:     { color: 'rgba(0,124,255,.25)', opacity: 1 },
+    neo:       { opacity: 0.4 },
+  }[variant] || {}) : {};
+  return (
+    <button type={type || 'button'} onClick={disabled ? undefined : onClick}
+      onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+      style={{ ...base, ...variants[variant], ...(hover && !disabled ? { background: hoverBg } : {}), ...disabledStyle, ...style }}>
+      {icon && <Icon name={icon} size={14} />}
+      {children}
+      {iconRight && <Icon name={iconRight} size={14} />}
+    </button>
+  );
+}
+
+/* ---------------- Input ---------------- */
+function Input({ icon, value, onChange, placeholder, type = 'text', error, style, onFocus, onBlur }) {
+  const [focus, setFocus] = useState(false);
+  return (
+    <div style={{ position: 'relative', display: 'inline-block', ...style }}>
+      {icon && (
+        <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--p-placeholder)', pointerEvents: 'none', display: 'flex' }}>
+          <Icon name={icon} size={14} />
+        </span>
+      )}
+      <input type={type} value={value} onChange={onChange} placeholder={placeholder}
+        onFocus={(e) => { setFocus(true); onFocus?.(e); }}
+        onBlur={(e) => { setFocus(false); onBlur?.(e); }}
+        style={{
+          width: '100%', height: 36, padding: icon ? '0 12px 0 32px' : '0 12px',
+          border: `1px solid ${error ? 'var(--p-danger)' : focus ? 'var(--p-primary)' : 'var(--p-border-strong)'}`,
+          borderRadius: 4, font: '400 14px Inter, sans-serif', color: 'var(--p-ink)', background: '#fff',
+          outline: 'none', boxShadow: focus ? '0 0 0 3px rgba(21,93,252,.15)' : 'none',
+          transition: 'border-color .12s, box-shadow .12s',
+        }} />
+    </div>
+  );
+}
+
+/* ---------------- Toggle (Foundation style) ---------------- */
+function Toggle({ on, onChange }) {
+  return (
+    <span onClick={() => onChange?.(!on)} style={{ width: 37, height: 20, position: 'relative', cursor: 'pointer', display: 'inline-block' }}>
+      <span style={{ position: 'absolute', left: 0, top: 3, width: 29, height: 14, borderRadius: 10, background: on ? 'rgba(0,124,255,.25)' : '#DADADA', transition: 'background .15s' }} />
+      <span style={{ position: 'absolute', top: 0, left: on ? 17 : 0, width: 20, height: 20, borderRadius: '50%', background: on ? '#007CFF' : '#fff', border: on ? '.5px solid #007CFF' : '.5px solid #DADADA', boxShadow: '0 1px 2px rgba(0,0,0,.25)', transition: 'left .15s, background .15s, border-color .15s' }} />
+    </span>
+  );
+}
+
+/* ---------------- Checkbox ---------------- */
+function Checkbox({ on, onChange }) {
+  return (
+    <span onClick={() => onChange?.(!on)} style={{
+      width: 18, height: 18, borderRadius: 3, cursor: 'pointer',
+      border: on ? '1.5px solid var(--p-primary)' : '1.5px solid var(--p-border-strong)',
+      background: on ? 'var(--p-primary)' : '#fff',
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#fff',
+      flexShrink: 0,
+    }}>
+      {on && <Icon name="check" size={14} />}
+    </span>
+  );
+}
+
+/* ---------------- Pill (category) ---------------- */
+function Pill({ kind = 'Beer', children }) {
+  const map = {
+    Beer:    { bg: 'var(--p-pill-beer-bg)',    fg: 'var(--p-pill-beer-fg)' },
+    Wine:    { bg: 'var(--p-pill-wine-bg)',    fg: 'var(--p-pill-wine-fg)' },
+    Spirits: { bg: 'var(--p-pill-spirits-bg)', fg: 'var(--p-pill-spirits-fg)' },
+    RTD:     { bg: 'var(--p-pill-rtd-bg)',     fg: 'var(--p-pill-rtd-fg)' },
+    'Non-Alcoholic': { bg: 'var(--p-pill-nonalc-bg)', fg: 'var(--p-pill-nonalc-fg)' },
+  };
+  const c = map[kind] || map.Beer;
+  return <span style={{ display: 'inline-flex', alignItems: 'center', padding: '2px 10px', borderRadius: 999, background: c.bg, color: c.fg, font: '500 12px/1.5 Inter, sans-serif', letterSpacing: '.02em', whiteSpace: 'nowrap' }}>{children || kind}</span>;
+}
+
+/* ---------------- FilterChip ---------------- */
+function FilterChip({ icon = 'filter_list', label, count, active, onClick }) {
+  return (
+    <button onClick={onClick} style={{
+      display: 'inline-flex', alignItems: 'center', gap: 6, height: 32, padding: '0 12px',
+      background: '#fff', borderRadius: 6, cursor: 'pointer',
+      border: `1px solid ${active ? 'var(--p-primary)' : 'var(--p-border-strong)'}`,
+      color: active ? 'var(--p-primary)' : 'var(--p-ink)',
+      font: '500 14px/1 Inter, sans-serif',
+    }}>
+      <Icon name={icon} size={12} color={active ? 'var(--p-primary)' : 'var(--p-muted)'} />
+      {label}
+      {count != null && (
+        <span style={{ background: active ? 'var(--p-primary-soft)' : 'var(--g-off-white)', color: active ? 'var(--p-primary)' : 'var(--p-muted)', padding: '1px 6px', borderRadius: 999, font: '500 11px Geist Mono, monospace', marginLeft: 2 }}>{count}</span>
+      )}
+      <Icon name="expand_more" size={14} color={active ? 'var(--p-primary)' : 'var(--p-muted)'} />
+    </button>
+  );
+}
+
+/* ---------------- SegmentedTabs — page-level underlined ---------------- */
+function SegmentedTabs({ value, onChange, items }) {
+  return (
+    <div style={{ display: 'flex', gap: 12, borderBottom: '1px solid var(--p-border)', padding: '0 4px' }}>
+      {items.map((it) => {
+        const on = value === it.id;
+        return (
+          <button key={it.id} onClick={() => onChange?.(it.id)} style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '14px 16px', marginBottom: -1,
+            border: 'none', borderBottom: `2px solid ${on ? '#007CFF' : 'transparent'}`,
+            background: 'transparent', cursor: 'pointer',
+            color: on ? '#007CFF' : '#4A5565',
+            font: '600 15px/1 Inter, sans-serif',
+            letterSpacing: '-0.005em',
+          }}>
+            {it.icon && <Icon name={it.icon} size={16} color={on ? '#007CFF' : '#4A5565'} />}
+            {it.label}
+            {it.count != null && (
+              <span style={{
+                font: '500 11px Geist Mono, monospace',
+                color: on ? '#007CFF' : 'var(--p-muted)',
+                background: on ? 'rgba(0,124,255,.12)' : 'var(--g-off-white)',
+                padding: '1px 6px', borderRadius: 999,
+              }}>{it.count}</span>
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ---------------- StatCard ---------------- */
+function StatCard({ value, label, color = 'ink', action }) {
+  const colors = { ink: 'var(--p-ink)', blue: 'var(--p-primary)', green: 'var(--p-success)', red: 'var(--p-danger)', gold: 'var(--p-warning)' };
+  return (
+    <div style={{ background: '#fff', border: '1px solid var(--p-border)', borderRadius: 6, padding: '14px 16px', display: 'flex', gap: 10, alignItems: 'baseline', boxShadow: 'var(--shadow-card)' }}>
+      <span style={{ font: "700 20px/1 'Geist Mono', monospace", color: colors[color] }}>{value}</span>
+      <span style={{ font: '400 14px/1.3 Inter, sans-serif', color: 'var(--p-text-2)' }}>{label}</span>
+      {action && <span style={{ marginLeft: 'auto', font: '500 12px/1 Inter, sans-serif', color: 'var(--p-muted)', cursor: 'pointer', textDecoration: 'underline', textDecorationColor: '#C4C9D2', textDecorationThickness: '1px', textUnderlineOffset: '2px' }}>{action}</span>}
+    </div>
+  );
+}
+
+/* ---------------- InfoBanner ---------------- */
+function InfoBanner({ tone = 'info', children }) {
+  const tones = {
+    info: { bg: 'var(--p-primary-tint)', fg: 'var(--p-ink)' },
+    danger: { bg: 'rgba(255,107,107,.12)', fg: 'var(--p-danger-strong)' },
+  };
+  return <div style={{ background: tones[tone].bg, color: tones[tone].fg, borderRadius: 8, padding: '10px 12px', font: '400 14px/1.4 Inter, sans-serif' }}>{children}</div>;
+}
+
+Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, FilterChip, SegmentedTabs, StatCard, InfoBanner });

@@ -1,0 +1,157 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0">
+<style>
+body { margin: 0; padding: 28px; background: #fff; font: 400 14px Inter; color: var(--p-ink); display: flex; flex-direction: column; gap: 36px; }
+.sec { font: 500 11px/1.2 'Geist Mono', monospace; color: var(--p-muted); text-transform: uppercase; letter-spacing: .08em; margin: 0 0 14px; }
+.mi { font-family: 'Material Symbols Rounded'; line-height: 1; font-feature-settings: 'liga'; display: inline-flex; align-items: center; }
+
+/* shared field + button bits */
+.field { position: relative; }
+.field > label { position: absolute; top: -7px; left: 10px; padding: 0 4px; background: #fff; font: 400 12px/1 Inter; color: var(--p-muted); }
+.field > .ctl { width: 100%; height: 44px; border: 1px solid var(--p-border-strong); border-radius: 6px; padding: 0 14px; font: 400 15px Inter; color: var(--p-ink); background: #fff; box-sizing: border-box; display: flex; align-items: center; }
+.field > textarea.ctl { height: 84px; padding: 12px 14px; resize: none; }
+.btn { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 18px; border-radius: 4px; font: 500 14px/1 Inter; border: 1px solid transparent; cursor: default; white-space: nowrap; }
+.btn-ghost { background: transparent; color: #007CFF; }
+.btn-primary { background: #007CFF; color: #fff; }
+.btn-neutral { background: #fff; color: #364153; border-color: #D1D5DC; }
+.icon-btn { width: 32px; height: 32px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; color: var(--p-muted); cursor: pointer; }
+.icon-btn:hover { background: rgba(0,0,0,.05); }
+
+/* ── Scrim stage ── */
+.stage { position: relative; border-radius: 12px; overflow: hidden; background: rgba(16,24,40,.45); display: flex; }
+.stage.center { align-items: center; justify-content: center; padding: 32px; min-height: 360px; }
+.stage.right { justify-content: flex-end; min-height: 420px; }
+
+/* ── Modal ── */
+.modal { width: 520px; background: #fff; border-radius: 12px; border: 1px solid var(--p-border); box-shadow: 0 8px 28px rgba(0,0,0,.18), 0 2px 6px rgba(0,0,0,.08); overflow: hidden; }
+.modal-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 14px 24px; }
+.modal-h { margin: 0; font: 600 18px/1.3 Inter; letter-spacing: -.01em; color: var(--p-ink); }
+.modal-body { padding: 4px 24px 8px; display: flex; flex-direction: column; gap: 20px; }
+.modal-foot { padding: 16px 24px; border-top: 1px solid #F0F1F3; display: flex; justify-content: flex-end; gap: 10px; }
+
+/* ── Drawer ── */
+.drawer { width: 460px; background: #fff; height: 420px; border-left: 1px solid var(--p-border); box-shadow: var(--shadow-float); display: flex; flex-direction: column; }
+.drawer-head { display: flex; align-items: flex-start; justify-content: space-between; padding: 20px 20px 16px 24px; border-bottom: 1px solid var(--p-border); }
+.drawer-sub { font: 500 11px/1 Inter; text-transform: uppercase; letter-spacing: .06em; color: var(--p-muted); margin-bottom: 6px; }
+.drawer-h { margin: 0; font: 600 20px/1.25 Inter; letter-spacing: -.01em; color: var(--p-ink); }
+.drawer-body { padding: 20px 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 18px; }
+.drawer-foot { padding: 14px 24px; border-top: 1px solid var(--p-border); display: flex; gap: 10px; }
+.kv { display: flex; flex-direction: column; gap: 4px; }
+.kv .k { font: 500 11px/1 Inter; text-transform: uppercase; letter-spacing: .05em; color: var(--p-muted); }
+.kv .v { font: 400 15px/1.4 Inter; color: var(--p-ink); }
+.kv .v.mono { font-family: 'Geist Mono', monospace; font-size: 13px; }
+
+.notes { font: 400 13px/1.8 Inter; color: var(--p-text-2); max-width: 600px; }
+.notes b { color: var(--p-ink); font-weight: 600; }
+code { font: 400 11px 'Geist Mono', monospace; background: #F3F4F6; padding: 1px 5px; border-radius: 2px; color: var(--p-text); }
+.btn-warn { background: #fff; color: #E5484D; border-color: #E5484D; }
+.modal.confirm { box-shadow: 0 8px 28px rgba(0,0,0,.12), 0 2px 6px rgba(0,0,0,.06); }
+.confirm-body { padding: 22px 24px 16px; }
+.confirm-title { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.confirm-icon { width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
+.confirm-h { margin: 0; font: 700 19px/1.2 Inter; color: var(--p-ink); }
+.confirm-p { margin: 0; font: 400 14px/1.5 Inter; color: var(--p-text-2); }
+.confirm-warn { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; padding: 10px 12px; background: #FFF7ED; border-radius: 8px; }
+.confirm-warn-text { font: 400 13px/1.45 Inter; color: #C2410C; }
+.stage.danger { background: rgba(229,72,77,.10); }
+.tree { font: 400 12px/1.7 'Geist Mono', monospace; color: var(--p-text-2); background: var(--p-surface-alt); border: 1px solid var(--p-border); border-radius: 8px; padding: 14px 16px; white-space: pre; margin: 0 0 4px; }
+</style></head>
+<body>
+
+<div>
+  <div class="sec">One overlay primitive, two surfaces</div>
+  <div class="tree">Overlay              ← scrim · focus-trap · Esc · return-focus · a11y
+├─ Modal             ← centered card
+│   ├─ default       (form / content — has ✕; sm/md/lg)
+│   └─ confirm       (icon chip · no ✕ · warning callout · destructive footer)
+└─ Drawer            ← edge-anchored sheet</div>
+  <p style="font:400 12px/1.5 Inter;color:var(--p-muted);margin:6px 0 0">“Confirmation Dialog” is now <b style="color:var(--p-text)">Modal · confirm</b> — not a separate component.</p>
+</div>
+
+<div>
+  <div class="sec">Modal · default — form (md · 520px)</div>
+  <div class="stage center">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 class="modal-h">Invite a user</h2>
+        <span class="icon-btn"><span class="mi" style="font-size:20px">close</span></span>
+      </div>
+      <div class="modal-body">
+        <div class="field"><label>Full name *</label><div class="ctl">Kenny D'Amica</div></div>
+        <div class="field"><label>Work email *</label><div class="ctl" style="color:var(--p-placeholder)">name@greater.co</div></div>
+        <div class="field"><label>Note (optional)</label><textarea class="ctl" readonly>Joining the Northeast sales team.</textarea></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-primary">Send invite</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="sec">Modal · confirm — destructive (was “Confirmation Dialog”)</div>
+  <div class="stage center danger">
+    <div class="modal confirm">
+      <div class="confirm-body">
+        <div class="confirm-title">
+          <span class="confirm-icon" style="background:rgba(229,72,77,.12)"><span class="mi" style="font-size:20px;color:#E5484D">block</span></span>
+          <h2 class="confirm-h">Deactivate 3 users?</h2>
+        </div>
+        <p class="confirm-p">They’ll lose access to all Greater properties. This can be undone from the Deactivated tab.</p>
+        <div class="confirm-warn">
+          <span class="mi" style="font-size:18px;color:#C2410C;flex-shrink:0;margin-top:1px">warning</span>
+          <span class="confirm-warn-text"><b style="font-weight:600">1</b> of these manages a team. You’ll be asked to reassign their direct reports before deactivating.</span>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-warn">Continue</button>
+      </div>
+    </div>
+  </div>
+  <p style="font:400 12px/1.5 Inter;color:var(--p-muted);margin:6px 0 0">No close ✕ (explicit choice required) · icon chip in the action tone · warning callout relabels the action to “Continue” · closes on Cancel / Esc only, never scrim-click.</p>
+</div>
+
+<div>
+  <div class="sec">Side sheet / drawer · right-anchored quick view (md · 460px)</div>
+  <div class="stage right">
+    <div class="drawer">
+      <div class="drawer-head">
+        <div>
+          <div class="drawer-sub">Account</div>
+          <h3 class="drawer-h">D'Amica's Corner Store</h3>
+        </div>
+        <span class="icon-btn"><span class="mi" style="font-size:20px">close</span></span>
+      </div>
+      <div class="drawer-body">
+        <div class="kv"><span class="k">Account ID</span><span class="v mono">ACC-48201</span></div>
+        <div class="kv"><span class="k">Type</span><span class="v">C-Store</span></div>
+        <div class="kv"><span class="k">Coverage</span><span class="v">Weekly · Thursday</span></div>
+        <div class="kv"><span class="k">Cases in market</span><span class="v mono">1,204</span></div>
+        <div class="kv"><span class="k">Sales rep</span><span class="v">Marcus Bell</span></div>
+      </div>
+      <div class="drawer-foot">
+        <button class="btn btn-neutral" style="flex:1;justify-content:center">Edit</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center">Open account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="sec">Anatomy &amp; rules</div>
+  <div class="notes">
+    <p style="margin:0 0 6px"><b>Overlay foundation:</b> all three share one invisible primitive — scrim, focus-trap, <code>Escape</code>, return-focus, ARIA <code>role="dialog"</code>. Modal and Drawer are the two visible surfaces built on it.</p>
+    <p style="margin:0 0 6px"><b>Modal · default:</b> <code>border-radius: 12px</code>, 1px <code>--p-border</code>, shadow <code>0 8px 28px rgba(0,0,0,.18)</code>. Widths: <b>sm 420 · md 520 · lg 640</b>. Header (title + <code>close</code>), body, footer separated by <code>1px #F0F1F3</code>. Footer right-aligned: Ghost/Neutral cancel + Primary confirm.</p>
+    <p style="margin:0 0 6px"><b>Modal · confirm:</b> same shell + softer shadow. Adds a 34×34 icon chip (12% tint of the action tone), drops the close ✕, and uses a Ghost + tone-matched action footer. Optional <code>#FFF7ED</code> warning callout for downstream consequences — when present the action relabels to “Continue”.</p>
+    <p style="margin:0 0 6px"><b>Drawer shell:</b> right-anchored, full content-height, <code>border-left: 1px --p-border</code> + <code>--shadow-float</code>. Widths: <b>sm 400 · md 460 · lg 560</b>. Header carries an overline + title; body scrolls; footer pinned with full-width actions. Use the drawer for view/edit-in-context without leaving the table; use the modal for short focused tasks.</p>
+    <p style="margin:0 0 6px"><b>Scrim:</b> <code>rgba(16,24,40,.45)</code> over the page. No blur.</p>
+    <p style="margin:0 0 6px"><b>Motion:</b> modal — 180ms ease-out, scale <code>0.98 → 1</code> + scrim fade. Drawer — 180ms ease-out <code>translateX(16px → 0)</code> (transform-only). Reduced-motion: no transform.</p>
+    <p style="margin:0"><b>Behavior:</b> trap focus; restore focus to the trigger on close. <b>default</b> &amp; <b>Drawer</b> close on scrim-click, <code>✕</code>, and <code>Escape</code>. <b>confirm</b> closes on <b>Cancel</b> or <code>Escape</code> only — never scrim-click — so a consequential choice can’t be dismissed by accident.</p>
+  </div>
+</div>
+
+</body></html>

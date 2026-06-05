@@ -1,0 +1,265 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../fonts/fonts.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0">
+<style>
+body { margin: 0; padding: 20px 24px; background: #fff; font: 400 14px Inter; color: var(--p-ink); display: flex; flex-direction: column; gap: 28px; }
+.sec { font: 500 11px/1.2 'Geist Mono', monospace; color: var(--p-muted); text-transform: uppercase; letter-spacing: .06em; margin: 0 0 14px; }
+.row { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; }
+
+/* ── Canonical floating-label field ── */
+/* height: 44px, border-radius: 6px (--radius-md), 15px Inter */
+.fl { position: relative; }
+.fl input,
+.fl .fl-select {
+  display: block;
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  box-sizing: border-box;
+  border: 1px solid var(--p-border-strong);
+  border-radius: 6px;
+  font: 400 15px/1 Inter;
+  color: var(--p-ink);
+  background: #fff;
+  outline: none;
+  transition: border-color .12s, box-shadow .12s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.fl input::placeholder { color: var(--p-placeholder); }
+
+/* Focus */
+.fl input:focus {
+  border-color: #007CFF;
+  box-shadow: 0 0 0 3px rgba(0,124,255,.15);
+}
+
+/* Error */
+.fl.err input { border-color: #E5484D; }
+.fl.err .fl-label { color: #E5484D; }
+.fl-error { font: 500 12px/1.3 Inter; color: #E5484D; margin-top: 4px; }
+
+/* Disabled: ONE explicit gray on every part (text, label, border, chevron) — no opacity, no browser-default bleed */
+.fl.dis {
+  pointer-events: none;
+}
+.fl.dis .fl-label {
+  color: #99A1AF;
+}
+.fl input:disabled,
+.fl select:disabled {
+  background: #fff;
+  border-color: #E5E7EB;
+  color: #99A1AF;
+  -webkit-text-fill-color: #99A1AF;
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+/* Floating label */
+.fl-label {
+  position: absolute;
+  top: -7px;
+  left: 10px;
+  padding: 0 4px;
+  background: #fff;
+  font: 400 12px/1 Inter;
+  color: #6A7282;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 2;
+}
+/* label always floats on the white page — never inherits the field's gray bg */
+
+/* Select — native element, same 44px shell as text input */
+.fl select {
+  display: block;
+  width: 100%;
+  height: 44px;
+  padding: 0 36px 0 14px;
+  box-sizing: border-box;
+  border: 1px solid var(--p-border-strong);
+  border-radius: 6px;
+  font: 400 15px/1 Inter;
+  color: var(--p-ink);
+  background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23364153' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 12px center;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+.fl select.placeholder { color: var(--p-placeholder); }
+.fl select:disabled {
+  background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2399A1AF' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 12px center;
+  border-color: #E5E7EB;
+  color: #99A1AF;
+  -webkit-text-fill-color: #99A1AF;
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+/* Mono (PIN, Route ID) */
+.fl input.mono { font-family: 'Geist Mono', monospace; }
+
+/* ── Floating-label search bar ── */
+/* height: 48px, border-radius: 8px (--radius-lg), icon at left */
+.sb { position: relative; }
+.sb input {
+  display: block;
+  width: 100%;
+  height: 48px;
+  padding: 0 14px 0 44px;
+  box-sizing: border-box;
+  border: 1px solid var(--p-border-strong);
+  border-radius: 8px;
+  font: 400 15px/1 Inter;
+  color: var(--p-ink);
+  background: #fff;
+  outline: none;
+  transition: border-color .12s, box-shadow .12s;
+}
+.sb input::placeholder { color: var(--p-placeholder); }
+.sb input:focus { border-color: #007CFF; box-shadow: 0 0 0 3px rgba(0,124,255,.15); }
+.sb-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  color: #6A7282;
+}
+.sb .fl-label { background: #fff; }
+
+.note { font: 400 12px/1.5 Inter; color: var(--p-muted); max-width: 640px; }
+.note code { font: 400 11px 'Geist Mono', monospace; background: #F3F4F6; padding: 1px 5px; border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ── FLOATING-LABEL FIELD ── -->
+<div>
+  <div class="sec">Field · states</div>
+  <div class="row">
+
+    <!-- Default (filled) -->
+    <div class="fl" style="width:200px">
+      <span class="fl-label">First Name</span>
+      <input value="Antonio">
+    </div>
+
+    <!-- Default (empty / placeholder) -->
+    <div class="fl" style="width:200px">
+      <span class="fl-label">Email</span>
+      <input placeholder="name@company.com">
+    </div>
+
+    <!-- Focus (simulated) -->
+    <div class="fl" style="width:200px">
+      <span class="fl-label" style="color:#007CFF">Phone</span>
+      <input value="" style="border-color:#007CFF;box-shadow:0 0 0 3px rgba(0,124,255,.15)">
+    </div>
+
+    <!-- Error -->
+    <div class="fl err" style="width:200px">
+      <span class="fl-label">Email</span>
+      <input value="not-an-email">
+      <div class="fl-error">Enter a valid email address</div>
+    </div>
+
+    <!-- Disabled -->
+    <div class="fl dis" style="width:200px">
+      <span class="fl-label">Username</span>
+      <input value="awhite" disabled>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── MONO FIELD ── -->
+<div>
+  <div class="sec">Field · monospace variant (IDs, codes, PIN)</div>
+  <div class="row">
+    <div class="fl" style="width:160px">
+      <span class="fl-label">PIN</span>
+      <input class="mono" value="12345">
+    </div>
+    <div class="fl" style="width:200px">
+      <span class="fl-label">Sales Route ID</span>
+      <input class="mono" placeholder="External ID">
+    </div>
+  </div>
+  <p class="note" style="margin-top:8px">Use <code>Geist Mono</code> for any numeric / code / ID field. Font size stays 15px; color stays <code>--p-ink</code>.</p>
+</div>
+
+<!-- ── SELECT ── -->
+<div>
+  <div class="sec">Select / dropdown</div>
+  <div class="row">
+    <!-- Filled -->
+    <div class="fl" style="width:240px">
+      <span class="fl-label">Role</span>
+      <select>
+        <option selected>Supervisor</option>
+        <option>Department Manager</option>
+        <option>Executive</option>
+      </select>
+    </div>
+    <!-- Placeholder -->
+    <div class="fl" style="width:240px">
+      <span class="fl-label">Role</span>
+      <select class="placeholder">
+        <option value="" disabled selected>Select a role</option>
+        <option>Supervisor</option>
+        <option>Department Manager</option>
+      </select>
+    </div>
+    <!-- Disabled -->
+    <div class="fl dis" style="width:240px">
+      <span class="fl-label">Role</span>
+      <select disabled>
+        <option selected>Supervisor</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- ── SEARCH BAR ── -->
+<div>
+  <div class="sec">Search bar · 48px · radius-lg</div>
+  <div class="row">
+    <div class="sb" style="width:400px">
+      <span class="fl-label">Search</span>
+      <span class="sb-icon">
+        <span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1">search</span>
+      </span>
+      <input placeholder="Search by name, email, or route…">
+    </div>
+    <!-- Focus state -->
+    <div class="sb" style="width:400px">
+      <span class="fl-label" style="color:#007CFF">Search</span>
+      <span class="sb-icon" style="color:#007CFF">
+        <span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1">search</span>
+      </span>
+      <input value="Antonio" style="border-color:#007CFF;box-shadow:0 0 0 3px rgba(0,124,255,.15)">
+    </div>
+  </div>
+</div>
+
+<!-- ── SPEC ── -->
+<div>
+  <div class="sec">Spec</div>
+  <div class="note">
+    <b style="color:var(--p-ink)">Field:</b> height <code>44px</code> · border-radius <code>6px</code> · font <code>400 15px Inter</code> · padding <code>0 14px</code> · focus ring <code>0 0 0 3px rgba(0,124,255,.15)</code><br><br>
+    <b style="color:var(--p-ink)">Search bar:</b> height <code>48px</code> · border-radius <code>8px</code> · padding-left <code>44px</code> (18px icon + gutter) · otherwise identical<br><br>
+    <b style="color:var(--p-ink)">Floating label:</b> <code>position: absolute; top: -7px; left: 10px; padding: 0 4px; background: #fff</code> · 12px 400 Inter · color <code>#6A7282</code> (error: <code>#E5484D</code>, focus: <code>#007CFF</code>)<br><br>
+    Required fields append <code> *</code> to the label string. Disabled fields keep a white background; the label, value text, border, and chevron all use a single gray <code>#99A1AF</code> (with <code>-webkit-text-fill-color</code> to override browser defaults) so input and select look identical.
+  </div>
+</div>
+
+</body>
+</html>

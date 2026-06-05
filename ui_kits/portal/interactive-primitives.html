@@ -1,0 +1,188 @@
+<!doctype html><html><head><meta charset="utf-8">
+<title>Greater Portal — Interactive Primitives</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="../../fonts/fonts.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0">
+<style>
+  body { margin: 0; padding: 40px; background: var(--p-surface-alt); font: 400 14px Inter; color: var(--p-ink); }
+  .wrap { max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+  h1 { font: 600 24px/1.2 Inter; letter-spacing: -.025em; margin: 0 0 4px; }
+  .lead { font: 400 14px Inter; color: var(--p-muted); margin: 0 0 8px; }
+  .panel { background: #fff; border: 1px solid var(--p-border); border-radius: 10px; padding: 20px 22px; }
+  .panel h2 { font: 600 11px/1 Inter; letter-spacing: .08em; text-transform: uppercase; color: var(--p-muted); margin: 0 0 16px; }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .b { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 18px; border-radius: 4px; font: 500 14px/1 Inter; border: 1px solid transparent; cursor: pointer; white-space: nowrap; }
+  .b.primary { background: #007CFF; color: #fff; }
+  .b.neutral { background: #fff; color: #364153; border-color: #D1D5DC; }
+  .b.warning { background: #fff; color: #E5484D; border-color: #E5484D; }
+  .b.ghost { background: transparent; color: #007CFF; }
+  .tbl { border: 1px solid var(--p-border); border-radius: 8px; overflow: visible; }
+  .trw { display: grid; grid-template-columns: 1.5fr 110px 170px; align-items: center; gap: 12px; padding: 0 16px; height: 52px; }
+  .trw + .trw { border-top: 1px solid var(--p-border); }
+  .trw .id { font: 400 12px 'Geist Mono', monospace; color: var(--p-muted); }
+  .trw .right { display: flex; justify-content: flex-end; }
+  .ftr { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 16px; background: var(--p-surface-alt); border: 1px solid var(--p-border); border-top: none; border-radius: 0 0 8px 8px; }
+  .ftr .count { font: 400 13px Inter; color: var(--p-muted); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- primitives.jsx declares the shared React hooks used by every kit file; load it first. -->
+<script type="text/babel" src="primitives.jsx"></script>
+<script type="text/babel" src="overlays.jsx"></script>
+<script type="text/babel" src="feedback.jsx"></script>
+<script type="text/babel" src="tables.jsx"></script>
+<script type="text/babel" src="dates.jsx"></script>
+
+<script type="text/babel" data-presets="react">
+function Demo() {
+  const [modal, setModal] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+  const [drawer, setDrawer] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [date, setDate] = useState(new Date(2026, 5, 11));
+
+  const planMenu = [
+    { header: 'Schedule' },
+    { label: 'Approve and schedule', icon: 'bolt', kbd: '⏎', onClick: () => window.toast('Plan scheduled') },
+    { label: 'Schedule for later', icon: 'schedule' },
+    { divider: true },
+    { label: 'Duplicate plan', icon: 'content_copy' },
+    { label: 'Reassign owner', icon: 'person' },
+    { divider: true },
+    { label: 'Discard draft', icon: 'delete', danger: true, onClick: () => window.toast('Draft discarded', 'error') },
+  ];
+  const rowMenu = [
+    { label: 'Duplicate', icon: 'content_copy' },
+    { label: 'Export', icon: 'download' },
+    { divider: true },
+    { label: 'Delete', icon: 'delete', danger: true },
+  ];
+
+  return (
+    <div className="wrap">
+      <div>
+        <h1>Interactive Primitives</h1>
+        <p className="lead">Click-to-test harness for the kit's <i>behavioral</i> components — <code>overlays.jsx</code>, <code>feedback.jsx</code>, <code>tables.jsx</code>, <code>dates.jsx</code>. For the full component reference, see the <code>preview/</code> cards.</p>
+      </div>
+
+      <div className="panel">
+        <h2>Toast</h2>
+        <div className="controls">
+          <button className="b primary" onClick={() => window.toast('Product Plans scheduled')}>Trigger success</button>
+          <button className="b warning" onClick={() => window.toast("Couldn't schedule Product Plans", 'error')}>Trigger error</button>
+        </div>
+      </div>
+
+      <div className="panel">
+        <h2>Row actions — Split button · Kebab · Menu</h2>
+        <div className="tbl">
+          <div className="trw">
+            <span>Northeast · Wk 17</span><span className="id">Kenny D.</span>
+            <span className="right"><SplitButton intent="primary" menuAlign="right" items={planMenu} onClick={() => window.toast('Continued draft')}>Continue draft</SplitButton></span>
+          </div>
+          <div className="trw">
+            <span>Harbor route · Wk 18</span><span className="id">Marcus B.</span>
+            <span className="right"><SplitButton intent="error" icon="report" menuAlign="right" items={planMenu} onClick={() => window.toast('Opened editor')}>Edits needed</SplitButton></span>
+          </div>
+          <div className="trw">
+            <span>Midtown · Wk 16</span><span className="id">Lena R.</span>
+            <span className="right" style={{ gap: 8 }}>
+              <button className="b ghost" style={{ height: 28, padding: '0 10px', fontSize: 13 }} onClick={() => window.toast('Reassigned')}>Reassign</button>
+              <Kebab items={rowMenu} />
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="panel">
+        <h2>Modal · Drawer · Confirm</h2>
+        <div className="controls">
+          <button className="b primary" onClick={() => setModal(true)}>Open modal</button>
+          <button className="b neutral" onClick={() => setDrawer(true)}>Open drawer</button>
+          <button className="b warning" onClick={() => setConfirm(true)}>Confirm dialog</button>
+        </div>
+      </div>
+
+      <div className="panel">
+        <h2>Loading &amp; Skeleton</h2>
+        <div className="controls" style={{ marginBottom: 16 }}>
+          <button className="b primary" onClick={() => { setLoading(true); setTimeout(() => setLoading(false), 2200); }} disabled={loading} style={loading ? { background: 'rgba(0,124,255,.85)' } : {}}>
+            {loading ? <><Spinner size={16} onFill /> Loading…</> : 'Reload table'}
+          </button>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--p-muted)' }}><Spinner size={16} /> inline</span>
+        </div>
+        <div style={{ border: '1px solid var(--p-border)', borderRadius: 8, overflow: 'hidden' }}>
+          {[0,1,2].map(i => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '0 16px', height: 52, borderTop: i ? '1px solid var(--p-border)' : 'none' }}>
+              {loading ? <>
+                <Skeleton width={16} height={16} radius={3} />
+                <Skeleton width="40%" height={13} />
+                <Skeleton width={90} height={18} radius={999} />
+                <Skeleton width={48} height={13} style={{ marginLeft: 'auto' }} />
+              </> : <>
+                <input type="checkbox" />
+                <span style={{ font: '500 14px Inter' }}>{['Estrella Damm Lager','Ravenswood Zinfandel',"Tito's Vodka"][i]}</span>
+                <span style={{ marginLeft: 'auto', font: '400 13px Geist Mono', color: 'var(--p-muted)' }}>{[214,88,142][i]}</span>
+              </>}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="panel">
+        <h2>Empty state</h2>
+        <EmptyState icon="search_off" title="No products match these filters" body="Try removing a filter or searching a different term." action={<button className="b ghost">Clear all filters</button>} />
+      </div>
+
+      <div className="panel">
+        <h2>Pagination · page {page} of 72</h2>
+        <div className="ftr" style={{ border: '1px solid var(--p-border)', borderRadius: 8 }}>
+          <span className="count">Showing <b style={{ color: 'var(--p-text)' }}>{(page-1)*50+1}–{page*50}</b> of <b style={{ color: 'var(--p-text)' }}>3,600</b></span>
+          <Pagination page={page} pageCount={72} onPage={setPage} />
+        </div>
+      </div>
+
+      <div className="panel">
+        <h2>Date picker</h2>
+        <DateField value={date} onChange={setDate} label="Schedule date" />
+      </div>
+
+      <Modal open={modal} onClose={() => setModal(false)} title="Invite a user"
+        footer={<><button className="b ghost" onClick={() => setModal(false)}>Cancel</button><button className="b primary" onClick={() => { setModal(false); window.toast('Invite sent'); }}>Send invite</button></>}>
+        <div style={{ position: 'relative' }}>
+          <label style={{ position: 'absolute', top: -7, left: 10, padding: '0 4px', background: '#fff', font: '400 12px/1 Inter', color: 'var(--p-muted)' }}>Work email *</label>
+          <input style={{ width: '100%', height: 44, border: '1px solid var(--p-border-strong)', borderRadius: 6, padding: '0 14px', font: '400 15px Inter', boxSizing: 'border-box' }} placeholder="name@greater.co" />
+        </div>
+      </Modal>
+
+      <Modal open={confirm} onClose={() => setConfirm(false)} variant="confirm" tone="danger" icon="block"
+        title="Deactivate 3 users?" warning="1 of these manages a team. You'll be asked to reassign their direct reports before deactivating."
+        footer={<><button className="b ghost" onClick={() => setConfirm(false)}>Cancel</button><button className="b warning" onClick={() => { setConfirm(false); window.toast('3 users deactivated'); }}>Continue</button></>}>
+        They'll lose access to all Greater properties. This can be undone from the Deactivated tab.
+      </Modal>
+
+      <Drawer open={drawer} onClose={() => setDrawer(false)} overline="Account" title="D'Amica's Corner Store"
+        footer={<><button className="b neutral" style={{ flex: 1, justifyContent: 'center' }} onClick={() => setDrawer(false)}>Edit</button><button className="b primary" style={{ flex: 1, justifyContent: 'center' }} onClick={() => setDrawer(false)}>Open account</button></>}>
+        {[['Account ID','ACC-48201'],['Type','C-Store'],['Coverage','Weekly · Thursday'],['Cases in market','1,204'],['Sales rep','Marcus Bell']].map(([k,v]) => (
+          <div key={k} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span style={{ font: '500 11px/1 Inter', textTransform: 'uppercase', letterSpacing: '.05em', color: 'var(--p-muted)' }}>{k}</span>
+            <span style={{ font: '400 15px Inter', color: 'var(--p-ink)' }}>{v}</span>
+          </div>
+        ))}
+      </Drawer>
+
+      <ToastHost />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script>
+</body></html>
