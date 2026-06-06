@@ -1,0 +1,51 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0"><style>
+body{margin:0;padding:24px;background:#fff;color:var(--p-ink)}
+.mi{font-family:'Material Symbols Rounded';line-height:1;display:inline-flex;align-items:center;vertical-align:middle}
+.lbl{font:500 11px/1.2 'Geist Mono',monospace;color:var(--p-muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px}
+.tbl{max-width:860px;border:1px solid var(--p-border);border-radius:8px;overflow:hidden}
+.r{display:flex;align-items:center;gap:12px;padding:0 16px;height:48px;border-bottom:1px solid var(--p-border);cursor:pointer}
+.r:hover{background:var(--p-primary-tint)}
+.chev{color:var(--p-muted);transition:transform .15s}
+.chev.open{transform:rotate(90deg);color:var(--p-primary)}
+.nm{font:500 14px/1 Inter;flex:1}
+.muted{color:var(--p-muted);font:400 13px/1 Inter}
+.panel{background:var(--p-surface-alt);border-bottom:1px solid var(--p-border);padding:16px;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{font:500 12px/1.5 Inter;padding:2px 9px;border-radius:999px;background:#fff;border:1px solid var(--p-border)}
+.split{display:inline-flex;height:28px;border-radius:6px;overflow:hidden;font:500 13px/1 Inter;background:var(--p-primary);color:#fff}
+.split .main{display:inline-flex;align-items:center;gap:6px;padding:0 11px;border:none;background:transparent;color:inherit;cursor:pointer;font:inherit}
+.split .caret{display:inline-flex;align-items:center;justify-content:center;width:26px;border:none;border-left:1px solid rgba(255,255,255,.28);background:transparent;color:inherit;cursor:pointer}
+.section{margin-top:34px;padding-top:22px;border-top:1px solid var(--p-border)}
+.notes{font:400 13px/1.5 Inter;color:var(--p-text-2);max-width:760px}
+.notes p{margin:0 0 8px}.notes code{font:500 12px 'Geist Mono',monospace;color:var(--p-text);background:var(--p-surface-tint);padding:1px 5px;border-radius:4px}
+</style></head><body>
+
+<p class="lbl">Store Promotions — one row expanded in place</p>
+<div class="tbl">
+  <div class="r"><span class="mi chev">chevron_right</span><span class="nm">Spring Reset</span><span class="muted">Jun 1 – Jun 30</span></div>
+
+  <div class="r" style="background:var(--p-primary-tint)"><span class="mi chev open">chevron_right</span><span class="nm">Summer Push</span><span class="muted">Jul 1 – Aug 15</span></div>
+  <div class="panel">
+    <div>
+      <div class="lbl" style="margin:0">Accounts</div>
+      <div class="chips"><span class="chip">Coastal #07</span><span class="chip">Coastal #12</span><span class="chip">Harbor Mkt</span></div>
+      <div class="lbl" style="margin:12px 0 0">Products</div>
+      <div class="chips"><span class="chip">Lager 12pk</span><span class="chip">IPA 6pk</span><span class="chip">Seltzer Variety</span></div>
+    </div>
+    <span class="split"><button class="main">Edit Store Promo</button><button class="caret"><span class="mi" style="font-size:17px">expand_more</span></button></span>
+  </div>
+
+  <div class="r" style="border-bottom:none"><span class="mi chev">chevron_right</span><span class="nm">Fall Lineup</span><span class="muted">Sep 1 – Sep 30</span></div>
+</div>
+
+<div class="section">
+  <div class="lbl" style="color:var(--p-ink)">Expandable Rows</div>
+  <div class="notes">
+    <p><b>Affordance:</b> an accessible chevron at the row's lead toggles the panel (<code>expand_more</code>, rotated when open).</p>
+    <p><b>Animation:</b> a <code>grid-rows</code> disclosure — animate <code>grid-template-rows: 0fr → 1fr</code> over a <code>min-height: 0</code> inner wrapper, so the panel height-animates without measuring.</p>
+    <p><b>Lazy-load:</b> fetch the detail on first expand (Store Promotions: <code>GET /promotions/{id}</code>); show a skeleton until it resolves.</p>
+    <p><b>The expanded panel — not a new column — is the home for in-context detail and actions.</b> It's where a <b>Split button</b> serves as the panel's primary action (<code>menuAlign="right"</code>); its label is always Title Case.</p>
+  </div>
+</div>
+
+</body></html>

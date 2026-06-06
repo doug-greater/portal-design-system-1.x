@@ -1,0 +1,81 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0"><style>
+body{margin:0;padding:24px;background:#fff;color:var(--p-ink)}
+.mi{font-family:'Material Symbols Rounded';line-height:1;display:inline-flex;align-items:center;vertical-align:middle}
+.lbl{font:500 11px/1.2 'Geist Mono',monospace;color:var(--p-muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 10px}
+.card{max-width:560px;border:1px solid var(--p-border);border-radius:12px;box-shadow:var(--shadow-card);padding:18px 22px}
+.mtitle{font:600 18px/1.3 Inter;letter-spacing:-.01em;margin:0}
+.msub{font:400 13px/1.3 Inter;color:var(--p-muted);margin:2px 0 16px}
+/* timeline */
+.node{display:grid;grid-template-columns:26px 1fr;gap:12px}
+.rail{display:flex;flex-direction:column;align-items:center}
+.chip{width:26px;height:26px;border-radius:50%;background:#fff;display:inline-flex;align-items:center;justify-content:center}
+.conn{flex:1;width:2px;background:var(--p-border);margin-top:2px;min-height:14px}
+.body{padding-bottom:22px;min-width:0}
+.hl{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.act{font:600 13px Inter}
+.cur{font:600 10px/1 Inter;letter-spacing:.05em;text-transform:uppercase;color:#027a48;background:var(--g-green-10);border-radius:999px;padding:3px 7px}
+.by{font:400 12px Inter;color:var(--p-muted)}
+.ts{font:400 12px 'Geist Mono',monospace;color:var(--p-placeholder);margin-left:auto}
+/* change rows */
+.cr{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font:400 13px Inter;margin-top:7px}
+.crl{font:600 11px/1 Inter;letter-spacing:.04em;text-transform:uppercase;color:var(--p-text-2);min-width:84;padding-top:2px}
+.old{color:var(--p-muted);text-decoration:line-through}.new{color:var(--p-ink);font-weight:500}
+.add{font:500 12px Inter;color:#027a48;background:var(--g-green-10);border-radius:999px;padding:2px 9px}
+.rem{font:500 12px Inter;color:var(--p-danger);background:var(--g-red-10);border-radius:999px;padding:2px 9px;text-decoration:line-through}
+.restore{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 11px;margin-top:10px;background:#fff;border:1px solid var(--p-border-strong);border-radius:6px;font:500 12px Inter;color:var(--p-text);cursor:pointer}
+/* ledger */
+.ledger{max-width:920px;border:1px solid var(--p-border);border-radius:8px;overflow:hidden;margin-top:8px}
+.lh,.lr{display:grid;grid-template-columns:120px 130px 1fr 90px 90px 1fr 1fr 110px;gap:10px;padding:9px 14px;align-items:center}
+.lh{background:var(--p-surface-alt);border-bottom:1px solid var(--p-border-strong);font:500 11px/1 Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--p-muted)}
+.lr{border-bottom:1px solid var(--p-border);font:400 13px Inter}
+.tag{font:500 11px/1 Inter;padding:3px 8px;border-radius:999px;display:inline-flex;align-items:center;gap:4px;width:fit-content}
+.section{margin-top:34px;padding-top:22px;border-top:1px solid var(--p-border)}
+.notes{font:400 13px/1.5 Inter;color:var(--p-text-2);max-width:780px}
+.notes p{margin:0 0 8px}.notes code{font:500 12px 'Geist Mono',monospace;color:var(--p-text);background:var(--p-surface-tint);padding:1px 5px;border-radius:4px}
+</style></head><body>
+
+<p class="lbl">Timeline modal — single record history + restore</p>
+<div class="card">
+  <h2 class="mtitle">Audit Log</h2>
+  <p class="msub">Store Promotion · Summer Push</p>
+
+  <div class="node">
+    <div class="rail"><span class="chip" style="border:1.5px solid var(--p-restore)"><span class="mi" style="font-size:14px;color:var(--p-restore)">settings_backup_restore</span></span><span class="conn"></span></div>
+    <div class="body"><div class="hl"><span class="act">Restored</span><span class="cur">Current</span><span class="by">by <b style="color:var(--p-text-2)">Dana Ruiz</b></span><span class="ts">May 11, 2026, 1:10 PM</span></div></div>
+  </div>
+  <div class="node">
+    <div class="rail"><span class="chip" style="border:1.5px solid #B7791F"><span class="mi" style="font-size:14px;color:#B7791F">edit</span></span><span class="conn"></span></div>
+    <div class="body">
+      <div class="hl"><span class="act">Updated</span><span class="by">by <b style="color:var(--p-text-2)">Marco Hale</b></span><span class="ts">May 9, 2026, 6:22 PM</span></div>
+      <div class="cr"><span class="crl">Dates</span><span class="old">Jun 1 – Jun 30</span><span class="mi" style="font-size:13px;color:var(--p-placeholder)">arrow_forward</span><span class="new">Jun 1 – Jul 15</span></div>
+      <div class="cr"><span class="crl">Accounts</span><span class="add">+ Coastal #07</span><span class="rem">− Coastal #19</span></div>
+      <button class="restore"><span class="mi" style="font-size:14px;color:var(--p-restore)">settings_backup_restore</span> Restore This Version</button>
+    </div>
+  </div>
+  <div class="node">
+    <div class="rail"><span class="chip" style="border:1.5px solid var(--p-primary)"><span class="mi" style="font-size:14px;color:var(--p-primary)">flag</span></span></div>
+    <div class="body" style="padding-bottom:0">
+      <div class="hl"><span class="act">Created</span><span class="by">by <b style="color:var(--p-text-2)">Dana Ruiz</b></span><span class="ts">May 2, 2026, 3:04 PM</span></div>
+      <div class="cr"><span class="crl">Name</span><span class="new">Summer Push</span></div>
+    </div>
+  </div>
+</div>
+
+<p class="lbl" style="margin-top:28px">Portal-wide ledger — one row per changed attribute</p>
+<div class="ledger">
+  <div class="lh"><span>When</span><span>Record Type</span><span>Record</span><span>Action</span><span>Attribute</span><span>Removed</span><span>Added</span><span>Changed By</span></div>
+  <div class="lr"><span class="ts" style="margin:0">May 9, 6:22 PM</span><span>Store Promotion</span><span>Summer Push</span><span><span class="tag" style="color:#B7791F;background:var(--g-gold-10)"><span class="mi" style="font-size:13px">edit</span>Updated</span></span><span>Dates</span><span class="old">Jun 1 – Jun 30</span><span class="new">Jun 1 – Jul 15</span><span>Marco Hale</span></div>
+  <div class="lr"><span class="ts" style="margin:0">May 2, 3:04 PM</span><span>POD Plan</span><span>Q3 Reset</span><span><span class="tag" style="color:#027a48;background:var(--g-green-10)"><span class="mi" style="font-size:13px">add_circle</span>Created</span></span><span>—</span><span style="color:var(--p-placeholder)">—</span><span class="new">42 products</span><span>Dana Ruiz</span></div>
+</div>
+
+<div class="section">
+  <div class="lbl" style="color:var(--p-ink)">Audit Log, Change Row &amp; Restore</div>
+  <div class="notes">
+    <p><b>Action accents:</b> Created = <code>--p-primary</code> (flag) · Updated = gold <code>#B7791F</code> (edit) · Restored = teal <code>--p-restore #0D9488</code> (settings_backup_restore) · Deleted = <code>--p-danger</code> (delete).</p>
+    <p><b>Ledger columns</b> are <b>Removed / Added</b> (not Old/New) — correct for scalar edits, multi-select membership, and creations alike. Removed renders struck-through <code>--p-muted</code>; Added in <code>--p-ink</code>. <b>Record Type</b> is plain text — no icon, no pill. Deletions are tombstones (the name persists).</p>
+    <p><b>Change Row</b> is shared by the timeline modal and the wizard Review step: scalar (<code>old → new</code>) or membership (<code>+</code> green / <code>−</code> red chips).</p>
+    <p>Every non-current version with a snapshot offers <b>Restore This Version</b> (teal) with an inline confirm. The modal opens at the 560px custom width.</p>
+  </div>
+</div>
+
+</body></html>

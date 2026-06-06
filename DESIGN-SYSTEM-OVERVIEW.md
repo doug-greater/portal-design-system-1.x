@@ -92,13 +92,14 @@ straightforward and verb-first.
 - **Second-person, sparingly.** "Sign in to your account." / "Track
   products and their availability across your accounts." Never cutesy
   ("Hey! Let's get you signed in 👋"). No first-person.
-- **Title Case for UI chrome; sentence case for prose.** The product has
-  intentionally moved toward **Title Case** for a more formal register on
-  interface labels — page titles ("In the Market"), nav items, tab labels,
-  stat-card labels ("Active Placements", "Points of Distribution"), button
-  labels, filter attributes, and table action links. Reserve **sentence
-  case** for descriptive and body copy: page subtitles, helper text, info
-  banners, and error messages.
+- **Title Case for UI chrome; sentence case for prose.** Title Case is now
+  **mandatory** for all interactive labels and overlay headers — page titles
+  ("In the Market"), nav items, tab labels, stat-card labels ("Active
+  Placements"), **every button / link-button / SplitButton label**, and
+  **Modal / Drawer / Dialog headers**. Never ship a sentence-case button label
+  or overlay header. Reserve **sentence case** for descriptive and body copy:
+  page subtitles, helper text, info banners, empty-state bodies, tooltips,
+  toasts, and error messages.
   - Column headers: `PRODUCT`, `ACCOUNTS`, `IN MARKET`, `CATEGORY` — all caps, tracked.
   - Overlines: `OVERLINE 1` — all caps.
 - **Numbers carry weight.** Stat cards lead with a large 20px bold number
@@ -273,7 +274,7 @@ coverage:
 - **Foundations** — Colors (neutrals, accents, the **10-color pill palette**, Intelligence gradient, opacity), Type
   (headings, body, mono, voice), Spacing (scale, radii, shadows),
   Iconography (**Material Symbols only**), Brand (logo, maps).
-- **Controls & forms** — Buttons (primary / secondary / warning / **neutral** / ghost /
+- **Controls & forms** — Buttons (primary / secondary / warning / **solid danger** / **neutral** / ghost /
   neo), Inputs & Forms (floating-label field, search bar,
   disabled states), Toggle / Checkbox / Radio.
 - **Navigation & filtering** — Page-level & segmented Tabs, Filter Chips,
@@ -281,17 +282,25 @@ coverage:
   / collapsed + collapsed flyout), and **Row actions** — the **Menu** popover
   primitive opened by either a **Split button** or a **Kebab** trigger.
 - **Overlays & feedback** — **Modal** (`default` + `confirm` variants) and **Drawer**
-  on a shared **Overlay** foundation, **Toast** (success / error, top-center),
-  **Loading & Skeleton**, and **Empty States**.
-- **Data display** — Tables, **Pagination** (footer count + page-size + pager),
-  Stat Cards, **Pills** (one tinted-label component for Category *and* Role on the
+  on a shared **Overlay** foundation (both now take an optional `subtitle`), **Toast** (success / error, top-center, always-present ✕),
+  **Loading & Skeleton**, **Empty States**, and the **Echo Pulse** post-auth brand moment.
+- **Data display** — Tables (incl. **grid-row** read-only ledgers), **Pagination** (footer count + page-size + pager),
+  **Stat Cards** (with drill-in `active` state + Show / Hide Stats), **Pills** (one tinted-label component for Category *and* Role on the
   shared 10-color palette), the **Status Badge** (soft pill + dot, 6 tones),
-  Info Banners, the floating **Selection Bar**, and the **Date Picker** (single + range).
+  Info Banners, two selection patterns — the header **Batch Actions** dropdown (default for tables) and the floating **Selection Bar** (canvas surfaces) — and the **Date Picker** (single + range, context-aware preset rails, min/max, drop-up).
 - **Identity & detail** — **User Avatars & Role Pills** (dotless; ring = the role's
   text color; both via the shared `.g-avatar` / `.g-role-pill` classes), the
   **Account Type Icon**, and the **Page Detail Header**.
 - **Permissions** — **Permission Cards** and the **Confirmation Dialog** (now the
   `confirm` variant of Modal).
+- **New in 1.1** — the **Wizard** (full-screen multi-step flow + `SelectionTable`,
+  `CopyToAllChip`, `ActionSegment`, `StepHeader`), the **Audit Log, Change Row & Restore**
+  family (timeline modal + portal-wide ledger), **Echo Pulse**, and **Expandable Rows**.
+
+**Terminology (1.1 canon).** "Store Promotions" (short "Store Promos", `/store-promotions`),
+"POD Planner" (`/pod-planner`), "Audit Log" (events Created / Updated / Restored / Deleted;
+value columns Removed / Added), "Batch Actions" (not "Bulk actions"), "Restore This Version"
+(teal). Company shown in-shell: "Coastal Beverage Company".
 
 The full spec for every component lives in `Greater Design System.md`.
 
@@ -304,11 +313,12 @@ The full spec for every component lives in `Greater Design System.md`.
   table and the full **Users / Permissions / Teams** page (the other nav sections
   are intentionally grayed out for this preview), plus the routes map and scenario
   configuration. Built entirely on the shared tokens + primitives:
-  - `primitives.jsx` — core (Icon, Button incl. neutral, Input, Toggle, Checkbox, Pill, Tabs, StatCard…).
-  - `overlays.jsx` — the Overlay foundation (MIcon · Scrim · focus-trap) + Modal, Drawer, **Menu**, **SplitButton**, **Kebab**.
-  - `feedback.jsx` — Toast (+ `window.toast`), Spinner, Skeleton, EmptyState.
-  - `tables.jsx` — Pagination · `dates.jsx` — Calendar / DateField.
-  - `FilterMenu.jsx`, `AppShell.jsx`, and screens: `LoginScreen`, `ProductsScreen`, `UsersScreen`, `RoutesScreen`, `ScenarioScreen`.
+  - `primitives.jsx` — core (Icon, Button incl. **danger** + `loading`, Input, Toggle, Checkbox, Pill, Tabs, StatCard with drill-in, **StatsToggle**…).
+  - `overlays.jsx` — the Overlay foundation (MIcon · Scrim · focus-trap) + Modal / Drawer (with `subtitle`), **Menu**, **SplitButton** (Title-Cases its label), **Kebab**.
+  - `feedback.jsx` — Toast (+ `window.toast`), Spinner, Skeleton, EmptyState, **EchoPulse**.
+  - `tables.jsx` — Pagination · `dates.jsx` — Calendar / DateField (min/max, context-aware presets, drop-up).
+  - **`wizard.jsx`** — WizardShell + SelectionTable + Check + CopyToAllChip + ActionSegment + StepHeader · **`audit.jsx`** — AuditLogModal + ChangeRow.
+  - `FilterMenu.jsx`, `AppShell.jsx`, and screens: `LoginScreen`, `ProductsScreen`, `UsersScreen`, `RoutesScreen`, `ScenarioScreen` (+ `SCREENS-1.1.md` notes for POD Planner, Store Promotions, Audit Log, Settings).
   - `interactive-primitives.html` — a click-to-test harness for the behavioral components.
   - **Icons are Material Symbols (font) only** — Lucide and Iconify have been removed.
 

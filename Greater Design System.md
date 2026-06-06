@@ -1546,7 +1546,7 @@ Collapse long ranges with an ellipsis, always keeping first, last, and current �
 #### Page size & Load more
 
 - **Page size:** options are **25 / 50 / 100**. **50 is the canonical default on every operator table** — it matches the Filter Menu's 50-row search cap so the two never disagree. Drop to **25** only when rows are exceptionally tall; otherwise always default to 50.
-- **Load more:** a centered Neutral button + `N of M loaded` caption — for feed-like / append-only lists where position doesn't matter. Use numbered paging for tables operators scan and jump around. Never both on one surface.
+- **Load More:** a centered Neutral button + `N of M loaded` caption — for feed-like / append-only lists where position doesn't matter. Use numbered paging for tables operators scan and jump around. Never both on one surface.
 
 ---
 

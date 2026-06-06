@@ -1,0 +1,75 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0"><style>
+body{margin:0;padding:24px;background:var(--p-surface-alt);color:var(--p-ink)}
+.mi{font-family:'Material Symbols Rounded';line-height:1;display:inline-flex;align-items:center;vertical-align:middle}
+.lbl{font:500 11px/1.2 'Geist Mono',monospace;color:var(--p-muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px}
+.frame{max-width:980px;border:1px solid var(--p-border);border-radius:10px;overflow:hidden;background:#fff;box-shadow:var(--shadow-card)}
+/* top bar */
+.top{height:60px;display:flex;align-items:center;gap:16px;padding:0 24px;border-bottom:1px solid var(--p-border)}
+.top img{height:22px}
+.top .div{width:1px;height:24px;background:var(--p-border-strong)}
+.top .ttl{font:600 16px/1 Inter;letter-spacing:-.01em}
+.exit{margin-left:auto;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 16px;border:1px solid var(--p-border-strong);border-radius:4px;background:#fff;color:var(--p-text);font:500 14px/1 Inter;cursor:pointer}
+/* steps */
+.steps{display:flex;align-items:center;gap:8px;padding:12px 32px;border-bottom:1px solid var(--p-border)}
+.step{display:inline-flex;align-items:center;gap:8px;padding:4px 6px}
+.badge{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font:600 12px/1 'Geist Mono',monospace}
+.done .badge{background:var(--p-success);color:#fff}.done .t{color:var(--p-success);font:500 14px/1 Inter}
+.active .badge{background:var(--p-ink);color:#fff}.active .t{color:var(--p-ink);font:600 14px/1 Inter}
+.up .badge{background:var(--p-surface-tint);color:var(--p-placeholder)}.up .t{color:var(--p-placeholder);font:500 14px/1 Inter}
+.conn{flex:1;height:1px;background:var(--p-border);min-width:16px}
+/* body */
+.bd{padding:24px 32px;min-height:120px}
+.h1{font:600 20px/1.3 Inter;letter-spacing:-.01em;margin:0}
+.helper{margin-top:10px;background:var(--p-primary-tint);color:var(--p-text);border-radius:8px;padding:10px 14px;font:400 14px/1.45 Inter}
+/* footer */
+.ft{height:72px;border-top:1px solid var(--p-border);box-shadow:0 -2px 12px rgba(16,24,40,.05);display:flex;align-items:center;justify-content:space-between;padding:0 32px}
+.back{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 28px;border:1px solid var(--p-border-strong);border-radius:4px;background:#fff;color:var(--p-text);font:500 14px/1 Inter;cursor:pointer}
+.right{display:flex;align-items:center;gap:18px}
+.cap{font:500 13px/1 Inter;color:var(--p-muted)}
+.cont{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 28px;min-width:160px;justify-content:center;border:none;border-radius:4px;background:var(--p-primary);color:#fff;font:500 14px/1 Inter;cursor:pointer}
+.section{margin-top:34px;padding-top:22px;border-top:1px solid var(--p-border)}
+.notes{font:400 13px/1.5 Inter;color:var(--p-text-2);max-width:780px}
+.notes p{margin:0 0 8px}.notes code{font:500 12px 'Geist Mono',monospace;color:var(--p-text);background:var(--p-surface-tint);padding:1px 5px;border-radius:4px}
+</style></head><body>
+
+<p class="lbl">Wizard chrome — step 2 of 4 (Store Promotion)</p>
+<div class="frame">
+  <div class="top">
+    <img src="../assets/greater-logotype.png" alt="Greater">
+    <span class="div"></span>
+    <span class="ttl">New Store Promotion</span>
+    <button class="exit"><span class="mi" style="font-size:18px">close</span> Exit</button>
+  </div>
+  <div class="steps">
+    <span class="step done"><span class="badge"><span class="mi" style="font-size:14px">check</span></span><span class="t">Select Products</span></span>
+    <span class="conn"></span>
+    <span class="step active"><span class="badge">2</span><span class="t">Configure</span></span>
+    <span class="conn"></span>
+    <span class="step up"><span class="badge">3</span><span class="t">Select Accounts</span></span>
+    <span class="conn"></span>
+    <span class="step up"><span class="badge">4</span><span class="t">Review</span></span>
+  </div>
+  <div class="bd">
+    <h2 class="h1">Configure Actions</h2>
+    <div class="helper">Set an action for each product. Use <b>Copy to All</b> to apply one row's value to every selected product. (Step 2 of 4)</div>
+  </div>
+  <div class="ft">
+    <button class="back"><span class="mi" style="font-size:18px">arrow_back</span> Back</button>
+    <div class="right">
+      <span class="cap">Step 2 of 4</span>
+      <button class="cont">Continue <span class="mi" style="font-size:18px">arrow_forward</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="lbl" style="color:var(--p-ink)">Wizard (multi-step flow)</div>
+  <div class="notes">
+    <p><b>Full-screen</b> — <code>position: fixed; inset: 0; z-index: 9000</code>, rendered over the App Shell while the route stays inside the protected layout.</p>
+    <p><b>Step indicator:</b> active = <code>--p-ink</code> badge; complete (and not current) = <code>--p-success</code> + check, <b>clickable to jump back</b>; upcoming = <code>--p-surface-tint</code>, not clickable. A step is complete only when <code>n &lt; current</code> <b>and</b> valid — never green prematurely.</p>
+    <p><b>Footer nav only:</b> Back (left, disabled on step 1) · <code>Step N of M</code> + a Primary advance (<code>min-width 160</code>) whose label / icon switch on the last step (<code>arrow_forward → check</code>, e.g. "Continue" → "Create Store Promo").</p>
+    <p><b>Edit = wizard, not modal:</b> editing reuses the same wizard prefilled at step 1; the final CTA relabels to "Update …", and the Review step shows a <b>Change Row</b> diff. Date inputs inside a wizard enforce <code>min = today</code>.</p>
+  </div>
+</div>
+
+</body></html>

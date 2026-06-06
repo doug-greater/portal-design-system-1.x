@@ -21,6 +21,11 @@ body{margin:0;padding:20px;background:#fff}
 .btn-secondary-warn:hover{background:rgba(229,72,77,.05)}
 .btn-secondary-warn[disabled]{color:rgba(229,72,77,.25);border-color:rgba(229,72,77,.25);cursor:not-allowed}
 
+/* Danger (solid) — terminal, already-confirmed destructive action */
+.btn-danger{background:#E5484D;color:#fff}
+.btn-danger:hover{background:#C93B40}
+.btn-danger[disabled]{background:rgba(229,72,77,.45);color:#fff;cursor:not-allowed}
+
 /* Tertiary — no stroke, blue text (tighter padding since there's no fill) */
 .btn-tertiary{background:transparent;color:#007CFF;padding:0 16px;min-width:72px}
 .btn-tertiary:hover{background:rgba(0,124,255,.05)}
@@ -103,7 +108,7 @@ code{font:400 11px 'Geist Mono',monospace;background:#F3F4F6;padding:1px 5px;bor
 <div class="lbl">Primary — blue fill</div>
 <div class="row">
   <button class="btn btn-primary">Confirm</button>
-  <button class="btn btn-primary">Save changes</button>
+  <button class="btn btn-primary">Save Changes</button>
   <button class="btn btn-primary" disabled>Finalize for Simulation</button>
 </div>
 
@@ -121,10 +126,16 @@ code{font:400 11px 'Geist Mono',monospace;background:#F3F4F6;padding:1px 5px;bor
   <button class="btn btn-secondary-warn" disabled>Delete</button>
 </div>
 
+<div class="lbl">Danger (solid) — terminal destructive confirm (to <i>open</i> a confirm, use Secondary · warning)</div>
+<div class="row">
+  <button class="btn btn-danger">Delete Permanently</button>
+  <button class="btn btn-danger" disabled>Delete Permanently</button>
+</div>
+
 <div class="lbl">Tertiary — ghost, blue text</div>
 <div class="row">
   <button class="btn btn-tertiary">Go Back</button>
-  <button class="btn btn-tertiary">Show more</button>
+  <button class="btn btn-tertiary">Show More</button>
   <button class="btn btn-tertiary" disabled>Go Back</button>
 </div>
 
@@ -160,7 +171,7 @@ code{font:400 11px 'Geist Mono',monospace;background:#F3F4F6;padding:1px 5px;bor
   <p class="d"><b>Both</b> the split button's caret and the kebab open this exact surface — it is not separate from either. Anchored under its trigger; a list of actions with an optional leading icon, a section label, a divider, and a destructive item last.</p>
   <div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap">
     <div style="display:flex;flex-direction:column;align-items:flex-start;gap:0">
-      <span class="split primary open" style="margin-bottom:6px"><button class="main">Continue draft</button><button class="caret"><span class="mi">expand_more</span></button></span>
+      <span class="split primary open" style="margin-bottom:6px"><button class="main">Continue Draft</button><button class="caret"><span class="mi">expand_more</span></button></span>
       <div class="menu">
         <div class="mitem"><span class="mi">edit</span>Continue editing</div>
         <div class="mitem"><span class="mi">content_copy</span>Duplicate plan</div>
@@ -188,7 +199,7 @@ code{font:400 11px 'Geist Mono',monospace;background:#F3F4F6;padding:1px 5px;bor
   <p class="h">Trigger · Split button</p>
   <p class="d">A visible button + a caret that opens the Menu. Use it to <b>encourage one action</b> and offer its <i>related variants</i> in the dropdown. Built at <b>28px</b> so it sits in a 45px row without growing it. The button's <i>intent</i> — primary or error — is the only thing that changes between the examples below.</p>
   <div class="row">
-    <span class="split primary"><button class="main">Continue draft</button><button class="caret"><span class="mi">expand_more</span></button></span>
+    <span class="split primary"><button class="main">Continue Draft</button><button class="caret"><span class="mi">expand_more</span></button></span>
     <span class="split error"><button class="main"><span class="mi">report</span> Edits needed</button><button class="caret"><span class="mi">expand_more</span></button></span>
     <span class="split primary"><button class="main"><span class="mi">check_circle</span> Approve and schedule</button><button class="caret"><span class="mi">expand_more</span></button></span>
   </div>
@@ -214,7 +225,7 @@ code{font:400 11px 'Geist Mono',monospace;background:#F3F4F6;padding:1px 5px;bor
   <p class="d"><b>Row actions are always visible at rest — never revealed on hover.</b> Hover-only actions fail discoverability, touch, and keyboard. Hover may <i>tint</i> the row (and darken a control), but it must never change <i>which</i> controls exist. Every row below shows its actions at rest.</p>
   <div class="tbl">
     <div class="thd"><span>Orchestration plan</span><span>Owner</span><span style="text-align:right">Actions</span></div>
-    <div class="trw"><span>Northeast · Wk 17</span><span class="id">Kenny D.</span><span class="right"><span class="split primary"><button class="main">Continue draft</button><button class="caret"><span class="mi">expand_more</span></button></span></span></div>
+    <div class="trw"><span>Northeast · Wk 17</span><span class="id">Kenny D.</span><span class="right"><span class="split primary"><button class="main">Continue Draft</button><button class="caret"><span class="mi">expand_more</span></button></span></span></div>
     <div class="trw"><span>Harbor route · Wk 18</span><span class="id">Marcus B.</span><span class="right"><span class="split error"><button class="main"><span class="mi">report</span> Edits needed</button><button class="caret"><span class="mi">expand_more</span></button></span></span></div>
     <div class="trw"><span>Midtown · Wk 16</span><span class="id">Lena R.</span><span class="right" style="gap:8px"><button class="btn btn-tertiary" style="height:28px;padding:0 10px;min-width:0;font-size:13px">Reassign</button><button class="kebab"><span class="mi">more_horiz</span></button></span></div>
     <div class="trw hov"><span>Downtown · Wk 15</span><span class="id">Kenny D.</span><span class="right" style="gap:8px"><button class="btn btn-tertiary" style="height:28px;padding:0 10px;min-width:0;font-size:13px">Reassign</button><button class="kebab"><span class="mi">more_horiz</span></button></span></div>
