@@ -415,7 +415,7 @@ Use variable-font axes (`FILL`, `wght`, `GRAD`, `opsz`) sparingly — prefer out
 
 ### Buttons
 
-All buttons share a base: `height: 36px`, `border-radius: 4px`, `font: 500 14px/1 Inter`, `padding: 0 24px`, `min-width: 96px`, `transition: background .12s`.
+All buttons share a base: `height: 36px`, `border-radius: 4px`, `font: 500 14px/1 Inter` (no extra letter-spacing — only the Neo variant is tracked), `padding: 0 20px`, `min-width: 88px`, `transition: background .12s`.
 
 #### Variants
 
@@ -448,6 +448,15 @@ border: 1px solid #E5484D;
 /* disabled */ color: rgba(229,72,77,.25); border-color: rgba(229,72,77,.25);
 ```
 
+**Danger (solid)** — red fill, white text; for an **already-confirmed, terminal** destructive action. Use **Secondary · Warning** (outline) to *open* a `confirm` modal per the existing rule; use **solid Danger** only for the final, irreversible commit inside it.
+
+```css
+background: #E5484D;
+color: #fff;
+/* hover */ background: #C93B40;
+/* disabled */ background: rgba(229,72,77,.45); color: #fff;
+```
+
 **Neutral** — white fill, gray stroke, dark text; use alongside a primary for secondary page-level actions (e.g. "Batch Actions")
 
 ```css
@@ -463,8 +472,8 @@ border: 1px solid #D1D5DC;
 ```css
 background: transparent;
 color: #007CFF;
-padding: 0 16px;
-min-width: 72px;
+padding: 0 12px;
+min-width: 0;          /* ghost hugs its label */
 /* hover */ background: rgba(0,124,255,.05);
 /* disabled */ color: rgba(0,124,255,.25);
 ```
@@ -489,9 +498,10 @@ letter-spacing: .05em;
 
 | Size | Height | Padding | Min-width |
 |---|---|---|---|
-| `sm` | 30px | `0 16px` | 72px |
-| `md` (default) | 36px | `0 24px` | 96px |
+| `sm` | 30px | `0 16px` | 64px |
+| `md` (default) | 36px | `0 20px` | 88px |
 | `lg` | 40px | `0 28px` | 120px |
+| `ghost` | 36px | `0 12px` | 0 (hugs label) |
 
 #### Button Examples
 
@@ -711,6 +721,12 @@ Token summary text: list the values when ≤2 are selected (`Category: Wine`), o
 - For large search sets, **Select all** operates on the full match set (every item matching the query), not just the rows currently rendered under the 50-item cap — so "search → select all" reliably captures everything that matched.
 - Close on outside-click and on `Escape`.
 
+**Clarifications**
+
+- **Per-attribute icons.** Each left-rail attribute row carries an icon matching its column — e.g. Chain → `account_tree`, Account → `storefront`, plus Brand / Category / Size / Supplier.
+- **Leading scope chip.** A filter step may begin with a **scope** chip that changes the *candidate set* rather than filtering it — e.g. Store Promotions' product step toggles "All Products" vs "Carried at Selected Accounts" (defaults to carried). It sits to the left of the attribute filters.
+- **Searchable single-chip (`ChipFilter`).** When exactly one high-cardinality attribute is filtered standalone (e.g. a Chain with hundreds of values), a single searchable chip is acceptable instead of opening the full menu — the bridge between "one Filter Chip" and "the consolidated menu".
+
 ---
 
 ### Tabs
@@ -834,6 +850,10 @@ font: 500 12px/1.5 Inter;
 - **Attention is built in** — loudness comes from the tone + the live dot (reserved for genuinely in-progress states; respects `prefers-reduced-motion`). There is no “Solid” or “Quiet” emphasis variant.
 - **Copy:** one or two words, Title Case. No icons by default — color + dot carry it.
 
+**Lifecycle mappings (examples — reuse a tone, don't re-mint one).**
+- **Store Promotion:** Active → **Info** (blue, live dot) · Upcoming → **Pending** (amber) · Past → **Neutral** (gray).
+- **User:** Active → **Success** (green) "Active" · Deactivated → **Neutral** (gray) "Deactivated".
+
 ---
 
 ### Stat Cards
@@ -920,6 +940,8 @@ color: var(--p-text);
 /* Product name */
 font-weight: 500;
 ```
+
+**Grid-row tables (read-only feeds).** Ultra-dense, fixed-schema, read-only ledgers (e.g. the Audit Log) may be built from CSS-grid `div` rows instead of a real `<table>`, to control 7–8 fixed/elastic columns precisely. Allowed **only** for read-only data feeds, and only if it keeps the standard chrome: the `#F9FAFB` / `11px` caps / `.08em` header, 1px row borders, the hover tint, and the standard footer. Anything interactive or selectable (e.g. the wizard `SelectionTable`) stays a real `<table>`.
 
 Columns auto-size to content with a `max-width: 300px` cap. Headers support column-resize via a drag handle (6px, highlights `--p-primary` on hover).
 
@@ -1348,7 +1370,7 @@ box-shadow: 0 6px 16px rgba(0,0,0,.14), 0 2px 4px rgba(0,0,0,.08);
 **Rules**
 
 - **Position:** `position: fixed`, top-center, `top: 18px`, above all content. Stack downward with a 10px gap when more than one is live.
-- **Behavior:** auto-dismiss ~4s (success) / ~6s (error); pause on hover. Add a trailing `✕` (22px, 6px radius, 80% opacity) only when the message is persistent or actionable.
+- **Behavior:** auto-dismiss ~4s (success) / ~6s (error); pause on hover. A trailing dismiss **`✕`** (22px, 6px radius, 80% opacity) is **always present**, so a user can clear a toast — or a whole stack — without waiting it out. (It's the same affordance on every toast; no `persistent`/`actionable` flag needed.)
 - **Motion:** slide in with a 180ms ease-out translate (transform-only, never opacity-only — backgrounded iframes can freeze an opacity keyframe at 0).
 - Two tones only. No info/warning toasts — use an Info Banner inline.
 
@@ -1385,7 +1407,9 @@ overflow: hidden;
 | `md` (default) | 520px |
 | `lg` | 640px |
 
-- **Header** — title (`600 18px`, `-.01em`) + `close` icon button, padding `18px 20px 14px 24px`.
+Custom widths are allowed for dense content — e.g. **560px** for the Audit Log timeline modal.
+
+- **Header** — title (`600 18px`, `-.01em`, **Title Case**) with an optional **`subtitle`** beneath (`400 13px --p-muted`, single-line ellipsized — e.g. the record name on the Audit Log modal) + `close` icon button, padding `18px 20px 14px 24px`.
 - **Body** — padding `4px 24px 8px`; 20px gap between fields.
 - **Footer** — `border-top: 1px solid #F0F1F3`, right-aligned, Ghost/Neutral cancel + Primary confirm.
 
@@ -1415,7 +1439,7 @@ box-shadow: var(--shadow-float);
 | `md` (default) | 460px |
 | `lg` | 560px |
 
-- **Header** — overline (`500 11px` caps, `--p-muted`) + title (`600 20px`), `border-bottom: 1px --p-border`.
+- **Header** — overline (`500 11px` caps, `--p-muted`) + title (`600 20px`, **Title Case**) + optional **`subtitle`** (`400 13px --p-muted`, ellipsized), `border-bottom: 1px --p-border`.
 - **Body** — scrolls (`flex: 1; overflow-y: auto`).
 - **Footer** — pinned, `border-top: 1px --p-border`, typically two full-width actions.
 
@@ -1523,7 +1547,9 @@ Single-date and range, both built on the floating-label field. Reference: `previ
 
 #### Trigger
 
-Standard 44px floating-label field with a leading icon — `calendar_today` (single) / `date_range` (range). Value formats as `Jun 11, 2026` / `Apr 20 – Apr 26, 2026` (en-dash range).
+Two trigger variants:
+- **Field** — the standard 44px floating-label field with a leading icon — `calendar_today` (single) / `date_range` (range). Value formats as `Jun 11, 2026` / `Apr 20 – Apr 26, 2026` (en-dash range).
+- **Filter chip** — a **36px** filter-chip-style trigger for table **range filters**: reads `Date: {from – to}` and tints `--p-primary-tint` when active (matches the Filter Chip pattern).
 
 #### Calendar popover
 
@@ -1540,7 +1566,21 @@ padding: 14px;          /* anchored 8px below the field */
 
 #### Range
 
-Endpoints are solid primary circles; the span between fills a `--p-primary-tint` band, rounded only at the two ends. Pair the calendar with a left **preset rail** (Today, Yesterday, This week, Last 7 days, This month, Last 30 days) — operators pick these far more than exact dates. Apply on second click (start → end).
+Endpoints are solid primary circles; the span between fills a `--p-primary-tint` band, rounded only at the two ends. Apply on second click (start → end). Operators pick presets far more than exact dates.
+
+**Context-aware preset rails.** A range picker carries a left preset rail, and **the rail must match the field's temporal direction:**
+- **Forward-looking** (go-live / start dates): Today · Tomorrow · Next 7 Days · Next 30 Days · This Month · Next Month.
+- **Backward-looking** (audit / history): Today · Yesterday · Last 7 Days · Last 14 Days · Last 30 Days.
+
+**Rail styling.** Two-pane layout filled on `--p-surface-alt`; the active preset is a raised white row with a `--p-primary` semibold label; a `Clear` (danger text) is pinned to the rail bottom.
+
+#### Bounds (min / max)
+
+`fromDate` / `min` disables earlier days; `max` disables later days. Future-only fields (e.g. anything created in a wizard) enforce **`min = today`**; the Audit Log enforces **`max = today`** so you can't pick the future. Disabled days render `--p-placeholder`, with no hover and `cursor: default`.
+
+#### Positioning (portaled + auto-flip)
+
+The calendar is **portaled to `<body>`** with `position: fixed`, so it escapes `overflow: hidden` on modals and table cells, and it **opens upward (`dropUp`)** when there isn't room below — so an in-modal picker never covers the modal's Save button. Treat portaled + auto-flip as **required** for any picker used inside a modal.
 
 - **Behavior:** close on outside-click and `Escape`.
 
