@@ -35,6 +35,7 @@
    - [Page Detail Header](#page-detail-header)
    - [App Shell & Navigation Sidebar](#app-shell--navigation-sidebar)
    - [Maps](#maps)
+   - **New in 1.1:** [Wizard (multi-step flow)](#wizard-multi-step-flow) · [Audit Log, Change Row & Restore](#audit-log-change-row--restore) · [Echo Pulse](#echo-pulse-brand-moment) · [Expandable Rows](#expandable-rows) · [Batch Actions](#batch-actions-header-dropdown)
 10. [Motion](#motion)
 11. [Voice & Copy](#voice--copy)
 12. [Layout](#layout)
@@ -520,7 +521,7 @@ Neo:        Next  (login screen only)
 Actions attached to a table row. There is **one primitive and two triggers** — do not add anything beyond these. Reference: `preview/components-buttons.html`.
 
 - **Menu popover** — *the primitive.* A floating list of actions. Both triggers below open this exact surface; it is never duplicated per-trigger.
-- **Split button** — *a trigger.* A labeled button + a caret; the button performs one action, the caret opens the Menu.
+- **Split button** — *a trigger.* A labeled button + a caret; the button performs one action, the caret opens the Menu. It is **not limited to the last table column** — it may also be the **primary action inside an expanded / disclosure panel** (see [Expandable Rows](#expandable-rows)), with `menuAlign="right"`. Its label is **always Title Case** (the component enforces it).
 - **Kebab** — *a trigger.* A single `more_horiz` icon button that opens the Menu.
 - A plain **slim button** (the existing button at 28px) covers the one-action / no-menu case.
 
@@ -897,6 +898,14 @@ Stat cards are laid out in 3-up rows.
 1       Pending Discontinue        Show
 4       Discontinued & Draining    Show
 ```
+
+#### Drill-in & active state
+
+A stat card can act as a **filter shortcut**: clicking its value (or the "Show" link) applies the matching table filter — e.g. "Pending Additions" toggles the Action filter; "Ending ≤ 7 Days" applies a `today..+7` date range. When a stat is the **live drill target** it takes an **`active` state** — its border, an inset `1px` ring, and the action link all adopt the card's semantic color (`box-shadow: inset 0 0 0 1px {color}, var(--shadow-card)`).
+
+#### Show / Hide Stats
+
+A **Neutral** Button toggles the whole stat row's visibility, **persisted per page** in `localStorage` under `gr-stats-visible:{key}`. Labels are **"Show Stats" / "Hide Stats"** (Title Case) with `visibility` / `visibility_off` icons.
 
 ---
 
@@ -1583,6 +1592,99 @@ Endpoints are solid primary circles; the span between fills a `--p-primary-tint`
 The calendar is **portaled to `<body>`** with `position: fixed`, so it escapes `overflow: hidden` on modals and table cells, and it **opens upward (`dropUp`)** when there isn't room below — so an in-modal picker never covers the modal's Save button. Treat portaled + auto-flip as **required** for any picker used inside a modal.
 
 - **Behavior:** close on outside-click and `Escape`.
+
+---
+
+### Wizard (multi-step flow)
+
+A **full-screen, position-fixed** multi-step creation / editing flow that renders over the App Shell (`position: fixed; inset: 0; z-index: 9000`) while its route stays inside the protected layout. Introduced for POD Planner and Store Promotions. Reference: `ui_kits/portal/wizard.jsx` (live: `components/Wizard.js`).
+
+**Anatomy (top → bottom)**
+
+1. **Top bar** — `height: 60px`, white, `1px --p-border` bottom. Greater logotype + `1px` divider + flow **title** (`600 16px Inter`, `-.01em`). Right side: a **Neutral** Button "Exit" with a `close` icon.
+2. **Step indicator** — white strip, `12px 32px` padding, centered to `max-width: 1320px`. Each step is a clickable chip: a `24px` circular badge + label.
+   - **Active:** badge `--p-ink` fill, white number (`600 12px Geist Mono`); label `600 14px --p-ink`.
+   - **Complete (not current):** badge `--p-success` fill, white `check`; label `500 14px --p-success`; **clickable to jump back**.
+   - **Upcoming:** badge `--p-surface-tint`, `--p-placeholder` number; label `500 14px --p-placeholder`; not clickable. Connector lines `1px --p-border` fill the gaps.
+   - **Completion rule:** a step counts as *complete* only when `n < current` **and** it is valid — never mark the current step green prematurely, and never show a "Saved" badge.
+3. **Body** — scroll-contained, centered `max-width: 1320px`, padding `20px 32px 24px`; per-step arrival animation `gr-tab-in` (`key={current}`).
+4. **Footer nav** — `height: 72px`, white, top border + soft top shadow `0 -2px 12px rgba(16,24,40,.05)`.
+   - Left: **Neutral** Button "Back" (`arrow_back`, `size=lg`), disabled on step 1.
+   - Right: `Step N of M` caption (`500 13px --p-muted`) + **Primary** Button (`size=lg`, `min-width: 160`) whose label / icon switch on the last step (`arrow_forward` → `check`; e.g. "Continue" → "Create Store Promo"). Disabled until the step's `canNext` is satisfied; shows an inline spinner when `busy`.
+
+**Rules / learnings**
+
+- The Wizard renders **over** the shell (`z-index: 9000`); the route stays inside the protected layout.
+- **Edit = wizard, not modal.** Editing an existing record reuses the same wizard, prefilled at step 1 (with a fetch fallback on hard refresh); the final CTA relabels to "Update …". The Review step shows a **change-diff summary** (the **Change Row** primitive, documented under Audit Log below).
+- Prev / Next live **only** in the bottom footer — no duplicate inline controls.
+- Date inputs inside a wizard enforce `min = today`.
+
+**Sub-components** (all in `wizard.jsx`)
+
+- **`SelectionTable`** — the reusable selection step: search `Input` + optional filter slot + sortable column headers (`unfold_more` / `arrow_upward` / `arrow_downward`, active head `--p-primary`) + a `44px` checkbox column with **select-all (filtered set)** + per-row `Check`. Row click toggles selection; selected rows tint `--p-primary-tint` (`.wz-row-selected`). Built on a CSS `<table>` with sticky `thead`. Inline footer: `Showing X of Y {noun}s · N selected`. Skeleton rows while loading. Testids: `selection-row-{id}`, `selection-checkbox-{id}`, `selection-select-all`, `selection-sort-{key}`, `selection-search`.
+- **`SelectedPopover`** — a pill trigger "**N selected**" (rounded, `--p-primary-tint` / `--p-primary-soft` border / `--p-primary-ink`) opening a 300px review list with per-item remove + "Clear All". Lets you trim a large multi-select without leaving the step.
+- **`Check`** — table-tuned binary checkbox: `18px`, `radius 4`, `1.5px` border; on = `--p-primary` fill + white `check`.
+- **`CopyToAllChip`** — inline action pill ("Copy to All", `content_copy`, `26px`, pill, `--p-primary-tint`) that propagates one row's configured value to every selected row (POD Planner "Configure Actions" step).
+- **`ActionSegment`** — a 2-option segmented control (Add / Discontinue) where **Add = `--p-success`** and **Discontinue = `--p-danger`** when active (`30px`, `radius 4`, `600 13px`) — an example of semantic-colored segments.
+- **`StepHeader`** — step title (`600 20px --p-ink`, `-.01em`) + optional **helper banner** (`--p-primary-tint` bg, `--p-text`, `radius 8`, `10px 14px`, `400 14px`). The canonical home for the "Select one or more… (Step 1 of 4)" info copy.
+
+CSS used: `.wz-row`, `.wz-row-selected`, `.wz-num` focus ring, `gr-tab-in` (see §10 / §13).
+
+---
+
+### Audit Log, Change Row & Restore
+
+A first-class, cross-portal capability with three surfaces, backed by per-entity immutable audit collections. The UI is fully reusable. Reference: `ui_kits/portal/audit.jsx` (live: `components/AuditLog.js`, `components/ChangeLog.js`, `screens/AuditLog.js`).
+
+**Action accents (new semantic taxonomy):** Created = `--p-primary` (`flag` / `add_circle`), Updated = **gold `#B7791F`** (`edit`), Restored = **teal `--p-restore` `#0D9488`** (`settings_backup_restore`), Deleted = `--p-danger` (`delete`). Tokens: `--p-audit-created` / `-updated` / `-restored` / `-deleted` (§13).
+
+#### Audit Log timeline modal (`AuditLogModal`)
+
+A vertical **timeline** of one record's history. Each node:
+- A `26px` circular icon chip outlined in the action accent + a vertical connector to the next node.
+- Header line: action label (`600 13px`), a **"Current"** chip on the newest node, "by {actor}", and a right-aligned mono timestamp.
+- Body: the change set rendered as **Change Rows** (below). A `created` node labels its rows **"Initial values"** and lists every starting field (nothing → value).
+- **Restore control:** every non-current node with a snapshot shows a **"Restore This Version"** button (teal) with an inline confirm ("Restore to this version?") → Cancel / Restore.
+- Driven by props (`auditUrl`, `restoreUrl(id)`, `formatValue(field, value)`, `createdMessage`, `restoredNoun`, `title`, `subtitle`), so any entity reuses it. Rendered in a Modal at the 560px custom width.
+
+#### Audit Log ledger page (`/audit-log`)
+
+A **single, generic, immutable ledger table** that flattens every entity's audit events into **one row per changed attribute**:
+
+`When · Record Type · Record · Action · Attribute · Removed · Added · Changed By`
+
+- The value columns are **"Removed" / "Added"**, not "Old Value / New Value" — this reads correctly for every change kind: a scalar edit (Name "A"→"B") is Removed:A / Added:B; a multi-select edit is literally what was removed vs added; a Created row is Removed:— / Added:value. Removed values render struck-through in `--p-muted`; Added values render in `--p-ink`.
+- **Record Type** is a **plain-text** column (e.g. "Store Promotion", "POD Plan", "User") — **no icon, no color pill**.
+- **Toolbar:** search · date-range filter (backward-looking preset rail — see Date Picker) · "All Record Types" · "All Actions" · "All Users" (actor) filters.
+- **Footer:** standard data-table footer (`Showing X–Y of Z changes` + `RowsSelect` + Pagination, default 50).
+- Built as a **grid-row table** (read-only feed — see Tables). Deletions are recorded as **tombstones** (the record's name persists as the label after the record itself is gone).
+
+#### Change Row (`ChangeRow`)
+
+The shared diff primitive used by the audit modal **and** the wizard Review step. Two modes:
+- **Scalar:** `<label> oldValue → newValue` — old struck-through `--p-muted`, `arrow_forward` glyph, new `--p-ink 500`. When `from` is null/undefined (creation) it shows only the new value.
+- **Membership:** `+ name` chips (green success text on `--g-green-10`) and `− name` chips (`--p-danger`, struck-through, on `--g-red-10`).
+- Label is an uppercase micro-caps tag (`600 11px`, `.04em`, `--p-text-2`, min-width 84).
+
+---
+
+### Echo Pulse (brand moment)
+
+A brand-forward loading mark shown on the post-auth transition into the portal: the Greater raven with two expanding **Intelligence-gradient** rings (conic `#007CFF → #5359F1 → #F153A9`). A **Foundation-tier** moment — the one place the Intelligence gradient (see §3) animates. Reference: `.echo-pulse` + the `ep-echo` keyframes in `colors_and_type.css` (live: `components/EchoPulse.js`).
+
+- Markup: `.echo-pulse` wraps the raven `<img>`; two `::before` / `::after` rings, conic-gradient masked to a 2px stroke, animated by `ep-echo` (scale .55 → 1.9, fading out) and offset by half the cycle.
+- Respects `prefers-reduced-motion` (rings disabled). Use it **only** for the auth → portal transition — not as a general spinner (that's the Spinner in Loading & Skeleton).
+
+---
+
+### Expandable Rows
+
+A table row can **expand in place** to reveal related detail — Store Promotions reveals its Accounts and Products via a lazy `GET /promotions/{id}`. Reference: `screens/Promotions.js`.
+
+- **Affordance:** an accessible chevron button at the row's lead toggles the panel (`expand_more`, rotated when open).
+- **Animation:** a **`grid-rows` disclosure** — animate `grid-template-rows: 0fr → 1fr` over a `min-height: 0` inner wrapper, so the panel height-animates without measuring.
+- **Lazy-load:** fetch the detail on first expand; show a skeleton until it resolves.
+- **The expanded panel — not a new column — is the correct home for in-context detail and actions.** This is where a **Split button** serves as the panel's primary action (see Row Actions), with `menuAlign="right"`.
 
 ---
 
