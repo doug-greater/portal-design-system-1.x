@@ -532,6 +532,7 @@ Actions attached to a table row. There is **one primitive and two triggers** —
 
 #### Do not
 
+- **Never use the vertical `more_vert` ("⋮") kebab.** The overflow / kebab trigger is **always** the horizontal `more_horiz` — in list rows, cards, panel headers, and menus alike. `more_vert` is **banned portal-wide** (the `.g-kebab` class renders `more_horiz`).
 - Do not ship a "secondary" split button as a repeated table column — if viewing is the row's job, make the row clickable and put extras in a kebab.
 - Do not treat "button + kebab" as a distinct component — it is simply a slim button beside a kebab.
 
@@ -946,7 +947,9 @@ Example usage:
 
 ### Selection Bar (floating)
 
-A floating bar that appears when one or more rows in a table are selected, showing the live count and bulk actions. Sticks to the bottom of the viewport, right-aligned, and floats above content. Reference: the selection bar in `ProductsScreen.jsx`.
+> **One of two selection patterns.** For operator **list / table pages with a footer + pager, the [Batch Actions header dropdown](#batch-actions-header-dropdown) is the default** — it sits with the data-table chrome instead of floating over it. Reserve this **floating** Selection Bar for **canvas / non-tabular surfaces** (maps, boards, galleries) where there is no table footer to anchor to.
+
+A floating bar that appears when one or more rows are selected, showing the live count and bulk actions. Sticks to the bottom of the viewport, right-aligned, and floats above content. Reference: the selection bar in `ProductsScreen.jsx`.
 
 ```css
 position: sticky;
@@ -972,6 +975,15 @@ box-shadow: var(--shadow-float);
 
 - Renders only when `selected.size > 0`; animates in/out is optional (none by default — the portal reads as static).
 - The count + Clear pairing is the reusable minimum. Everything else is feature-specific and should be justified per screen.
+
+#### Batch Actions (header dropdown)
+
+The **default** multi-select pattern for operator list / table pages. Bulk actions live in a persistent header control rather than a floating bar, so they sit with the table footer (count + pager) instead of fighting it. Reference: `screens/PodPlanner.js`, `screens/Promotions.js`, `screens/Users.js`.
+
+- A **Neutral** Button labeled **"Batch Actions"** with a trailing `expand_more`, placed in the page header **to the left of the primary "New …" CTA**.
+- **Always present**, but **disabled** until `selected > 0`. When active it opens the standard **Menu** popover of bulk actions (e.g. *Edit Dates*, *Edit Qty*, *Delete*); destructive items go **last**, in `--p-danger`.
+- Pairs with a **header-checkbox select-all (visible page)** and the standard table footer (`Showing X–Y of Z` + `RowsSelect` + Pagination).
+- **Do not** also float a Selection Bar on the same surface — pick one. On tables, that's Batch Actions.
 
 Role-colored initials circle used wherever a user is represented (tables, detail headers, team rosters).
 
@@ -1212,7 +1224,7 @@ The sidebar must sit **outside** the scroll region (a sibling of `main`), never 
 
 - **Org header** — wordmark (collapsed: crow mark) + company name + city selector. City selector hidden when collapsed.
 - **Primary nav** — parent rows (40px, icon + 15px label + `expand_more` chevron when it has children) with expandable child lists. Active leaf / open group tints `rgba(0,124,255,.10)` with `--p-primary` icon; hover `rgba(0,124,255,.05)`. Active **child** row: solid `#007CFF` fill, white text, `30px` min-height.
-- **Bottom utility nav** — pinned to the bottom (Ops Tools toggle, Help Center [external], account, Sign Out). Ops Tools toggle hidden when collapsed.
+- **Bottom utility nav** — pinned to the bottom. Top → bottom: **Help Center** [external], **Audit Log**, **Settings**, **Account**, **Sign Out**. "Audit Log" (`/audit-log`) and "Settings" (`/settings`) are real routes and carry an **active/selected** state (`rgba(0,124,255,.10)` tint + `--p-primary` icon, like the primary nav); Help Center opens externally, Account and Sign Out are utilities. (The former "Ops Tools" toggle has been removed.)
 
 #### Collapsed Flyout
 
@@ -1500,7 +1512,7 @@ Collapse long ranges with an ellipsis, always keeping first, last, and current �
 
 #### Page size & Load more
 
-- **Page size:** 25 / 50 / 100. **Default 50** — matches the Filter Menu's 50-row search cap so the two never disagree.
+- **Page size:** options are **25 / 50 / 100**. **50 is the canonical default on every operator table** — it matches the Filter Menu's 50-row search cap so the two never disagree. Drop to **25** only when rows are exceptionally tall; otherwise always default to 50.
 - **Load more:** a centered Neutral button + `N of M loaded` caption — for feed-like / append-only lists where position doesn't matter. Use numbered paging for tables operators scan and jump around. Never both on one surface.
 
 ---
