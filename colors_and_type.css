@@ -79,6 +79,14 @@
   --p-danger:        #E5484D;
   --p-danger-strong: #DC2626;
 
+  /* ---------- Restore / audit action accents ---------- */
+  --p-restore:        #0D9488;             /* teal — restore / revert action + `restored` audit state */
+  --g-teal-10:        rgba(20,184,166,.12);/* teal tint surface                                       */
+  --p-audit-created:  var(--p-primary);    /* created  → blue (flag)                                  */
+  --p-audit-updated:  #B7791F;             /* updated  → gold (edit)                                  */
+  --p-audit-restored: var(--p-restore);    /* restored → teal (settings_backup_restore)               */
+  --p-audit-deleted:  var(--p-danger);     /* deleted  → red  (delete)                                */
+
   /* ---------- Intelligence Gradient — AI / Confidence / Predictive features ---------- */
   --g-intel-start:    #007CFF;
   --g-intel-mid:      #5359F1;
@@ -188,12 +196,12 @@
   color: var(--fg-1);
 }
 
-/* Section title / column header — Inter Medium 14 UPPERCASE */
+/* Section title / column header — Inter Medium 13 UPPERCASE, muted (matches shipped portal) */
 .g-section-title {
-  font: 500 var(--fs-14)/1.15 var(--font-sans);
-  letter-spacing: 0.05em;
+  font: 500 13px/1 var(--font-sans);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--fg-1);
+  color: var(--p-muted);
 }
 
 /* Subtitle under H1 — Inter Medium 14 UPPERCASE medium-gray */
@@ -283,6 +291,31 @@
 /* Avatar — initials circle. Pass size (width/height/font-size) + background/color inline; ring via box-shadow. */
 .g-avatar { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; font-family: var(--font-sans); font-weight: 600; letter-spacing: .01em; flex-shrink: 0; }
 
+/* Row-action overflow trigger. Horizontal `more_horiz` ONLY — `more_vert` is banned (see §9 Row Actions). */
+.g-kebab { width: 28px; height: 28px; border-radius: var(--radius-md); display: inline-flex; align-items: center; justify-content: center; color: var(--p-muted); cursor: pointer; border: none; background: transparent; transition: background .12s, color .12s; }
+.g-kebab:hover { background: rgba(0,0,0,.05); color: var(--p-text); }
+
+/* Split button — main action + caret disclosure. Intents: .primary / .error. */
+.g-split { display: inline-flex; height: 28px; border-radius: var(--radius-md); overflow: hidden; font: 500 13px/1 var(--font-sans); vertical-align: middle; box-sizing: border-box; }
+.g-split .g-split-main  { display: inline-flex; align-items: center; gap: 6px; padding: 0 11px; cursor: pointer; border: none; background: transparent; font: inherit; color: inherit; }
+.g-split .g-split-caret { display: inline-flex; align-items: center; justify-content: center; width: 26px; cursor: pointer; border: none; background: transparent; color: inherit; }
+.g-split.primary { background: var(--p-primary); color: #fff; }
+.g-split.primary .g-split-caret { border-left: 1px solid rgba(255,255,255,.28); }
+.g-split.primary .g-split-main:hover, .g-split.primary .g-split-caret:hover { background: rgba(255,255,255,.14); }
+.g-split.error { background: var(--p-danger); color: #fff; }
+.g-split.error .g-split-caret { border-left: 1px solid rgba(255,255,255,.32); }
+.g-split.error .g-split-main:hover, .g-split.error .g-split-caret:hover { background: rgba(255,255,255,.14); }
+.g-split .g-split-main:focus-visible, .g-split .g-split-caret:focus-visible { outline: none; background: rgba(255,255,255,.22); }
+
+/* Stacked mono ID under a name (tables / wizards) */
+.g-mono-id { font-family: var(--font-mono); font-size: var(--fs-11); line-height: 1; color: var(--p-muted); letter-spacing: .02em; }
+
+/* Wizard selection-table row states */
+.wz-row:hover { background: var(--p-surface-alt) !important; }
+.wz-row-selected { background: var(--p-primary-tint) !important; }
+.wz-row-selected:hover { background: #E4EFFE !important; }
+.wz-num:focus { outline: none; border-color: var(--p-primary) !important; box-shadow: 0 0 0 3px rgba(0,124,255,.15); }
+
 /* Base body reset */
 html, body {
   font-family: var(--font-sans);
@@ -296,3 +329,50 @@ html, body {
 
 /* Selection uses primary blue */
 ::selection { background: var(--p-primary-soft); color: var(--p-ink); }
+
+/* =======================================================================
+   Motion — keyframes & entrance utilities
+   All transform/opacity, ease-out, no bounce (see §10). Entrance animations
+   are transform-first: a backgrounded iframe can freeze an opacity-only
+   keyframe at 0, leaving content permanently invisible.
+   ======================================================================= */
+@keyframes gr-fade-in    { from { opacity: 0; } to { opacity: 1; } }
+@keyframes gr-pop-in     { from { opacity: 0; transform: translateY(6px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes gr-flyout-in  { from { opacity: 0; transform: translateX(-7px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes gr-toast-in   { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes gr-spin       { to { transform: rotate(360deg); } }
+@keyframes gr-shimmer    { 0% { background-position: -480px 0; } 100% { background-position: 480px 0; } }
+@keyframes gr-rise-in    { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes gr-slide-fwd  { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes gr-slide-back { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes gr-tab-in     { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes gr-bar-in     { from { opacity: 0; transform: translate(-50%, 16px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+/* Entrance utility classes */
+.gr-rise      { animation: gr-rise-in .62s cubic-bezier(0.22,1,0.36,1) both; animation-delay: calc(var(--i, 0) * 80ms); }
+.gr-step-fwd  { animation: gr-slide-fwd .28s cubic-bezier(0.22,1,0.36,1) both; }
+.gr-step-back { animation: gr-slide-back .28s cubic-bezier(0.22,1,0.36,1) both; }
+.gr-tab-in    { animation: gr-tab-in .26s cubic-bezier(0.22,1,0.36,1) both; }
+.gr-bar-in    { animation: gr-bar-in .26s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* Echo Pulse — branded post-auth loading mark: raven + expanding intelligence-gradient rings. */
+.echo-pulse { --ep-size: 92px; --ep-ring: 150px; --ep-speed: 2.4s; position: relative; display: inline-flex; align-items: center; justify-content: center; }
+.echo-pulse img { display: block; width: var(--ep-size); height: auto; position: relative; z-index: 1; user-select: none; }
+.echo-pulse::before,
+.echo-pulse::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  width: var(--ep-ring); height: var(--ep-ring);
+  margin: calc(var(--ep-ring) / -2) 0 0 calc(var(--ep-ring) / -2);
+  border-radius: 50%; opacity: 0;
+  background: conic-gradient(from -90deg, #007CFF 0deg, #5359F1 130deg, #F153A9 250deg, #5359F1 310deg, #007CFF 360deg);
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 2px), #000 calc(100% - 2px));
+          mask: radial-gradient(farthest-side, #0000 calc(100% - 2px), #000 calc(100% - 2px));
+  animation: ep-echo var(--ep-speed) ease-out infinite;
+}
+.echo-pulse::after { animation-delay: calc(var(--ep-speed) / -2); }
+@keyframes ep-echo { 0% { transform: scale(.55); opacity: .55; } 80% { opacity: 0; } 100% { transform: scale(1.9); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  .echo-pulse::before, .echo-pulse::after { animation: none !important; opacity: 0 !important; }
+}

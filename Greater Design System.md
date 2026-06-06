@@ -240,7 +240,7 @@ Inter is the **only** UI family (Regular / Medium / Semibold / Bold / Light). No
 | `.g-h1` | Inter Semibold 24 / 1.33, ls −0.025em | Portal page title |
 | `.g-h2` | Inter Semibold 20 / 1.2, ls 0 | Compact page title |
 | `.g-h3` | Inter Regular 18 / 1.33, ls +0.05em | Secondary info, sign-in heading |
-| `.g-section-title` | Inter Medium 14 UPPERCASE, ls +0.05em | Section title, column header |
+| `.g-section-title` | Inter Medium 13 UPPERCASE, ls +0.06em, muted | Section title, column header |
 | `.g-subtitle-1` | Inter Medium 14 UPPERCASE, ls +0.05em, medium-gray | Subtitle under H1 |
 | `.g-subtitle-2` | Inter Regular 11 / 1.3, medium-gray | Fine print / legal |
 | `.g-body-1` | Inter Regular 16 / 1.4 | Standard page & table content |
@@ -1541,6 +1541,26 @@ Animation is minimal — the portal reads as mostly static.
 
 Rules: no bounces, no springs. Treat motion as a garnish, not a feature.
 
+### Keyframes
+
+These named keyframes ship in `colors_and_type.css` and back every entrance / loading animation:
+
+| Keyframe | Used for |
+|---|---|
+| `gr-fade-in` | simple opacity reveals |
+| `gr-pop-in` | menus / popovers / tooltips |
+| `gr-flyout-in` | collapsed-nav flyout |
+| `gr-toast-in` | toast entrance (top-center) |
+| `gr-spin` | spinner |
+| `gr-shimmer` | skeleton shimmer |
+| `gr-rise-in` | login / staggered entrance (`--i` index delay) |
+| `gr-slide-fwd` / `gr-slide-back` | directional step transitions |
+| `gr-tab-in` | tab-panel & wizard-step arrival |
+| `gr-bar-in` | bottom-anchored bar (keeps `translate(-50%, …)` centering) |
+| `ep-echo` | Echo Pulse rings (see §9 Echo Pulse) |
+
+**Transform-first rule.** Entrance animations must animate a transform, not opacity alone. A backgrounded iframe can freeze an opacity-only keyframe at `0`, leaving content permanently invisible — always pair opacity with a `translate`/`scale`. Honor `prefers-reduced-motion`: the stylesheet collapses durations and disables the Echo Pulse rings.
+
 ---
 
 ## 11. Voice & Copy
@@ -1666,6 +1686,17 @@ All tokens are defined in `colors_and_type.css`. Load it first, then optionally 
   --p-warning: #DB9E03;
   --p-danger: #E5484D;
   --p-danger-strong: #DC2626;
+
+  /* Intelligence gradient — AI / confidence / predictive */
+  --g-intel-gradient: linear-gradient(90deg, #007CFF 0%, #5359F1 50%, #F153A9 100%);
+
+  /* Restore / audit action accents */
+  --p-restore: #0D9488;             /* teal — restore / revert + `restored` audit state */
+  --g-teal-10: rgba(20,184,166,.12);
+  --p-audit-created: var(--p-primary);
+  --p-audit-updated: #B7791F;
+  --p-audit-restored: var(--p-restore);
+  --p-audit-deleted: var(--p-danger);
 
   /* Radii */
   --radius-xs: 2px;
