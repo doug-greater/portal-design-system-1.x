@@ -295,6 +295,11 @@ text-underline-offset: 2px;
   - Column headers: all caps, tracked (`PRODUCT`, `ACCOUNTS`, `IN MARKET`)
   - Overlines: all caps (`OVERLINE 1`)
   - Tab labels & filter chips: Title Case (`Products in Market`, `All Products`)
+  - **Actions & overlay headers: Title Case** (see the rule below)
+
+**Title Case for actions & overlay headers.** Title Case is mandatory for **all** button and link-button labels, SplitButton labels, segmented-control labels used as actions, and **Modal / Drawer / Dialog headers**. Capitalize the first and last word and every major word; keep short articles, conjunctions, and prepositions (*a, an, the, and, or, to, of, in*) lowercase unless first or last. Examples: **"Save Changes"** (not "Save changes"), **"Clear All"**, **"Copy to All"**, **"Add Report"**, **"Create Another Plan"**, **"Restore This Version"**, **"Batch Actions"**. This applies to new components too — never ship a sentence-case button label or overlay header.
+
+Everything that is **not** an action or overlay header stays **sentence case**: body text, table cell content, helper / validation text, info banners, empty-state bodies, tooltips, and toasts.
 
 ---
 
@@ -491,10 +496,10 @@ letter-spacing: .05em;
 #### Button Examples
 
 ```
-Primary:    Confirm  /  Save changes  /  Finalize for Simulation (disabled)
+Primary:    Confirm  /  Save Changes  /  Finalize for Simulation (disabled)
 Secondary:  Edit Section  /  Save as Draft  /  Next (disabled)
 Warning:    Delete  /  Discontinue
-Ghost:      Go Back  /  Show more
+Ghost:      Go Back  /  Show More
 Neo:        Next  (login screen only)
 ```
 
@@ -1462,7 +1467,7 @@ color: var(--p-muted);   /* 28px outline Material Symbol */
 
 | Cause | Icon | Action |
 |---|---|---|
-| **No results** (search / filter) | `search_off` / `filter_alt_off` | Ghost **Clear filters** — never a create CTA |
+| **No results** (search / filter) | `search_off` / `filter_alt_off` | Ghost **Clear Filters** — never a create CTA |
 | **Empty set** (nothing exists yet) | the surface's nav icon (`inventory_2`, `group`, `route`) | Primary create CTA |
 | **First-run / import** | `upload_file` | Dashed dropzone (`1px dashed --p-border-strong`, `#FBFCFD`) + primary + helper (template) |
 
@@ -1569,9 +1574,9 @@ These named keyframes ship in `colors_and_type.css` and back every entrance / lo
 
 - **Plainspoken, operational, slightly wry.** Product copy is literal and straightforward.
 - **Second-person, sparingly.** "Sign in to your account." Never cutesy ("Hey! Let's get you signed in 👋"). No first-person.
-- **Sentence case** everywhere except column headers, overlines, and tab/chip labels (see Typography).
+- **Sentence case** for prose; **Title Case** for actions & overlay headers. Sentence case everywhere except column headers, overlines, tab/chip labels, and — per §4 — every button / link-button / SplitButton label and Modal·Drawer·Dialog header (see Typography → Sentence Case Rules).
 - **Numbers carry weight.** Stat cards lead with large bold numbers. Use abbreviations: `21.1k`, `$482.7k`, `1,258`.
-- **Verb-first** for actions: "Save changes", "Finalize for Simulation", "Go Back".
+- **Verb-first** for actions, in Title Case: "Save Changes", "Finalize for Simulation", "Go Back".
 - **No emoji in product.** Emoji-free.
 - **Inline status words are colored** — not bolded, not badged. The color conveys the meaning.
 
