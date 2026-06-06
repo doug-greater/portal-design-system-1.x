@@ -76,6 +76,21 @@ function Skeleton({ width = '100%', height = 12, radius = 4, circle = false, sty
   );
 }
 
+/* ---------------- EchoPulse — branded post-auth loading mark ----------------
+   The raven inside two expanding intelligence-gradient rings. The .echo-pulse
+   class + ep-echo keyframes live in colors_and_type.css (disabled under
+   prefers-reduced-motion). Use ONLY for the auth → portal transition. */
+function EchoPulse({ size = 92, ring = 150, speed = '2.4s', label }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 36 }}>
+      <div className="echo-pulse" style={{ '--ep-size': `${size}px`, '--ep-ring': `${ring}px`, '--ep-speed': speed }}>
+        <img src="../../assets/greater-crow.png" alt="Greater" draggable="false" />
+      </div>
+      {label && <div style={{ font: "500 13px/1 'Geist Mono', monospace", color: 'var(--p-muted)', letterSpacing: '.02em' }}>{label}</div>}
+    </div>
+  );
+}
+
 /* ---------------- EmptyState ---------------- */
 function EmptyState({ icon = 'inbox', title, body, action, dashed = false, inTable = false }) {
   return (
@@ -93,4 +108,4 @@ function EmptyState({ icon = 'inbox', title, body, action, dashed = false, inTab
   );
 }
 
-Object.assign(window, { Toast, ToastHost, Spinner, Skeleton, EmptyState });
+Object.assign(window, { Toast, ToastHost, Spinner, Skeleton, EmptyState, EchoPulse });

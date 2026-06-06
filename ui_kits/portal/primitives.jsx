@@ -27,12 +27,12 @@ function Crow({ size = 24 }) {
 }
 
 /* ---------------- Button ---------------- */
-function Button({ variant = 'primary', size = 'md', icon, iconRight, children, onClick, disabled, style, type }) {
+function Button({ variant = 'primary', size = 'md', icon, iconRight, children, onClick, disabled, loading, style, type, ...rest }) {
   const base = {
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
     height: size === 'sm' ? 30 : size === 'lg' ? 40 : 36,
-    padding: size === 'sm' ? '0 16px' : size === 'lg' ? '0 28px' : '0 24px',
-    minWidth: size === 'sm' ? 72 : size === 'lg' ? 120 : 96,
+    padding: size === 'sm' ? '0 16px' : size === 'lg' ? '0 28px' : '0 20px',
+    minWidth: size === 'sm' ? 64 : size === 'lg' ? 120 : 88,
     borderRadius: 4, cursor: disabled ? 'not-allowed' : 'pointer',
     font: '500 14px/1 Inter, sans-serif', border: '1px solid transparent',
     transition: 'background .12s, border-color .12s', opacity: disabled ? 0.45 : 1,
@@ -42,8 +42,9 @@ function Button({ variant = 'primary', size = 'md', icon, iconRight, children, o
     primary:   { background: '#007CFF', color: '#fff' },
     secondary: { background: '#fff', color: '#007CFF', borderColor: '#007CFF' },
     warning:   { background: '#fff', color: '#E5484D', borderColor: '#E5484D' },
+    danger:    { background: '#E5484D', color: '#fff' },
     neutral:   { background: '#fff', color: '#364153', borderColor: '#D1D5DC' },
-    ghost:     { background: 'transparent', color: '#007CFF', padding: '0 16px', minWidth: 72 },
+    ghost:     { background: 'transparent', color: '#007CFF', padding: '0 12px', minWidth: 0 },
     neo:       { background: '#fff', color: '#000', border: '1px solid #000', boxShadow: '2px 2px 0 0 #000', letterSpacing: '.05em', height: 39, padding: '0 30px', minWidth: 120, fontSize: 16 },
   };
   const [hover, setHover] = useState(false);
@@ -51,6 +52,7 @@ function Button({ variant = 'primary', size = 'md', icon, iconRight, children, o
     primary:   '#0066D6',
     secondary: 'rgba(0,124,255,.05)',
     warning:   'rgba(229,72,77,.05)',
+    danger:    '#C93B40',
     neutral:   '#F3F4F6',
     ghost:     'rgba(0,124,255,.05)',
     neo:       '#F0F7FF',
@@ -59,15 +61,16 @@ function Button({ variant = 'primary', size = 'md', icon, iconRight, children, o
     primary:   { background: 'rgba(0,124,255,.25)', color: '#fff', opacity: 1 },
     secondary: { color: 'rgba(0,124,255,.25)', borderColor: 'rgba(0,124,255,.25)', opacity: 1 },
     warning:   { color: 'rgba(229,72,77,.25)', borderColor: 'rgba(229,72,77,.25)', opacity: 1 },
+    danger:    { background: 'rgba(229,72,77,.45)', color: '#fff', opacity: 1 },
     neutral:   { background: '#fff', color: '#99A1AF', borderColor: '#E5E7EB', opacity: 1 },
     ghost:     { color: 'rgba(0,124,255,.25)', opacity: 1 },
     neo:       { opacity: 0.4 },
   }[variant] || {}) : {};
   return (
-    <button type={type || 'button'} onClick={disabled ? undefined : onClick}
-      onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+    <button type={type || 'button'} onClick={disabled || loading ? undefined : onClick} disabled={disabled || loading}
+      onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} {...rest}
       style={{ ...base, ...variants[variant], ...(hover && !disabled ? { background: hoverBg } : {}), ...disabledStyle, ...style }}>
-      {icon && <Icon name={icon} size={14} />}
+      {loading ? <Spinner size={15} onFill={variant === 'primary' || variant === 'danger'} /> : (icon && <Icon name={icon} size={14} />)}
       {children}
       {iconRight && <Icon name={iconRight} size={14} />}
     </button>
@@ -189,14 +192,17 @@ function SegmentedTabs({ value, onChange, items }) {
   );
 }
 
-/* ---------------- StatCard ---------------- */
-function StatCard({ value, label, color = 'ink', action }) {
+/* ---------------- StatCard (with drill-in `active` state) ----------------
+   Pass `onClick` to make the card a filter shortcut; `active` marks it as the
+   live drill target — border, inset ring, and action link adopt its color. */
+function StatCard({ value, label, color = 'ink', action, active, onClick }) {
   const colors = { ink: 'var(--p-ink)', blue: 'var(--p-primary)', green: 'var(--p-success)', red: 'var(--p-danger)', gold: 'var(--p-warning)' };
+  const c = colors[color] || colors.ink;
   return (
-    <div style={{ background: '#fff', border: '1px solid var(--p-border)', borderRadius: 6, padding: '14px 16px', display: 'flex', gap: 10, alignItems: 'baseline', boxShadow: 'var(--shadow-card)' }}>
-      <span style={{ font: "700 20px/1 'Geist Mono', monospace", color: colors[color] }}>{value}</span>
+    <div onClick={onClick} style={{ background: '#fff', border: `1px solid ${active ? c : 'var(--p-border)'}`, borderRadius: 6, padding: '14px 16px', display: 'flex', gap: 10, alignItems: 'baseline', boxShadow: active ? `inset 0 0 0 1px ${c}, var(--shadow-card)` : 'var(--shadow-card)', cursor: onClick ? 'pointer' : 'default', transition: 'border-color .12s, box-shadow .12s' }}>
+      <span style={{ font: "700 20px/1 'Geist Mono', monospace", color: c }}>{value}</span>
       <span style={{ font: '400 14px/1.3 Inter, sans-serif', color: 'var(--p-text-2)' }}>{label}</span>
-      {action && <span style={{ marginLeft: 'auto', font: '500 12px/1 Inter, sans-serif', color: 'var(--p-muted)', cursor: 'pointer', textDecoration: 'underline', textDecorationColor: '#C4C9D2', textDecorationThickness: '1px', textUnderlineOffset: '2px' }}>{action}</span>}
+      {action && <span style={{ marginLeft: 'auto', font: '500 12px/1 Inter, sans-serif', color: active ? c : 'var(--p-muted)', cursor: 'pointer', textDecoration: 'underline', textDecorationColor: active ? c : '#C4C9D2', textDecorationThickness: '1px', textUnderlineOffset: '2px' }}>{action}</span>}
     </div>
   );
 }
@@ -210,4 +216,22 @@ function InfoBanner({ tone = 'info', children }) {
   return <div style={{ background: tones[tone].bg, color: tones[tone].fg, borderRadius: 8, padding: '10px 12px', font: '400 14px/1.4 Inter, sans-serif' }}>{children}</div>;
 }
 
-Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, FilterChip, SegmentedTabs, StatCard, InfoBanner });
+/* ---------------- Show / Hide Stats — per-page persisted toggle ---------------- */
+function useStatsVisible(key) {
+  const storageKey = `gr-stats-visible:${key}`;
+  const [visible, setVisible] = useState(() => {
+    try { const v = localStorage.getItem(storageKey); return v === null ? true : v === '1'; } catch (e) { return true; }
+  });
+  useEffect(() => { try { localStorage.setItem(storageKey, visible ? '1' : '0'); } catch (e) {} }, [storageKey, visible]);
+  return [visible, setVisible];
+}
+
+function StatsToggle({ visible, onToggle }) {
+  return (
+    <Button variant="neutral" icon={visible ? 'visibility_off' : 'visibility'} onClick={onToggle}>
+      {visible ? 'Hide Stats' : 'Show Stats'}
+    </Button>
+  );
+}
+
+Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, FilterChip, SegmentedTabs, StatCard, InfoBanner, StatsToggle, useStatsVisible });

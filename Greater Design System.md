@@ -35,6 +35,7 @@
    - [Page Detail Header](#page-detail-header)
    - [App Shell & Navigation Sidebar](#app-shell--navigation-sidebar)
    - [Maps](#maps)
+   - **New in 1.1:** [Wizard (multi-step flow)](#wizard-multi-step-flow) · [Audit Log, Change Row & Restore](#audit-log-change-row--restore) · [Echo Pulse](#echo-pulse-brand-moment) · [Expandable Rows](#expandable-rows) · [Batch Actions](#batch-actions-header-dropdown)
 10. [Motion](#motion)
 11. [Voice & Copy](#voice--copy)
 12. [Layout](#layout)
@@ -240,7 +241,7 @@ Inter is the **only** UI family (Regular / Medium / Semibold / Bold / Light). No
 | `.g-h1` | Inter Semibold 24 / 1.33, ls −0.025em | Portal page title |
 | `.g-h2` | Inter Semibold 20 / 1.2, ls 0 | Compact page title |
 | `.g-h3` | Inter Regular 18 / 1.33, ls +0.05em | Secondary info, sign-in heading |
-| `.g-section-title` | Inter Medium 14 UPPERCASE, ls +0.05em | Section title, column header |
+| `.g-section-title` | Inter Medium 13 UPPERCASE, ls +0.06em, muted | Section title, column header |
 | `.g-subtitle-1` | Inter Medium 14 UPPERCASE, ls +0.05em, medium-gray | Subtitle under H1 |
 | `.g-subtitle-2` | Inter Regular 11 / 1.3, medium-gray | Fine print / legal |
 | `.g-body-1` | Inter Regular 16 / 1.4 | Standard page & table content |
@@ -295,6 +296,11 @@ text-underline-offset: 2px;
   - Column headers: all caps, tracked (`PRODUCT`, `ACCOUNTS`, `IN MARKET`)
   - Overlines: all caps (`OVERLINE 1`)
   - Tab labels & filter chips: Title Case (`Products in Market`, `All Products`)
+  - **Actions & overlay headers: Title Case** (see the rule below)
+
+**Title Case for actions & overlay headers.** Title Case is mandatory for **all** button and link-button labels, SplitButton labels, segmented-control labels used as actions, and **Modal / Drawer / Dialog headers**. Capitalize the first and last word and every major word; keep short articles, conjunctions, and prepositions (*a, an, the, and, or, to, of, in*) lowercase unless first or last. Examples: **"Save Changes"** (not "Save changes"), **"Clear All"**, **"Copy to All"**, **"Add Report"**, **"Create Another Plan"**, **"Restore This Version"**, **"Batch Actions"**. This applies to new components too — never ship a sentence-case button label or overlay header.
+
+Everything that is **not** an action or overlay header stays **sentence case**: body text, table cell content, helper / validation text, info banners, empty-state bodies, tooltips, and toasts.
 
 ---
 
@@ -410,7 +416,7 @@ Use variable-font axes (`FILL`, `wght`, `GRAD`, `opsz`) sparingly — prefer out
 
 ### Buttons
 
-All buttons share a base: `height: 36px`, `border-radius: 4px`, `font: 500 14px/1 Inter`, `padding: 0 24px`, `min-width: 96px`, `transition: background .12s`.
+All buttons share a base: `height: 36px`, `border-radius: 4px`, `font: 500 14px/1 Inter` (no extra letter-spacing — only the Neo variant is tracked), `padding: 0 20px`, `min-width: 88px`, `transition: background .12s`.
 
 #### Variants
 
@@ -443,6 +449,15 @@ border: 1px solid #E5484D;
 /* disabled */ color: rgba(229,72,77,.25); border-color: rgba(229,72,77,.25);
 ```
 
+**Danger (solid)** — red fill, white text; for an **already-confirmed, terminal** destructive action. Use **Secondary · Warning** (outline) to *open* a `confirm` modal per the existing rule; use **solid Danger** only for the final, irreversible commit inside it.
+
+```css
+background: #E5484D;
+color: #fff;
+/* hover */ background: #C93B40;
+/* disabled */ background: rgba(229,72,77,.45); color: #fff;
+```
+
 **Neutral** — white fill, gray stroke, dark text; use alongside a primary for secondary page-level actions (e.g. "Batch Actions")
 
 ```css
@@ -458,8 +473,8 @@ border: 1px solid #D1D5DC;
 ```css
 background: transparent;
 color: #007CFF;
-padding: 0 16px;
-min-width: 72px;
+padding: 0 12px;
+min-width: 0;          /* ghost hugs its label */
 /* hover */ background: rgba(0,124,255,.05);
 /* disabled */ color: rgba(0,124,255,.25);
 ```
@@ -484,17 +499,18 @@ letter-spacing: .05em;
 
 | Size | Height | Padding | Min-width |
 |---|---|---|---|
-| `sm` | 30px | `0 16px` | 72px |
-| `md` (default) | 36px | `0 24px` | 96px |
+| `sm` | 30px | `0 16px` | 64px |
+| `md` (default) | 36px | `0 20px` | 88px |
 | `lg` | 40px | `0 28px` | 120px |
+| `ghost` | 36px | `0 12px` | 0 (hugs label) |
 
 #### Button Examples
 
 ```
-Primary:    Confirm  /  Save changes  /  Finalize for Simulation (disabled)
+Primary:    Confirm  /  Save Changes  /  Finalize for Simulation (disabled)
 Secondary:  Edit Section  /  Save as Draft  /  Next (disabled)
 Warning:    Delete  /  Discontinue
-Ghost:      Go Back  /  Show more
+Ghost:      Go Back  /  Show More
 Neo:        Next  (login screen only)
 ```
 
@@ -505,7 +521,7 @@ Neo:        Next  (login screen only)
 Actions attached to a table row. There is **one primitive and two triggers** — do not add anything beyond these. Reference: `preview/components-buttons.html`.
 
 - **Menu popover** — *the primitive.* A floating list of actions. Both triggers below open this exact surface; it is never duplicated per-trigger.
-- **Split button** — *a trigger.* A labeled button + a caret; the button performs one action, the caret opens the Menu.
+- **Split button** — *a trigger.* A labeled button + a caret; the button performs one action, the caret opens the Menu. It is **not limited to the last table column** — it may also be the **primary action inside an expanded / disclosure panel** (see [Expandable Rows](#expandable-rows)), with `menuAlign="right"`. Its label is **always Title Case** (the component enforces it).
 - **Kebab** — *a trigger.* A single `more_horiz` icon button that opens the Menu.
 - A plain **slim button** (the existing button at 28px) covers the one-action / no-menu case.
 
@@ -527,6 +543,7 @@ Actions attached to a table row. There is **one primitive and two triggers** —
 
 #### Do not
 
+- **Never use the vertical `more_vert` ("⋮") kebab.** The overflow / kebab trigger is **always** the horizontal `more_horiz` — in list rows, cards, panel headers, and menus alike. `more_vert` is **banned portal-wide** (the `.g-kebab` class renders `more_horiz`).
 - Do not ship a "secondary" split button as a repeated table column — if viewing is the row's job, make the row clickable and put extras in a kebab.
 - Do not treat "button + kebab" as a distinct component — it is simply a slim button beside a kebab.
 
@@ -705,6 +722,12 @@ Token summary text: list the values when ≤2 are selected (`Category: Wine`), o
 - For large search sets, **Select all** operates on the full match set (every item matching the query), not just the rows currently rendered under the 50-item cap — so "search → select all" reliably captures everything that matched.
 - Close on outside-click and on `Escape`.
 
+**Clarifications**
+
+- **Per-attribute icons.** Each left-rail attribute row carries an icon matching its column — e.g. Chain → `account_tree`, Account → `storefront`, plus Brand / Category / Size / Supplier.
+- **Leading scope chip.** A filter step may begin with a **scope** chip that changes the *candidate set* rather than filtering it — e.g. Store Promotions' product step toggles "All Products" vs "Carried at Selected Accounts" (defaults to carried). It sits to the left of the attribute filters.
+- **Searchable single-chip (`ChipFilter`).** When exactly one high-cardinality attribute is filtered standalone (e.g. a Chain with hundreds of values), a single searchable chip is acceptable instead of opening the full menu — the bridge between "one Filter Chip" and "the consolidated menu".
+
 ---
 
 ### Tabs
@@ -828,6 +851,10 @@ font: 500 12px/1.5 Inter;
 - **Attention is built in** — loudness comes from the tone + the live dot (reserved for genuinely in-progress states; respects `prefers-reduced-motion`). There is no “Solid” or “Quiet” emphasis variant.
 - **Copy:** one or two words, Title Case. No icons by default — color + dot carry it.
 
+**Lifecycle mappings (examples — reuse a tone, don't re-mint one).**
+- **Store Promotion:** Active → **Info** (blue, live dot) · Upcoming → **Pending** (amber) · Past → **Neutral** (gray).
+- **User:** Active → **Success** (green) "Active" · Deactivated → **Neutral** (gray) "Deactivated".
+
 ---
 
 ### Stat Cards
@@ -872,6 +899,14 @@ Stat cards are laid out in 3-up rows.
 4       Discontinued & Draining    Show
 ```
 
+#### Drill-in & active state
+
+A stat card can act as a **filter shortcut**: clicking its value (or the "Show" link) applies the matching table filter — e.g. "Pending Additions" toggles the Action filter; "Ending ≤ 7 Days" applies a `today..+7` date range. When a stat is the **live drill target** it takes an **`active` state** — its border, an inset `1px` ring, and the action link all adopt the card's semantic color (`box-shadow: inset 0 0 0 1px {color}, var(--shadow-card)`).
+
+#### Show / Hide Stats
+
+A **Neutral** Button toggles the whole stat row's visibility, **persisted per page** in `localStorage` under `gr-stats-visible:{key}`. Labels are **"Show Stats" / "Hide Stats"** (Title Case) with `visibility` / `visibility_off` icons.
+
 ---
 
 ### Tables
@@ -915,6 +950,8 @@ color: var(--p-text);
 font-weight: 500;
 ```
 
+**Grid-row tables (read-only feeds).** Ultra-dense, fixed-schema, read-only ledgers (e.g. the Audit Log) may be built from CSS-grid `div` rows instead of a real `<table>`, to control 7–8 fixed/elastic columns precisely. Allowed **only** for read-only data feeds, and only if it keeps the standard chrome: the `#F9FAFB` / `11px` caps / `.08em` header, 1px row borders, the hover tint, and the standard footer. Anything interactive or selectable (e.g. the wizard `SelectionTable`) stays a real `<table>`.
+
 Columns auto-size to content with a `max-width: 300px` cap. Headers support column-resize via a drag handle (6px, highlights `--p-primary` on hover).
 
 ---
@@ -941,7 +978,9 @@ Example usage:
 
 ### Selection Bar (floating)
 
-A floating bar that appears when one or more rows in a table are selected, showing the live count and bulk actions. Sticks to the bottom of the viewport, right-aligned, and floats above content. Reference: the selection bar in `ProductsScreen.jsx`.
+> **One of two selection patterns.** For operator **list / table pages with a footer + pager, the [Batch Actions header dropdown](#batch-actions-header-dropdown) is the default** — it sits with the data-table chrome instead of floating over it. Reserve this **floating** Selection Bar for **canvas / non-tabular surfaces** (maps, boards, galleries) where there is no table footer to anchor to.
+
+A floating bar that appears when one or more rows are selected, showing the live count and bulk actions. Sticks to the bottom of the viewport, right-aligned, and floats above content. Reference: the selection bar in `ProductsScreen.jsx`.
 
 ```css
 position: sticky;
@@ -967,6 +1006,15 @@ box-shadow: var(--shadow-float);
 
 - Renders only when `selected.size > 0`; animates in/out is optional (none by default — the portal reads as static).
 - The count + Clear pairing is the reusable minimum. Everything else is feature-specific and should be justified per screen.
+
+#### Batch Actions (header dropdown)
+
+The **default** multi-select pattern for operator list / table pages. Bulk actions live in a persistent header control rather than a floating bar, so they sit with the table footer (count + pager) instead of fighting it. Reference: `screens/PodPlanner.js`, `screens/Promotions.js`, `screens/Users.js`.
+
+- A **Neutral** Button labeled **"Batch Actions"** with a trailing `expand_more`, placed in the page header **to the left of the primary "New …" CTA**.
+- **Always present**, but **disabled** until `selected > 0`. When active it opens the standard **Menu** popover of bulk actions (e.g. *Edit Dates*, *Edit Qty*, *Delete*); destructive items go **last**, in `--p-danger`.
+- Pairs with a **header-checkbox select-all (visible page)** and the standard table footer (`Showing X–Y of Z` + `RowsSelect` + Pagination).
+- **Do not** also float a Selection Bar on the same surface — pick one. On tables, that's Batch Actions.
 
 Role-colored initials circle used wherever a user is represented (tables, detail headers, team rosters).
 
@@ -1207,7 +1255,7 @@ The sidebar must sit **outside** the scroll region (a sibling of `main`), never 
 
 - **Org header** — wordmark (collapsed: crow mark) + company name + city selector. City selector hidden when collapsed.
 - **Primary nav** — parent rows (40px, icon + 15px label + `expand_more` chevron when it has children) with expandable child lists. Active leaf / open group tints `rgba(0,124,255,.10)` with `--p-primary` icon; hover `rgba(0,124,255,.05)`. Active **child** row: solid `#007CFF` fill, white text, `30px` min-height.
-- **Bottom utility nav** — pinned to the bottom (Ops Tools toggle, Help Center [external], account, Sign Out). Ops Tools toggle hidden when collapsed.
+- **Bottom utility nav** — pinned to the bottom. Top → bottom: **Help Center** [external], **Audit Log**, **Settings**, **Account**, **Sign Out**. "Audit Log" (`/audit-log`) and "Settings" (`/settings`) are real routes and carry an **active/selected** state (`rgba(0,124,255,.10)` tint + `--p-primary` icon, like the primary nav); Help Center opens externally, Account and Sign Out are utilities. (The former "Ops Tools" toggle has been removed.)
 
 #### Collapsed Flyout
 
@@ -1331,7 +1379,7 @@ box-shadow: 0 6px 16px rgba(0,0,0,.14), 0 2px 4px rgba(0,0,0,.08);
 **Rules**
 
 - **Position:** `position: fixed`, top-center, `top: 18px`, above all content. Stack downward with a 10px gap when more than one is live.
-- **Behavior:** auto-dismiss ~4s (success) / ~6s (error); pause on hover. Add a trailing `✕` (22px, 6px radius, 80% opacity) only when the message is persistent or actionable.
+- **Behavior:** auto-dismiss ~4s (success) / ~6s (error); pause on hover. A trailing dismiss **`✕`** (22px, 6px radius, 80% opacity) is **always present**, so a user can clear a toast — or a whole stack — without waiting it out. (It's the same affordance on every toast; no `persistent`/`actionable` flag needed.)
 - **Motion:** slide in with a 180ms ease-out translate (transform-only, never opacity-only — backgrounded iframes can freeze an opacity keyframe at 0).
 - Two tones only. No info/warning toasts — use an Info Banner inline.
 
@@ -1368,7 +1416,9 @@ overflow: hidden;
 | `md` (default) | 520px |
 | `lg` | 640px |
 
-- **Header** — title (`600 18px`, `-.01em`) + `close` icon button, padding `18px 20px 14px 24px`.
+Custom widths are allowed for dense content — e.g. **560px** for the Audit Log timeline modal.
+
+- **Header** — title (`600 18px`, `-.01em`, **Title Case**) with an optional **`subtitle`** beneath (`400 13px --p-muted`, single-line ellipsized — e.g. the record name on the Audit Log modal) + `close` icon button, padding `18px 20px 14px 24px`.
 - **Body** — padding `4px 24px 8px`; 20px gap between fields.
 - **Footer** — `border-top: 1px solid #F0F1F3`, right-aligned, Ghost/Neutral cancel + Primary confirm.
 
@@ -1398,7 +1448,7 @@ box-shadow: var(--shadow-float);
 | `md` (default) | 460px |
 | `lg` | 560px |
 
-- **Header** — overline (`500 11px` caps, `--p-muted`) + title (`600 20px`), `border-bottom: 1px --p-border`.
+- **Header** — overline (`500 11px` caps, `--p-muted`) + title (`600 20px`, **Title Case**) + optional **`subtitle`** (`400 13px --p-muted`, ellipsized), `border-bottom: 1px --p-border`.
 - **Body** — scrolls (`flex: 1; overflow-y: auto`).
 - **Footer** — pinned, `border-top: 1px --p-border`, typically two full-width actions.
 
@@ -1462,7 +1512,7 @@ color: var(--p-muted);   /* 28px outline Material Symbol */
 
 | Cause | Icon | Action |
 |---|---|---|
-| **No results** (search / filter) | `search_off` / `filter_alt_off` | Ghost **Clear filters** — never a create CTA |
+| **No results** (search / filter) | `search_off` / `filter_alt_off` | Ghost **Clear Filters** — never a create CTA |
 | **Empty set** (nothing exists yet) | the surface's nav icon (`inventory_2`, `group`, `route`) | Primary create CTA |
 | **First-run / import** | `upload_file` | Dashed dropzone (`1px dashed --p-border-strong`, `#FBFCFD`) + primary + helper (template) |
 
@@ -1495,8 +1545,8 @@ Collapse long ranges with an ellipsis, always keeping first, last, and current �
 
 #### Page size & Load more
 
-- **Page size:** 25 / 50 / 100. **Default 50** — matches the Filter Menu's 50-row search cap so the two never disagree.
-- **Load more:** a centered Neutral button + `N of M loaded` caption — for feed-like / append-only lists where position doesn't matter. Use numbered paging for tables operators scan and jump around. Never both on one surface.
+- **Page size:** options are **25 / 50 / 100**. **50 is the canonical default on every operator table** — it matches the Filter Menu's 50-row search cap so the two never disagree. Drop to **25** only when rows are exceptionally tall; otherwise always default to 50.
+- **Load More:** a centered Neutral button + `N of M loaded` caption — for feed-like / append-only lists where position doesn't matter. Use numbered paging for tables operators scan and jump around. Never both on one surface.
 
 ---
 
@@ -1506,7 +1556,9 @@ Single-date and range, both built on the floating-label field. Reference: `previ
 
 #### Trigger
 
-Standard 44px floating-label field with a leading icon — `calendar_today` (single) / `date_range` (range). Value formats as `Jun 11, 2026` / `Apr 20 – Apr 26, 2026` (en-dash range).
+Two trigger variants:
+- **Field** — the standard 44px floating-label field with a leading icon — `calendar_today` (single) / `date_range` (range). Value formats as `Jun 11, 2026` / `Apr 20 – Apr 26, 2026` (en-dash range).
+- **Filter chip** — a **36px** filter-chip-style trigger for table **range filters**: reads `Date: {from – to}` and tints `--p-primary-tint` when active (matches the Filter Chip pattern).
 
 #### Calendar popover
 
@@ -1523,9 +1575,116 @@ padding: 14px;          /* anchored 8px below the field */
 
 #### Range
 
-Endpoints are solid primary circles; the span between fills a `--p-primary-tint` band, rounded only at the two ends. Pair the calendar with a left **preset rail** (Today, Yesterday, This week, Last 7 days, This month, Last 30 days) — operators pick these far more than exact dates. Apply on second click (start → end).
+Endpoints are solid primary circles; the span between fills a `--p-primary-tint` band, rounded only at the two ends. Apply on second click (start → end). Operators pick presets far more than exact dates.
+
+**Context-aware preset rails.** A range picker carries a left preset rail, and **the rail must match the field's temporal direction:**
+- **Forward-looking** (go-live / start dates): Today · Tomorrow · Next 7 Days · Next 30 Days · This Month · Next Month.
+- **Backward-looking** (audit / history): Today · Yesterday · Last 7 Days · Last 14 Days · Last 30 Days.
+
+**Rail styling.** Two-pane layout filled on `--p-surface-alt`; the active preset is a raised white row with a `--p-primary` semibold label; a `Clear` (danger text) is pinned to the rail bottom.
+
+#### Bounds (min / max)
+
+`fromDate` / `min` disables earlier days; `max` disables later days. Future-only fields (e.g. anything created in a wizard) enforce **`min = today`**; the Audit Log enforces **`max = today`** so you can't pick the future. Disabled days render `--p-placeholder`, with no hover and `cursor: default`.
+
+#### Positioning (portaled + auto-flip)
+
+The calendar is **portaled to `<body>`** with `position: fixed`, so it escapes `overflow: hidden` on modals and table cells, and it **opens upward (`dropUp`)** when there isn't room below — so an in-modal picker never covers the modal's Save button. Treat portaled + auto-flip as **required** for any picker used inside a modal.
 
 - **Behavior:** close on outside-click and `Escape`.
+
+---
+
+### Wizard (multi-step flow)
+
+A **full-screen, position-fixed** multi-step creation / editing flow that renders over the App Shell (`position: fixed; inset: 0; z-index: 9000`) while its route stays inside the protected layout. Introduced for POD Planner and Store Promotions. Reference: `ui_kits/portal/wizard.jsx` (live: `components/Wizard.js`).
+
+**Anatomy (top → bottom)**
+
+1. **Top bar** — `height: 60px`, white, `1px --p-border` bottom. Greater logotype + `1px` divider + flow **title** (`600 16px Inter`, `-.01em`). Right side: a **Neutral** Button "Exit" with a `close` icon.
+2. **Step indicator** — white strip, `12px 32px` padding, centered to `max-width: 1320px`. Each step is a clickable chip: a `24px` circular badge + label.
+   - **Active:** badge `--p-ink` fill, white number (`600 12px Geist Mono`); label `600 14px --p-ink`.
+   - **Complete (not current):** badge `--p-success` fill, white `check`; label `500 14px --p-success`; **clickable to jump back**.
+   - **Upcoming:** badge `--p-surface-tint`, `--p-placeholder` number; label `500 14px --p-placeholder`; not clickable. Connector lines `1px --p-border` fill the gaps.
+   - **Completion rule:** a step counts as *complete* only when `n < current` **and** it is valid — never mark the current step green prematurely, and never show a "Saved" badge.
+3. **Body** — scroll-contained, centered `max-width: 1320px`, padding `20px 32px 24px`; per-step arrival animation `gr-tab-in` (`key={current}`).
+4. **Footer nav** — `height: 72px`, white, top border + soft top shadow `0 -2px 12px rgba(16,24,40,.05)`.
+   - Left: **Neutral** Button "Back" (`arrow_back`, `size=lg`), disabled on step 1.
+   - Right: `Step N of M` caption (`500 13px --p-muted`) + **Primary** Button (`size=lg`, `min-width: 160`) whose label / icon switch on the last step (`arrow_forward` → `check`; e.g. "Continue" → "Create Store Promo"). Disabled until the step's `canNext` is satisfied; shows an inline spinner when `busy`.
+
+**Rules / learnings**
+
+- The Wizard renders **over** the shell (`z-index: 9000`); the route stays inside the protected layout.
+- **Edit = wizard, not modal.** Editing an existing record reuses the same wizard, prefilled at step 1 (with a fetch fallback on hard refresh); the final CTA relabels to "Update …". The Review step shows a **change-diff summary** (the **Change Row** primitive, documented under Audit Log below).
+- Prev / Next live **only** in the bottom footer — no duplicate inline controls.
+- Date inputs inside a wizard enforce `min = today`.
+
+**Sub-components** (all in `wizard.jsx`)
+
+- **`SelectionTable`** — the reusable selection step: search `Input` + optional filter slot + sortable column headers (`unfold_more` / `arrow_upward` / `arrow_downward`, active head `--p-primary`) + a `44px` checkbox column with **select-all (filtered set)** + per-row `Check`. Row click toggles selection; selected rows tint `--p-primary-tint` (`.wz-row-selected`). Built on a CSS `<table>` with sticky `thead`. Inline footer: `Showing X of Y {noun}s · N selected`. Skeleton rows while loading. Testids: `selection-row-{id}`, `selection-checkbox-{id}`, `selection-select-all`, `selection-sort-{key}`, `selection-search`.
+- **`SelectedPopover`** — a pill trigger "**N selected**" (rounded, `--p-primary-tint` / `--p-primary-soft` border / `--p-primary-ink`) opening a 300px review list with per-item remove + "Clear All". Lets you trim a large multi-select without leaving the step.
+- **`Check`** — table-tuned binary checkbox: `18px`, `radius 4`, `1.5px` border; on = `--p-primary` fill + white `check`.
+- **`CopyToAllChip`** — inline action pill ("Copy to All", `content_copy`, `26px`, pill, `--p-primary-tint`) that propagates one row's configured value to every selected row (POD Planner "Configure Actions" step).
+- **`ActionSegment`** — a 2-option segmented control (Add / Discontinue) where **Add = `--p-success`** and **Discontinue = `--p-danger`** when active (`30px`, `radius 4`, `600 13px`) — an example of semantic-colored segments.
+- **`StepHeader`** — step title (`600 20px --p-ink`, `-.01em`) + optional **helper banner** (`--p-primary-tint` bg, `--p-text`, `radius 8`, `10px 14px`, `400 14px`). The canonical home for the "Select one or more… (Step 1 of 4)" info copy.
+
+CSS used: `.wz-row`, `.wz-row-selected`, `.wz-num` focus ring, `gr-tab-in` (see §10 / §13).
+
+---
+
+### Audit Log, Change Row & Restore
+
+A first-class, cross-portal capability with three surfaces, backed by per-entity immutable audit collections. The UI is fully reusable. Reference: `ui_kits/portal/audit.jsx` (live: `components/AuditLog.js`, `components/ChangeLog.js`, `screens/AuditLog.js`).
+
+**Action accents (new semantic taxonomy):** Created = `--p-primary` (`flag` / `add_circle`), Updated = **gold `#B7791F`** (`edit`), Restored = **teal `--p-restore` `#0D9488`** (`settings_backup_restore`), Deleted = `--p-danger` (`delete`). Tokens: `--p-audit-created` / `-updated` / `-restored` / `-deleted` (§13).
+
+#### Audit Log timeline modal (`AuditLogModal`)
+
+A vertical **timeline** of one record's history. Each node:
+- A `26px` circular icon chip outlined in the action accent + a vertical connector to the next node.
+- Header line: action label (`600 13px`), a **"Current"** chip on the newest node, "by {actor}", and a right-aligned mono timestamp.
+- Body: the change set rendered as **Change Rows** (below). A `created` node labels its rows **"Initial values"** and lists every starting field (nothing → value).
+- **Restore control:** every non-current node with a snapshot shows a **"Restore This Version"** button (teal) with an inline confirm ("Restore to this version?") → Cancel / Restore.
+- Driven by props (`auditUrl`, `restoreUrl(id)`, `formatValue(field, value)`, `createdMessage`, `restoredNoun`, `title`, `subtitle`), so any entity reuses it. Rendered in a Modal at the 560px custom width.
+
+#### Audit Log ledger page (`/audit-log`)
+
+A **single, generic, immutable ledger table** that flattens every entity's audit events into **one row per changed attribute**:
+
+`When · Record Type · Record · Action · Attribute · Removed · Added · Changed By`
+
+- The value columns are **"Removed" / "Added"**, not "Old Value / New Value" — this reads correctly for every change kind: a scalar edit (Name "A"→"B") is Removed:A / Added:B; a multi-select edit is literally what was removed vs added; a Created row is Removed:— / Added:value. Removed values render struck-through in `--p-muted`; Added values render in `--p-ink`.
+- **Record Type** is a **plain-text** column (e.g. "Store Promotion", "POD Plan", "User") — **no icon, no color pill**.
+- **Toolbar:** search · date-range filter (backward-looking preset rail — see Date Picker) · "All Record Types" · "All Actions" · "All Users" (actor) filters.
+- **Footer:** standard data-table footer (`Showing X–Y of Z changes` + `RowsSelect` + Pagination, default 50).
+- Built as a **grid-row table** (read-only feed — see Tables). Deletions are recorded as **tombstones** (the record's name persists as the label after the record itself is gone).
+
+#### Change Row (`ChangeRow`)
+
+The shared diff primitive used by the audit modal **and** the wizard Review step. Two modes:
+- **Scalar:** `<label> oldValue → newValue` — old struck-through `--p-muted`, `arrow_forward` glyph, new `--p-ink 500`. When `from` is null/undefined (creation) it shows only the new value.
+- **Membership:** `+ name` chips (green success text on `--g-green-10`) and `− name` chips (`--p-danger`, struck-through, on `--g-red-10`).
+- Label is an uppercase micro-caps tag (`600 11px`, `.04em`, `--p-text-2`, min-width 84).
+
+---
+
+### Echo Pulse (brand moment)
+
+A brand-forward loading mark shown on the post-auth transition into the portal: the Greater raven with two expanding **Intelligence-gradient** rings (conic `#007CFF → #5359F1 → #F153A9`). A **Foundation-tier** moment — the one place the Intelligence gradient (see §3) animates. Reference: `.echo-pulse` + the `ep-echo` keyframes in `colors_and_type.css` (live: `components/EchoPulse.js`).
+
+- Markup: `.echo-pulse` wraps the raven `<img>`; two `::before` / `::after` rings, conic-gradient masked to a 2px stroke, animated by `ep-echo` (scale .55 → 1.9, fading out) and offset by half the cycle.
+- Respects `prefers-reduced-motion` (rings disabled). Use it **only** for the auth → portal transition — not as a general spinner (that's the Spinner in Loading & Skeleton).
+
+---
+
+### Expandable Rows
+
+A table row can **expand in place** to reveal related detail — Store Promotions reveals its Accounts and Products via a lazy `GET /promotions/{id}`. Reference: `screens/Promotions.js`.
+
+- **Affordance:** an accessible chevron button at the row's lead toggles the panel (`expand_more`, rotated when open).
+- **Animation:** a **`grid-rows` disclosure** — animate `grid-template-rows: 0fr → 1fr` over a `min-height: 0` inner wrapper, so the panel height-animates without measuring.
+- **Lazy-load:** fetch the detail on first expand; show a skeleton until it resolves.
+- **The expanded panel — not a new column — is the correct home for in-context detail and actions.** This is where a **Split button** serves as the panel's primary action (see Row Actions), with `menuAlign="right"`.
 
 ---
 
@@ -1541,6 +1700,26 @@ Animation is minimal — the portal reads as mostly static.
 
 Rules: no bounces, no springs. Treat motion as a garnish, not a feature.
 
+### Keyframes
+
+These named keyframes ship in `colors_and_type.css` and back every entrance / loading animation:
+
+| Keyframe | Used for |
+|---|---|
+| `gr-fade-in` | simple opacity reveals |
+| `gr-pop-in` | menus / popovers / tooltips |
+| `gr-flyout-in` | collapsed-nav flyout |
+| `gr-toast-in` | toast entrance (top-center) |
+| `gr-spin` | spinner |
+| `gr-shimmer` | skeleton shimmer |
+| `gr-rise-in` | login / staggered entrance (`--i` index delay) |
+| `gr-slide-fwd` / `gr-slide-back` | directional step transitions |
+| `gr-tab-in` | tab-panel & wizard-step arrival |
+| `gr-bar-in` | bottom-anchored bar (keeps `translate(-50%, …)` centering) |
+| `ep-echo` | Echo Pulse rings (see §9 Echo Pulse) |
+
+**Transform-first rule.** Entrance animations must animate a transform, not opacity alone. A backgrounded iframe can freeze an opacity-only keyframe at `0`, leaving content permanently invisible — always pair opacity with a `translate`/`scale`. Honor `prefers-reduced-motion`: the stylesheet collapses durations and disables the Echo Pulse rings.
+
 ---
 
 ## 11. Voice & Copy
@@ -1549,9 +1728,9 @@ Rules: no bounces, no springs. Treat motion as a garnish, not a feature.
 
 - **Plainspoken, operational, slightly wry.** Product copy is literal and straightforward.
 - **Second-person, sparingly.** "Sign in to your account." Never cutesy ("Hey! Let's get you signed in 👋"). No first-person.
-- **Sentence case** everywhere except column headers, overlines, and tab/chip labels (see Typography).
+- **Sentence case** for prose; **Title Case** for actions & overlay headers. Sentence case everywhere except column headers, overlines, tab/chip labels, and — per §4 — every button / link-button / SplitButton label and Modal·Drawer·Dialog header (see Typography → Sentence Case Rules).
 - **Numbers carry weight.** Stat cards lead with large bold numbers. Use abbreviations: `21.1k`, `$482.7k`, `1,258`.
-- **Verb-first** for actions: "Save changes", "Finalize for Simulation", "Go Back".
+- **Verb-first** for actions, in Title Case: "Save Changes", "Finalize for Simulation", "Go Back".
 - **No emoji in product.** Emoji-free.
 - **Inline status words are colored** — not bolded, not badged. The color conveys the meaning.
 
@@ -1666,6 +1845,17 @@ All tokens are defined in `colors_and_type.css`. Load it first, then optionally 
   --p-warning: #DB9E03;
   --p-danger: #E5484D;
   --p-danger-strong: #DC2626;
+
+  /* Intelligence gradient — AI / confidence / predictive */
+  --g-intel-gradient: linear-gradient(90deg, #007CFF 0%, #5359F1 50%, #F153A9 100%);
+
+  /* Restore / audit action accents */
+  --p-restore: #0D9488;             /* teal — restore / revert + `restored` audit state */
+  --g-teal-10: rgba(20,184,166,.12);
+  --p-audit-created: var(--p-primary);
+  --p-audit-updated: #B7791F;
+  --p-audit-restored: var(--p-restore);
+  --p-audit-deleted: var(--p-danger);
 
   /* Radii */
   --radius-xs: 2px;

@@ -81,11 +81,12 @@ function Scrim({ children, onClose, justify = 'center' }) {
 }
 
 /* ---------------- Modal (default + confirm) ---------------- */
-function Modal({ open, onClose, title, children, footer, size = 'md', variant = 'default', tone = 'danger', icon = 'warning', warning }) {
+function Modal({ open, onClose, title, subtitle, children, footer, size = 'md', width, variant = 'default', tone = 'danger', icon = 'warning', warning }) {
   useDismiss(open, onClose);
   if (!open) return null;
   const confirm = variant === 'confirm';
-  const width = { sm: 420, md: 520, lg: 640 }[size] || 520;
+  // size map, or a custom width for dense content (e.g. the 560px audit timeline)
+  const w = width || ({ sm: 420, md: 520, lg: 640 }[size] || 520);
   const TONES = {
     danger:  { tint: 'rgba(229,72,77,.12)', color: 'var(--p-danger)' },
     warning: { tint: 'rgba(219,158,3,.12)', color: 'var(--p-warning)' },
@@ -95,7 +96,7 @@ function Modal({ open, onClose, title, children, footer, size = 'md', variant = 
   const t = TONES[tone] || TONES.danger;
   return (
     <Scrim onClose={confirm ? undefined : onClose}>
-      <div style={{ width, background: '#fff', borderRadius: 12, border: '1px solid var(--p-border)', boxShadow: confirm ? '0 8px 28px rgba(0,0,0,.12), 0 2px 6px rgba(0,0,0,.06)' : '0 8px 28px rgba(0,0,0,.18), 0 2px 6px rgba(0,0,0,.08)', overflow: 'hidden', animation: 'g-modal-in .18s ease-out' }}>
+      <div style={{ width: w, background: '#fff', borderRadius: 12, border: '1px solid var(--p-border)', boxShadow: confirm ? '0 8px 28px rgba(0,0,0,.12), 0 2px 6px rgba(0,0,0,.06)' : '0 8px 28px rgba(0,0,0,.18), 0 2px 6px rgba(0,0,0,.08)', overflow: 'hidden', animation: 'g-modal-in .18s ease-out' }}>
         {confirm ? (
           <div style={{ padding: '22px 24px 16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
@@ -112,9 +113,12 @@ function Modal({ open, onClose, title, children, footer, size = 'md', variant = 
           </div>
         ) : (
           <>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px 14px 24px' }}>
-              <h2 style={{ margin: 0, font: '600 18px/1.3 Inter, sans-serif', letterSpacing: '-.01em', color: 'var(--p-ink)' }}>{title}</h2>
-              <span onClick={onClose} style={{ width: 32, height: 32, borderRadius: 6, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--p-muted)', cursor: 'pointer' }}><MIcon name="close" size={20} /></span>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', padding: '18px 20px 14px 24px' }}>
+              <div style={{ minWidth: 0 }}>
+                <h2 style={{ margin: 0, font: '600 18px/1.3 Inter, sans-serif', letterSpacing: '-.01em', color: 'var(--p-ink)' }}>{title}</h2>
+                {subtitle && <div style={{ font: '400 13px/1.3 Inter, sans-serif', color: 'var(--p-muted)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{subtitle}</div>}
+              </div>
+              <span onClick={onClose} style={{ width: 32, height: 32, borderRadius: 6, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--p-muted)', cursor: 'pointer', flexShrink: 0 }}><MIcon name="close" size={20} /></span>
             </div>
             <div style={{ padding: '4px 24px 8px', display: 'flex', flexDirection: 'column', gap: 20 }}>{children}</div>
           </>
@@ -172,15 +176,28 @@ function Menu({ items = [], onSelect, style }) {
   );
 }
 
+/* Title Case for action labels — keep short articles/conjunctions/prepositions lowercase (see §4). */
+function toTitleCase(s) {
+  if (typeof s !== 'string') return s;
+  const small = new Set(['a', 'an', 'the', 'and', 'or', 'to', 'of', 'in', 'for', 'on', 'at', 'by', 'with', 'as']);
+  return s.split(' ').map((w, i, arr) =>
+    (i !== 0 && i !== arr.length - 1 && small.has(w.toLowerCase()))
+      ? w.toLowerCase()
+      : w.charAt(0).toUpperCase() + w.slice(1)
+  ).join(' ');
+}
+
 /* ---------------- SplitButton (trigger) ----------------
-   A visible action + a caret that opens the Menu. intent: 'primary' | 'error'. */
+   A visible action + a caret that opens the Menu. intent: 'primary' | 'error'.
+   The main label is always rendered in Title Case (DS §4); it may serve as a
+   row's last-column trigger OR the primary action inside an expanded panel. */
 function SplitButton({ children, onClick, items = [], intent = 'primary', icon, menuAlign = 'left' }) {
   const [open, setOpen] = useState(false);
   const ref = useOutside(() => setOpen(false));
   return (
     <span ref={ref} style={{ position: 'relative', display: 'inline-flex' }}>
       <span className={'g-split ' + intent}>
-        <button className="g-split-main" onClick={onClick}>{icon && <MIcon name={icon} size={15} />}{children}</button>
+        <button className="g-split-main" onClick={onClick}>{icon && <MIcon name={icon} size={15} />}{toTitleCase(children)}</button>
         <button className="g-split-caret" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((o) => !o)}><MIcon name="expand_more" size={17} /></button>
       </span>
       {open && <div style={{ position: 'absolute', top: 34, [menuAlign === 'right' ? 'right' : 'left']: 0, zIndex: 60 }}><Menu items={items} onSelect={() => setOpen(false)} /></div>}
