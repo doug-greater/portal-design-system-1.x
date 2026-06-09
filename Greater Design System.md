@@ -1410,6 +1410,26 @@ A **full-page editor that stays inside the App Shell** (left nav visible) — no
 
 ---
 
+### Deep-linking (URL facets)
+
+Cross-page affordances (a chip, a "View all", a stat) should land the user on the destination list **already filtered** — and that state should be a real, shareable URL.
+
+- **List filters are URL-addressable.** A list's search + facet state serializes to query params (`?q=…&account=A0011&chain=Pelican%20Grocers`). The list reads them on mount via the shared `readUrlFacets(search, mapping)` helper (`lib/urlFilters.js`), which maps query keys → facet groups.
+- **Cross-page links navigate with a facet query.** The pending-delta chips (see Tables) and the Accounts "Products" cell deep-link to `/pod-planner?account=<id>`; the account-detail "Products in Market" link goes to `/in-the-market?account=<id>`.
+- **Link to the record facet, not a sub-filter.** The `+N` and `−N` chips both link to the **same** account-filtered view (no `action=Add/Discontinue` param) — the user wants to see *that store's* pending plans; pre-filtering to only adds or only discontinues hides half the picture. Keep deep-links to the **stable record facet** only.
+- **Renamed routes redirect, preserving the query string.** When a route is renamed, the old path **301s** to the new one with `location.search` intact, so existing `…?account=…` deep-links keep working:
+
+```jsx
+function LegacyProductsRedirect() {
+  const { search } = useLocation();
+  return <Navigate to={`/in-the-market${search}`} replace />;
+}
+```
+
+**IA note — `/in-the-market`.** The "In the Market" catalog page route is **`/in-the-market`** (was `/products`); the home, post-login, and catch-all redirects point to it, and `/products` 301s to it (query preserved). **Back-end API paths are unchanged** — only the front-end route was renamed; calls like `GET /api/products…` stay as-is.
+
+---
+
 ### Maps
 
 Maps use **Leaflet 1.9.x** with **CARTO "Light All" @2x retina tiles** (muted neutral — never satellite).

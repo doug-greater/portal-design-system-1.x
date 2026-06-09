@@ -59,7 +59,7 @@ Header, and a full app shell with a collapsible Navigation Sidebar.
 | `/scenarios/:id/agent-configuration/*` | Configure AI agents — sales rep week defaults, call patterns, route planning. |
 | `/scenarios/:id/general-settings/*` | Scenario-level settings (work-week, constraints). |
 | `/orchestration/visualize-impact/*` | Line/area charts showing baseline vs. selected scenario impact ($ savings, workload). |
-| `/products` ("In the Market") | Inventory table — products × accounts × coverage, with category pills and placement counts. |
+| `/in-the-market` ("In the Market") | Inventory table — products × accounts × coverage, with category pills and placement counts. (Renamed from `/products`, which 301s here with the query string preserved; back-end API paths unchanged.) |
 | `/accounts` | Account directory + detail pages (Account Type Icon identity header). |
 | `/users` | User management — list, detail (Profile / Role & Permissions / Team), with role pills and permission cards. |
 | `/store-layouts` | Per-account drag-and-drop merchandising — sections, placements, an Unassigned tray, drafts / scheduled resets, CSV import (`@dnd-kit`). In-shell editor at `/store-layouts/:accountId/:version`. |
