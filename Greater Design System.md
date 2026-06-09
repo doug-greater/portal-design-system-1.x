@@ -1376,6 +1376,15 @@ The sidebar must sit **outside** the scroll region (a sibling of `main`), never 
 - **Primary nav** — parent rows (40px, icon + 15px label + `expand_more` chevron when it has children) with expandable child lists. Active leaf / open group tints `rgba(0,124,255,.10)` with `--p-primary` icon; hover `rgba(0,124,255,.05)`. Active **child** row: solid `#007CFF` fill, white text, `30px` min-height.
 - **Bottom utility nav** — pinned to the bottom. Top → bottom: **Help Center** [external], **Audit Log**, **Settings**, **Account**, **Sign Out**. "Audit Log" (`/audit-log`) and "Settings" (`/settings`) are real routes and carry an **active/selected** state (`rgba(0,124,255,.10)` tint + `--p-primary` icon, like the primary nav); Help Center opens externally, Account and Sign Out are utilities. (The former "Ops Tools" toggle has been removed.)
 
+#### Collapse / expand motion
+
+The collapsible nav (72px ↔ 248px, `transition: width 180ms ease`) animates two things rather than snapping:
+
+- **Logo crossfade.** Don't swap the brand mark's `src`. Stack the **wordmark** and the **crow** absolutely in a width-animating container and **dissolve** between them (`opacity` over 160ms).
+- **Company-name reveal (wrap-safe).** The name **wraps freely** at full width — **never** `nowrap` / ellipsis-truncate it (that permanently clips a long customer name). Reveal it with **`grid-template-rows: 0fr ↔ 1fr`** so it animates to its **natural** (possibly multi-line) height, plus **asymmetric opacity timing** so the temporary reflow is never seen: on **collapse**, fade out fast (110ms) *then* close the row (60ms delay); on **expand**, open the row with the drawer *then* fade in after the width settles (220ms delay). The grid child needs `overflow: hidden; min-height: 0`.
+
+**Content region = `--p-shell`** (see §3 Color); the `aside` itself stays white. **Loading screens** — `FullScreenLoader` (initial auth) and the post-auth **Echo Pulse** overlay ("Entering Greater Portal…") — also sit on `--p-shell`, so entering and leaving the portal is continuous with the shelled app (the Echo Pulse mark is transparent, so no component change).
+
 #### Collapsed Flyout
 
 When collapsed (72px), hovering a nav icon opens a flyout so users navigate without expanding the rail.

@@ -302,27 +302,37 @@ function AppShell({ currentRoute = 'route-assignments', onNavigate, userName = '
           display: 'flex', flexDirection: 'column', gap: 0,
         }}>
           {/* Header */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, paddingBottom: 20, alignItems: collapsed ? 'center' : 'stretch' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0, paddingBottom: 20, alignItems: collapsed ? 'center' : 'stretch' }}>
+            {/* Logo crossfade — wordmark ↔ crow dissolve (no instant src swap) */}
             <a href="#" onClick={(e)=>e.preventDefault()} style={{ display: 'inline-flex' }}>
-              {collapsed
-                ? <img src="../../assets/greater-crow.png" alt="Greater" width="28" height="30" style={{ height: 30, width: 'auto', display: 'block' }} />
-                : <img src="../../assets/greater-logotype.png" alt="Greater" width="132" height="30" style={{ height: 30, width: 132, display: 'block' }} />
-              }
+              <div style={{ position: 'relative', height: 30, width: collapsed ? 34 : 132, transition: 'width 180ms ease', flexShrink: 0 }}>
+                <img src="../../assets/greater-logotype.png" alt="Greater"
+                  style={{ position: 'absolute', top: 0, left: 0, height: 30, width: 'auto', maxWidth: 132, objectFit: 'contain', opacity: collapsed ? 0 : 1, transition: 'opacity 160ms ease', pointerEvents: 'none' }} />
+                <img src="../../assets/greater-crow.png" alt="" aria-hidden="true"
+                  style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', height: 30, width: 'auto', objectFit: 'contain', opacity: collapsed ? 1 : 0, transition: 'opacity 160ms ease', pointerEvents: 'none' }} />
+              </div>
             </a>
+            {/* Company name — wrap-safe grid-rows reveal: wraps freely, hidden during the transition (never nowrap/ellipsis) */}
+            <div style={{
+              display: 'grid', gridTemplateRows: collapsed ? '0fr' : '1fr',
+              marginTop: collapsed ? 0 : 16, opacity: collapsed ? 0 : 1,
+              transition: collapsed
+                ? 'opacity 110ms ease, grid-template-rows 180ms ease 60ms, margin-top 180ms ease 60ms'
+                : 'opacity 200ms ease 220ms, grid-template-rows 200ms ease, margin-top 200ms ease',
+            }}>
+              <p style={{ margin: 0, minHeight: 0, overflow: 'hidden', font: '400 14px/20px Inter', color: INK }}>Coastal Beverage Company</p>
+            </div>
             {!collapsed && (
-              <div>
-                <p style={{ margin: 0, font: '400 14px/20px Inter', color: INK }}>Coastal Beverage Company</p>
-                <div style={{ marginTop: 8, width: '100%' }}>
-                  <button type="button" style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    width: '100%', minHeight: 28, padding: '4px 4px 4px 8px', gap: 8,
-                    borderRadius: 8, border: '0.5px solid #D1D5DB', background: '#fff',
-                    font: '500 13px/20px Inter', color: INK, cursor: 'pointer',
-                  }}>
-                    <span>Elizabeth City</span>
-                    {MS('arrow_drop_down', 18, GRAY_800)}
-                  </button>
-                </div>
+              <div style={{ marginTop: 8, width: '100%' }}>
+                <button type="button" style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  width: '100%', minHeight: 28, padding: '4px 4px 4px 8px', gap: 8,
+                  borderRadius: 8, border: '0.5px solid #D1D5DB', background: '#fff',
+                  font: '500 13px/20px Inter', color: INK, cursor: 'pointer',
+                }}>
+                  <span>Elizabeth City</span>
+                  {MS('arrow_drop_down', 18, GRAY_800)}
+                </button>
               </div>
             )}
           </div>
@@ -352,7 +362,7 @@ function AppShell({ currentRoute = 'route-assignments', onNavigate, userName = '
       </aside>
 
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 }}>
-        <div style={{ flex: 1, minHeight: 0, padding: 24, overflowY: 'auto', background: '#fff' }}>{children}</div>
+        <div style={{ flex: 1, minHeight: 0, padding: 24, overflowY: 'auto', background: 'var(--p-shell)' }}>{children}</div>
       </main>
 
       {/* Collapsed flyout — fixed-positioned so it escapes the sidebar's overflow clipping */}
