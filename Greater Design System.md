@@ -136,9 +136,10 @@ The portal is information-dense — big data tables, filter chips, stat cards, c
 | `--p-placeholder` | `#99A1AF` | Input placeholder / muted count |
 | `--p-border` | `#E5E7EB` | 1px dividers, table borders |
 | `--p-border-strong` | `#D1D5DC` | Input borders |
-| `--p-surface` | `#FFFFFF` | Default surface |
+| `--p-surface` | `#FFFFFF` | Default surface (cards, tables, nav, modals) |
 | `--p-surface-alt` | `#F9FAFB` | Table header / zebra rows |
 | `--p-surface-tint` | `#F3F4F6` | Tab-strip background |
+| `--p-shell` | `#FDFCF9` | **Page / canvas background** — warm off-white; never for cards |
 
 ### Portal Primary Blue
 
@@ -193,7 +194,7 @@ The portal is information-dense — big data tables, filter chips, stat cards, c
 
 - Tints are always 25% / 10% / 5% of the accent over white — never ad-hoc.
 - No gradients in product surfaces. No full-bleed imagery. No repeating patterns.
-- The login screen is a sea of white with the raven logo centered — that restraint is the brand.
+- **Page canvas = `--p-shell` (#FDFCF9); surfaces = white.** The app content area, the wizard workflow area, the login screen, and the loading screens render on Shell. Cards, tables, panels, modals, popovers, the side nav, and wizard chrome stay white (`--p-surface`) so they lift off the warm canvas — never paint a full page white. (Login is the raven centered on Shell; the restraint is still the brand.)
 
 ---
 
@@ -356,11 +357,14 @@ Base unit is **4px**. All spacing tokens are multiples of this base.
 | Token | Value | Usage |
 |---|---|---|
 | `--shadow-tooltip` | `0 2px 6px 0 rgba(0,0,0,.15)` | Tooltip popovers |
-| `--shadow-card` | `0 1px 2px -1px rgba(0,0,0,.10), 0 1px 3px 0 rgba(0,0,0,.10)` | Stat cards, secondary buttons |
-| `--shadow-float` | `0 4px 6px -4px rgba(0,0,0,.10), 0 10px 15px -3px rgba(0,0,0,.10)` | Elevated floating cards (route popover) |
+| `--shadow-card` | `0 1px 2px -1px rgba(0,0,0,.10), 0 1px 3px 0 rgba(0,0,0,.10)` | **Small** elements (stat cards, secondary buttons) |
+| `--shadow-surface` | `0 1px 2px 0 rgba(16,24,40,.04), 0 6px 16px -8px rgba(16,24,40,.10)` | **Large** resting surfaces (tables, detail cards, ledgers) lifting off the shell |
+| `--shadow-float` | `0 4px 6px -4px rgba(0,0,0,.10), 0 10px 15px -3px rgba(0,0,0,.10)` | Elevated floating / transient layers (menus, popovers, tooltips, toasts) |
 | `--shadow-brutal` | `2px 2px 0 0 rgb(0,0,0)` | Foundation brand-moment buttons only |
 
-Cards in-table have **no shadow**. Use `--shadow-card` for stat cards and `--shadow-float` for detached popovers.
+Cards in-table have **no shadow**.
+
+> **Two elevation tiers by size.** Small elements use the tight `--shadow-card`; large resting surfaces (tables, detail cards, ledgers) use the soft diffuse `--shadow-surface` (ink-tinted `rgba(16,24,40,…)`, softer against the warm shell). Keep the 1px `--p-border` on surfaces — **border + soft shadow together**; the shadow doesn't replace the border. Floating transient layers keep `--shadow-float`.
 
 ---
 
@@ -1954,6 +1958,12 @@ These named keyframes ship in `colors_and_type.css` and back every entrance / lo
 
 **Transform-first rule.** Entrance animations must animate a transform, not opacity alone. A backgrounded iframe can freeze an opacity-only keyframe at `0`, leaving content permanently invisible — always pair opacity with a `translate`/`scale`. Honor `prefers-reduced-motion`: the stylesheet collapses durations and disables the Echo Pulse rings.
 
+### JS animations (count-ups, asymmetric timing)
+
+- **JS count-ups use ease-out-quart** (`1 − (1−t)⁴`), ~720–760ms, no bounce/elastic — the JS sibling of the CSS `cubic-bezier(0.22, 1, 0.36, 1)` family (`.gr-rise` / `.gr-step-*` / `.gr-tab-in`). The StatCard value count-up (see §9 Stat Cards) is the canonical example.
+- **Asymmetric enter/exit timing is an approved technique.** When an element should *leave* quickly but *arrive* gently (or arrive only after a sibling settles), set different transition delays / durations per state (read the `transition` string from the current state). Documented examples: the StatCard opacity ramp and the sidebar company-name reveal (§9 App Shell).
+- **Reduced motion covers JS too.** The global `prefers-reduced-motion` rule neutralizes CSS transitions; JS animations additionally **check `matchMedia` and snap to the final value** (see `useCountUp`). New motion must keep both safeties.
+
 ---
 
 ## 11. Voice & Copy
@@ -2073,6 +2083,7 @@ All tokens are defined in `colors_and_type.css`. Load it first, then optionally 
   --p-surface: #FFFFFF;
   --p-surface-alt: #F9FAFB;
   --p-surface-tint: #F3F4F6;
+  --p-shell: #FDFCF9;          /* page / canvas background */
 
   /* Portal primary */
   --p-primary: #007CFF;
@@ -2116,6 +2127,7 @@ All tokens are defined in `colors_and_type.css`. Load it first, then optionally 
   /* Elevation */
   --shadow-tooltip: 0 2px 6px 0 rgba(0,0,0,.15);
   --shadow-card: 0 1px 2px -1px rgba(0,0,0,.10), 0 1px 3px 0 rgba(0,0,0,.10);
+  --shadow-surface: 0 1px 2px 0 rgba(16,24,40,.04), 0 6px 16px -8px rgba(16,24,40,.10);
   --shadow-float: 0 4px 6px -4px rgba(0,0,0,.10), 0 10px 15px -3px rgba(0,0,0,.10);
   --shadow-brutal: 2px 2px 0 0 rgb(0,0,0);
 
