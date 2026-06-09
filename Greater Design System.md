@@ -1099,6 +1099,12 @@ The **default** multi-select pattern for operator list / table pages. Bulk actio
 - Pairs with a **header-checkbox select-all (visible page)** and the standard table footer (`Showing X–Y of Z` + `RowsSelect` + Pagination).
 - **Do not** also float a Selection Bar on the same surface — pick one. On tables, that's Batch Actions.
 
+**Row-checkbox tables (the full pattern).** Store Layouts is the reference (`screens/StoreLayouts.js`): a header **select-all** + a per-row checkbox whose cell **stops propagation** (ticking it never triggers the row's navigate-to-detail). A **"{n} selected" chip** (`--p-primary-tint` pill, hidden at 0) sits left of the Batch Actions button.
+
+- **Tab-conditional menu:** the action list depends on the active tab (e.g. Active → *Apply Template*; Scheduled → *Edit Effective Date · Cancel to Draft · Cancel & Discard (danger)*; Drafts → *Publish Now · Schedule…*). Keep the trigger identical; vary only the Menu items. **Selection clears on tab switch** (selections aren't valid across different record sets).
+- **Shared date modal (`BatchDateModal`):** for any "apply one future date to N records" action (Schedule…, Edit Effective Date) — a `Modal` with a Date Picker (`fromDate = tomorrow`), confirm disabled until a date is picked. Reuse it; don't build per-action date modals.
+- **Partial results = two toasts:** a green success for the converted count *and* a separate red toast naming blocked records (e.g. "1 skipped — a draft already exists for: Bluewater Bistro"). Document this success+warning convention for partial batch outcomes.
+
 Role-colored initials circle used wherever a user is represented (tables, detail headers, team rosters).
 
 ```css
@@ -1359,6 +1365,18 @@ When collapsed (72px), hovering a nav icon opens a flyout so users navigate with
 - The hovered icon tints blue (`--p-primary`) while its flyout is open. The flyout closes automatically when the rail is expanded.
 
 > **Entrance animation caveat:** animate the flyout's entrance with **transform only**, not opacity. Backgrounded/throttled iframes pause `requestAnimationFrame`, which can freeze an `opacity: 0 → 1` keyframe at 0 and leave the panel invisible. A transform-only slide always rests fully opaque.
+
+#### In-shell detail editor
+
+A **full-page editor that stays inside the App Shell** (left nav visible) — not a modal, drawer, or separate chrome. Reference: `screens/StoreLayoutEditor.js`.
+
+- **Sticky page header** (`position: sticky; top: 0; z-index: 20; background: #fff; border-bottom`). Because the shell's scroll region has 24–32px padding, add an **opaque backing `<div>`** behind the header content (`absolute; left: -12; right: -12; top: -28; bottom: 0; background: #fff; z-index: -1; pointer-events: none`) so card shadows don't peek at the edges. The backing **must** be `z-index: -1`, or it paints over the title / tabs.
+- **Measure the header height** (`ref` + `ResizeObserver` → `headerH`) and thread `stickyTop = headerH − 1` into the board's sticky section headers and the Unassigned tray, so each sub-header pins flush under the page header. Re-measure on tab change.
+- **Scroll-to-top on open:** route changes don't reset the shell's scroll container — walk up to the nearest scrollable ancestor and set `scrollTop = 0` on load. **Never `autoFocus` an input on mount inside a scroll container** (it yanks scroll); gate autofocus to freshly-created items.
+- **Tabs over shared editable state must not unmount.** When a page tabs over the *same* model (Layout Editor ⇄ Product List), keep both mounted (`display: none`) — unmounting wipes in-progress edits.
+- **Header action bar** (right): a **dirty indicator** ("● Unsaved changes", `--p-warning`) + `History` + `Export` (neutral) + the version-specific Save / Publish controls (a **MenuButton**).
+- **Cross-version banners:** `InfoBanner tone="amber"` for "editing a scheduled reset" and `tone="info"` for "this is a draft", each with an inline `.g-textlink` to jump to the sibling version.
+- **Exit guard:** leaving with unsaved edits opens a `confirm` Modal ("Discard Unsaved Changes?").
 
 ---
 
