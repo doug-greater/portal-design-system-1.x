@@ -139,6 +139,37 @@ function Pill({ kind = 'Beer', children }) {
   return <span style={{ display: 'inline-flex', alignItems: 'center', padding: '2px 10px', borderRadius: 999, background: c.bg, color: c.fg, font: '500 12px/1.5 Inter, sans-serif', letterSpacing: '.02em', whiteSpace: 'nowrap' }}>{children || kind}</span>;
 }
 
+/* ---------------- Chip (micro status) ----------------
+   Smallest inline indicator: ~19px soft-tinted pill + optional 12px icon.
+   No dot (that's Status Badge); smaller than a category Pill. */
+const CHIP_TONES = {
+  neutral: { bg: 'var(--p-surface-tint)', fg: 'var(--p-text-2)' },
+  info:    { bg: 'var(--p-primary-tint)', fg: 'var(--p-primary-ink)' },
+  amber:   { bg: 'var(--g-gold-10)',      fg: 'var(--p-warning)' },
+  danger:  { bg: 'var(--g-red-10)',       fg: 'var(--p-danger-strong)' },
+  success: { bg: '#ECFDF5',               fg: '#047857' },
+};
+function Chip({ tone = 'neutral', icon, children, title, style }) {
+  const t = CHIP_TONES[tone] || CHIP_TONES.neutral;
+  return (
+    <span title={title} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, height: 19, padding: '0 7px', borderRadius: 999, background: t.bg, color: t.fg, font: '600 10.5px/1 Inter, sans-serif', whiteSpace: 'nowrap', flexShrink: 0, ...style }}>
+      {icon && <Icon name={icon} size={12} color="currentColor" />}{children}
+    </span>
+  );
+}
+
+/* ---------------- ChipToggle (boolean attribute pill) ---------------- */
+function ChipToggle({ on, onClick, icon, label }) {
+  return (
+    <button onClick={onClick} title={label}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 4, height: 26, padding: '0 9px', borderRadius: 999, cursor: 'pointer', whiteSpace: 'nowrap',
+        border: `1px solid ${on ? 'var(--p-primary)' : 'var(--p-border-strong)'}`, background: on ? 'var(--p-primary-tint)' : '#fff',
+        color: on ? 'var(--p-primary-ink)' : 'var(--p-muted)', font: '500 12px/1 Inter, sans-serif' }}>
+      <Icon name={icon} size={13} color={on ? 'var(--p-primary)' : 'var(--p-placeholder)'} /> {label}
+    </button>
+  );
+}
+
 /* ---------------- FilterChip ---------------- */
 function FilterChip({ icon = 'filter_list', label, count, active, onClick }) {
   return (
@@ -207,10 +238,29 @@ function StatCard({ value, label, color = 'ink', action, active, onClick }) {
   );
 }
 
+/* ---------------- Tooltip ----------------
+   Dark hover popover. `maxWidth` (px) switches to multi-line wrap (required for
+   copy longer than ~6 words); `side="bottom"` opens downward near the top edge. */
+function Tooltip({ text, children, side = 'top', maxWidth }) {
+  const [show, setShow] = useState(false);
+  const pos = side === 'top'
+    ? { bottom: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)' }
+    : { top: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)' };
+  return (
+    <span style={{ position: 'relative', display: 'inline-flex' }} onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}>
+      {children}
+      {show && text && (
+        <span role="tooltip" style={{ position: 'absolute', ...pos, whiteSpace: maxWidth ? 'normal' : 'nowrap', width: maxWidth, maxWidth: maxWidth ? 'calc(100vw - 32px)' : undefined, background: 'var(--p-ink)', color: '#fff', font: `500 11px/${maxWidth ? '1.5' : '1.3'} Inter, sans-serif`, padding: maxWidth ? '7px 10px' : '4px 8px', borderRadius: 6, boxShadow: 'var(--shadow-float)', zIndex: 200, pointerEvents: 'none', textAlign: 'left' }}>{text}</span>
+      )}
+    </span>
+  );
+}
+
 /* ---------------- InfoBanner ---------------- */
 function InfoBanner({ tone = 'info', children }) {
   const tones = {
     info: { bg: 'var(--p-primary-tint)', fg: 'var(--p-ink)' },
+    amber: { bg: 'var(--g-gold-10)', fg: 'var(--p-ink)' },
     danger: { bg: 'rgba(255,107,107,.12)', fg: 'var(--p-danger-strong)' },
   };
   return <div style={{ background: tones[tone].bg, color: tones[tone].fg, borderRadius: 8, padding: '10px 12px', font: '400 14px/1.4 Inter, sans-serif' }}>{children}</div>;
@@ -234,4 +284,4 @@ function StatsToggle({ visible, onToggle }) {
   );
 }
 
-Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, FilterChip, SegmentedTabs, StatCard, InfoBanner, StatsToggle, useStatsVisible });
+Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, Chip, ChipToggle, FilterChip, SegmentedTabs, StatCard, InfoBanner, Tooltip, StatsToggle, useStatsVisible });

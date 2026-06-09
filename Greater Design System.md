@@ -36,6 +36,7 @@
    - [App Shell & Navigation Sidebar](#app-shell--navigation-sidebar)
    - [Maps](#maps)
    - **New in 1.1:** [Wizard (multi-step flow)](#wizard-multi-step-flow) · [Audit Log, Change Row & Restore](#audit-log-change-row--restore) · [Echo Pulse](#echo-pulse-brand-moment) · [Expandable Rows](#expandable-rows) · [Batch Actions](#batch-actions-header-dropdown)
+   - **New in Phase 3 (Store Layouts):** [Chip](#chip-micro-status) · [Tooltip](#tooltip) · [MenuButton](#menubutton-off-table-disclosure) · [Arrangement Board](#arrangement-board-drag-and-drop) · [Meta Row](#meta-row-progressive-disclosure) · [General Stock Area](#general-stock-area-arrangement-board-sub-pattern) · [Inline Quantity Control](#inline-quantity-control) · [Add-items Picker](#add-items-picker-grouped-multi-select) · [CSV Import](#csv-import)
 10. [Motion](#motion)
 11. [Voice & Copy](#voice--copy)
 12. [Layout](#layout)
@@ -251,6 +252,7 @@ Inter is the **only** UI family (Regular / Medium / Semibold / Bold / Light). No
 | `.g-overline` | Inter Regular 12 UPPERCASE, ls +0.05em, dark-gray | Overline labels |
 | `.g-overline-tag` | As overline, on `#F5F5F5` pill with 4px radius | Overline on soft-gray pill |
 | `.g-link` | Inter Medium, primary blue, no underline (underline on hover) | Text hyperlinks |
+| `.g-textlink` | Inter Medium 14, primary blue, button-as-link (no border/bg), underline on hover | Inline links inside banners / sentences |
 | `.g-error` | Inter Medium 12, danger red | Error messages below fields |
 | `.g-mono` | Geist Mono 12 | Code / IDs |
 | `.g-info` | Inter Regular 14, blue-tint bg, 8px radius | Inline info callout |
@@ -402,6 +404,8 @@ Use variable-font axes (`FILL`, `wght`, `GRAD`, `opsz`) sparingly — prefer out
 
 `search`, `filter_alt`, `expand_more`, `unfold_more`, `storefront` (Products in Market), `inventory_2` (All Products), `location_on`, `more_horiz`, `close`, `check`, `info`, `arrow_outward`, `fullscreen`, `account_circle`, `bar_chart`, `settings`, `home`, `apartment`, `route`, `schedule`, `notifications`, `help`, `edit`, `delete`
 
+**Store Layouts (Phase 3):** `dashboard_customize` (Layout Editor / Edit Layout), `drag_indicator` (drag handle), `shuffle` (General Stock Area), `curtains` (Display placement), `move_down` (drag-here empty state), `fit_width` (Set Capacity For All), `sticky_note_2` (section note), `lightbulb` (Suggested), `draft` / `edit_note` (drafts), `event_upcoming` (scheduled reset), `event_busy` (cancel reset), `publish` (Publish), `history` (History), `download` (Export), `cloud_upload` / `upload_file` / `library_add` / `add_circle` (CSV import), `format_list_bulleted` (Product List tab), `remove_shopping_cart` / `add_business` (plan chips). All outline weight (`FILL 0`).
+
 **Account-type icons** (rendered inside the Account Type Icon avatar — see §9): `storefront` (Retail / Store), `fastfood` (Restaurant), `shopping_cart` (Grocery), `local_convenience_store` (C-Store), `local_bar` (Bar), `attach_money` (Discount Store). All outline weight (`FILL 0`).
 
 ### Special Characters
@@ -449,7 +453,7 @@ border: 1px solid #E5484D;
 /* disabled */ color: rgba(229,72,77,.25); border-color: rgba(229,72,77,.25);
 ```
 
-**Danger (solid)** — red fill, white text; for an **already-confirmed, terminal** destructive action. Use **Secondary · Warning** (outline) to *open* a `confirm` modal per the existing rule; use **solid Danger** only for the final, irreversible commit inside it.
+**Danger (solid)** — red fill, white text; for an **already-confirmed, terminal** destructive action. **The rule:** an at-rest destructive button in a **table or header** uses outline **Secondary · Warning** — it *opens* a `confirm`; only the **terminal commit inside that confirm** uses **solid Danger**. Never use solid danger for a button that merely opens a dialog.
 
 ```css
 background: #E5484D;
@@ -541,11 +545,29 @@ Actions attached to a table row. There is **one primitive and two triggers** —
 - **Kebab:** `28×28px`, `border-radius: 6px`, `more_horiz` at 20px, `--p-muted`; hover `rgba(0,0,0,.05)`.
 - **Menu popover:** `border-radius: 8px`, `--shadow-float`, 1px `--p-border`, `padding: 4px`, `min-width: ~208px`. Items `34px`, `padding: 0 10px`, `400 14px Inter`, optional 18px `--p-muted` leading icon. Group with an uppercase label + `1px --p-border` divider when there are more than ~5 items; destructive items go **last**, in `--p-danger`. Opens on click; closes on outside-click, `Escape`, or selection.
 
+#### MenuButton (off-table disclosure)
+
+SplitButton and Kebab are tuned for **28px table rows**. In a page header, detail action bar, or toolbar you often want the same "primary action + a menu of alternatives" but at **full button height** so it lines up with its neighbors — that's **MenuButton**: a normal `Button` (any variant) with a trailing `expand_more` that opens the **identical Menu popover**.
+
+- **Inside a data-table row →** SplitButton or Kebab (28px).
+- **Outside tables (header / action bar / toolbar) →** MenuButton (36px `Button` + chevron). Choose `variant` by intent (primary for the encouraged action); default `menuAlign="right"`. Never a second menu style — it opens the same `Menu`.
+
+Example (`StoreLayoutEditor` action bar): `Publish ▾` → `[Publish Now · Schedule For Later]`, aligned with the adjacent Save / Discard buttons.
+
 #### Do not
 
 - **Never use the vertical `more_vert` ("⋮") kebab.** The overflow / kebab trigger is **always** the horizontal `more_horiz` — in list rows, cards, panel headers, and menus alike. `more_vert` is **banned portal-wide** (the `.g-kebab` class renders `more_horiz`).
 - Do not ship a "secondary" split button as a repeated table column — if viewing is the row's job, make the row clickable and put extras in a kebab.
 - Do not treat "button + kebab" as a distinct component — it is simply a slim button beside a kebab.
+
+---
+
+### Tooltip
+
+A dark popover (`--p-ink` bg, white text) anchored to its trigger; hover-only, `pointer-events: none`, `z-index: 200`. Pairs naturally with a 14px `info` glyph (`cursor: help`). Default is a single nowrap line (`font: 500 11px/1.3 Inter; padding: 4px 8px; border-radius: 6px; box-shadow: var(--shadow-float)`). Reference: `preview/components-tooltip.html`.
+
+- **`maxWidth` (px)** — for multi-line / educational copy. Switches to `white-space: normal`, sets `width: {maxWidth}`, `max-width: calc(100vw - 32px)`, `line-height: 1.5`, `padding: 7px 10px`, left-aligned. **Required** whenever the body runs longer than ~6 words — otherwise it shrink-wraps to one nowrap line that runs off-screen.
+- **`side`** — `"top"` (default) or `"bottom"`. Use `"bottom"` for any trigger near the top edge of the viewport (e.g. an in-card control) so the tooltip can't be clipped above the fold.
 
 ---
 
@@ -571,6 +593,7 @@ background: #fff;
 | Default | `1px solid #D1D5DC` | `#fff` | — |
 | Focus | `1px solid #007CFF` | `#fff` | `box-shadow: 0 0 0 3px rgba(0,124,255,.15)` |
 | Error | `1px solid #E5484D` | `#fff` | Error message below: 12px 500 Inter, `#E5484D` |
+| Soft-required (unset) | `1px solid var(--p-warning)` | `var(--g-gold-10)` | Encouraged-but-optional field left empty — **amber, not red**. It's a nudge ("adding one is encouraged"), not an error. E.g. an unset Capacity. |
 | Disabled | `1px solid #E5E7EB` | `#fff` | `color: #99A1AF; -webkit-text-fill-color: #99A1AF; opacity: 1; cursor: not-allowed` — label, value, border &amp; chevron all use one gray |
 
 #### Floating label
@@ -644,6 +667,21 @@ On:  border 1.5px solid #007CFF, bg #007CFF, white checkmark (12px, stroke-width
 Off: border 1.5px solid #D1D5DC, bg #fff
 On:  border 1.5px solid #007CFF, inner 8px circle bg #007CFF
 ```
+
+#### Chip Toggle
+
+A pill that toggles a single **boolean attribute** on a dense row — when a `Toggle` is too big and a checkbox would read as *selection* (e.g. "is this a Display?" on a placement row).
+
+```css
+display: inline-flex; align-items: center; gap: 4px;
+height: 26px; padding: 0 9px; border-radius: 999px;
+font: 500 12px/1 Inter; cursor: pointer;
+/* off */ border: 1px solid var(--p-border-strong); background: #fff; color: var(--p-muted);
+/* on  */ border: 1px solid var(--p-primary); background: var(--p-primary-tint); color: var(--p-primary-ink);
+/* leading icon 13px: --p-placeholder off / --p-primary on */
+```
+
+Distinct from the **Filter Chip** (32px, opens a filter) and from **Chip** (status, non-interactive) — use only for an always-visible label + icon boolean.
 
 ---
 
@@ -857,6 +895,46 @@ font: 500 12px/1.5 Inter;
 
 ---
 
+### Chip (micro status)
+
+The smallest inline indicator: a **soft tinted pill (~19px tall) with an optional 12px leading icon**. Use on dense rows where a Status Badge (with its dot) or a category Pill would be too heavy — a plan flag ("Adds Aug 1"), a presence marker ("1 Display"), a soft warning ("Draft exists"). This is the single spec for these micro-chips; do **not** hand-roll new ones. Reference: `preview/components-chip.html`.
+
+```css
+display: inline-flex; align-items: center; gap: 3px;
+height: 19px; padding: 0 7px; border-radius: 999px;
+font: 600 10.5px/1 Inter; white-space: nowrap; flex-shrink: 0;
+/* optional leading icon: 12px, color = currentColor */
+```
+
+| Tone | Background | Text | Typical use |
+|---|---|---|---|
+| `neutral` | `--p-surface-tint` | `--p-text-2` | Generic / count tags |
+| `info` | `--p-primary-tint` | `--p-primary-ink` | Plan add ("Adds Aug 1"), presence ("1 Display") |
+| `amber` | `--g-gold-10` | `--p-warning` | Soft warning ("New to store", "Draft exists", "Suggested") |
+| `danger` | `--g-red-10` | `--p-danger-strong` | Removal / discontinue ("Disc. Sep 1") |
+| `success` | `#ECFDF5` | `#047857` | Positive confirmation |
+
+**Rules**
+
+- **Tone = meaning.** Map to the nearest tone; never mint a per-feature color.
+- **Chip vs Status Badge vs Pill:** Chip = micro flag / marker (icon, **no dot**, 10.5px). Status Badge = lifecycle state (**dot**, no icon, 12px). Pill = category / role tag (12px, no dot / icon).
+- **Copy:** one to three words; an icon is optional and only when it adds clarity.
+
+**Canonical icon + tone + copy map** (battle-tested — adopt verbatim):
+
+| Meaning | Tone | Icon | Copy template |
+|---|---|---|---|
+| Pending add (future) | `info` | `schedule` | `Adds {Mon D}` |
+| Pending discontinue | `danger` | `remove_shopping_cart` | `Disc. {Mon D}` |
+| Not yet at store | `amber` | `add_business` | `New to store` |
+| Display presence (count) | `info` | `curtains` | `{n} Display` |
+| Existing draft warning | `amber` | *(none)* | `Draft exists` |
+| Suggested setting | `amber` | `lightbulb` | `Suggested` |
+
+**Clickable status pills.** A row may carry a Chip that is *interactive* — e.g. amber "Reset {Mon D, YYYY}" (`event_upcoming`) or gray "Draft" (`edit_note`) that deep-links into a version's editor. It uses the Chip visual but is a `<button>`: it must `stopPropagation` from the row's own click and expose a `title` / aria-label.
+
+---
+
 ### Stat Cards
 
 ```css
@@ -966,10 +1044,16 @@ border-radius: 8px;
 padding: 10px 12px;
 font: 400 14px/1.4 Inter;
 
+/* Amber (warning tint) — e.g. "editing a scheduled reset", CSV import warnings */
+background: var(--g-gold-10);
+color: var(--p-ink);
+
 /* Danger (red tint) */
 background: rgba(255,107,107,.12);
 color: var(--p-danger-strong);
 ```
+
+**Three tones:** **info** (blue), **amber** (warning / "heads-up" context), **danger** (red). Amber is for non-blocking context an operator should notice (cross-version editing banners, partial-import warnings) — not an error.
 
 Example usage:
 > "Select one or more products below, then press 'Continue' to choose a desired action for each product. (Step 1 of 4)"
@@ -1015,6 +1099,12 @@ The **default** multi-select pattern for operator list / table pages. Bulk actio
 - **Always present**, but **disabled** until `selected > 0`. When active it opens the standard **Menu** popover of bulk actions (e.g. *Edit Dates*, *Edit Qty*, *Delete*); destructive items go **last**, in `--p-danger`.
 - Pairs with a **header-checkbox select-all (visible page)** and the standard table footer (`Showing X–Y of Z` + `RowsSelect` + Pagination).
 - **Do not** also float a Selection Bar on the same surface — pick one. On tables, that's Batch Actions.
+
+**Row-checkbox tables (the full pattern).** Store Layouts is the reference (`screens/StoreLayouts.js`): a header **select-all** + a per-row checkbox whose cell **stops propagation** (ticking it never triggers the row's navigate-to-detail). A **"{n} selected" chip** (`--p-primary-tint` pill, hidden at 0) sits left of the Batch Actions button.
+
+- **Tab-conditional menu:** the action list depends on the active tab (e.g. Active → *Apply Template*; Scheduled → *Edit Effective Date · Cancel to Draft · Cancel & Discard (danger)*; Drafts → *Publish Now · Schedule…*). Keep the trigger identical; vary only the Menu items. **Selection clears on tab switch** (selections aren't valid across different record sets).
+- **Shared date modal (`BatchDateModal`):** for any "apply one future date to N records" action (Schedule…, Edit Effective Date) — a `Modal` with a Date Picker (`fromDate = tomorrow`), confirm disabled until a date is picked. Reuse it; don't build per-action date modals.
+- **Partial results = two toasts:** a green success for the converted count *and* a separate red toast naming blocked records (e.g. "1 skipped — a draft already exists for: Bluewater Bistro"). Document this success+warning convention for partial batch outcomes.
 
 Role-colored initials circle used wherever a user is represented (tables, detail headers, team rosters).
 
@@ -1276,6 +1366,18 @@ When collapsed (72px), hovering a nav icon opens a flyout so users navigate with
 - The hovered icon tints blue (`--p-primary`) while its flyout is open. The flyout closes automatically when the rail is expanded.
 
 > **Entrance animation caveat:** animate the flyout's entrance with **transform only**, not opacity. Backgrounded/throttled iframes pause `requestAnimationFrame`, which can freeze an `opacity: 0 → 1` keyframe at 0 and leave the panel invisible. A transform-only slide always rests fully opaque.
+
+#### In-shell detail editor
+
+A **full-page editor that stays inside the App Shell** (left nav visible) — not a modal, drawer, or separate chrome. Reference: `screens/StoreLayoutEditor.js`.
+
+- **Sticky page header** (`position: sticky; top: 0; z-index: 20; background: #fff; border-bottom`). Because the shell's scroll region has 24–32px padding, add an **opaque backing `<div>`** behind the header content (`absolute; left: -12; right: -12; top: -28; bottom: 0; background: #fff; z-index: -1; pointer-events: none`) so card shadows don't peek at the edges. The backing **must** be `z-index: -1`, or it paints over the title / tabs.
+- **Measure the header height** (`ref` + `ResizeObserver` → `headerH`) and thread `stickyTop = headerH − 1` into the board's sticky section headers and the Unassigned tray, so each sub-header pins flush under the page header. Re-measure on tab change.
+- **Scroll-to-top on open:** route changes don't reset the shell's scroll container — walk up to the nearest scrollable ancestor and set `scrollTop = 0` on load. **Never `autoFocus` an input on mount inside a scroll container** (it yanks scroll); gate autofocus to freshly-created items.
+- **Tabs over shared editable state must not unmount.** When a page tabs over the *same* model (Layout Editor ⇄ Product List), keep both mounted (`display: none`) — unmounting wipes in-progress edits.
+- **Header action bar** (right): a **dirty indicator** ("● Unsaved changes", `--p-warning`) + `History` + `Export` (neutral) + the version-specific Save / Publish controls (a **MenuButton**).
+- **Cross-version banners:** `InfoBanner tone="amber"` for "editing a scheduled reset" and `tone="info"` for "this is a draft", each with an inline `.g-textlink` to jump to the sibling version.
+- **Exit guard:** leaving with unsaved edits opens a `confirm` Modal ("Discard Unsaved Changes?").
 
 ---
 
@@ -1688,6 +1790,136 @@ A table row can **expand in place** to reveal related detail — Store Promotion
 
 ---
 
+### Arrangement Board (drag-and-drop)
+
+A direct-manipulation board for arranging **sections** and the **product placements** within them, with an **Unassigned tray** of unplaced SKUs. Built on **`@dnd-kit`** (core + sortable + utilities) for accessible, keyboard-operable drag-and-drop — the only new runtime dependency. Reference: `ui_kits/portal/layout-board.jsx` (structural; live: `components/layout/LayoutBoard.js`).
+
+**Layout.** Two-column grid: `grid-template-columns: minmax(0,1fr) 340px; gap: 20px; align-items: start` — editor column (left) + a sticky Unassigned tray (right).
+
+**Section card.**
+
+```css
+border: 1px solid var(--p-border); border-radius: 10px; background: #fff; box-shadow: var(--shadow-card);
+/* header (sticky): */ position: sticky; top: {headerH}; z-index: 6;
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  background: var(--p-surface-alt); border-radius: 10px 10px 0 0;
+  border-bottom: 1px solid var(--p-border);   /* none + radius 10px when collapsed */
+```
+
+Header L→R: **drag handle** (`drag_indicator` 20px, `cursor: grab`, `touch-action: none`), **Section Name control** (preset `Select` + "Custom…"), an **item-count** (`{n} items`, mono) *or* a **"General Stock" badge**, a **collapse** chevron (rotates −90° when collapsed), and a **Kebab** → `[Add Product · Set Capacity For All · Delete Section (danger)]`.
+
+**Section name control.** A `Select` of canonical presets **+ a trailing "Custom…"** entry; choosing Custom reveals an inline free-text input (168px). Presets come from the backend (`/meta.sectionTypes`). Document the pattern: **"preset dropdown + Custom… escape hatch"** for any constrained-but-extensible name field.
+
+**Placement row.**
+
+```css
+display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+border: 1px solid var(--p-border); border-radius: 8px; background: #fff;
+/* dragging: opacity .4 */
+```
+
+Contents: drag handle (`drag_indicator` 18px) · **sequence chip** (mono `{n}` in a `--p-surface-alt` 6px box) · product name (500 14px) + category **Pill** + plan **Chip** + `brand · size` sub-line · **Inline Quantity Control** · **Chip Toggle "Display"** (`curtains`) · a `close` remove button (hover → `--g-red-10` / `--p-danger`).
+
+**Empty section drop-zone.** `1px dashed --p-border; radius 8; min-height 52px`, centered "Drag products here" with a `move_down` glyph.
+
+**Unassigned tray.**
+
+```css
+/* sticky at top: {headerH}; label row: inventory_2 + "Unassigned" + mono count pill */
+border: 1px dashed var(--p-border-strong); border-radius: 10px;
+background: var(--p-surface-alt); padding: 10px; min-height: 120px;
+/* active drop target: border-color --p-primary; background --p-primary-tint */
+```
+
+Tray chips are compact (name 13px + `category · size` + plan Chip). Helper: *"Products at this store that aren't placed in any section appear here. Drag one into a section to place it."* Empty: *"Every authorized product is placed."*
+
+**Drag overlay.** Use `@dnd-kit` `DragOverlay` (no drop animation): a product ghost (white card, 1px `--p-primary` border, `--shadow-float`) or a section-name ghost — keeps the dragged item legible above sticky headers.
+
+**Drag / drop rules (real product rules — document them):**
+
+1. A product **may live in multiple sections**, so **dragging a placement into the tray is forbidden** (ambiguous "remove from where?"). The tray only *emits* unplaced SKUs; it never *accepts* placements.
+2. A **General Stock Area** section rejects all drops.
+3. After any move, **self-heal tray membership** (unplaced = full catalog − placed).
+4. **Keyboard:** `KeyboardSensor` + `sortableKeyboardCoordinates`; `PointerSensor` with a 6px activation distance so clicks aren't swallowed.
+
+**A11y / motion:** honor `prefers-reduced-motion`; drag handles get `aria-label`; collapse / menu are real buttons. No springy drop animations — motion is garnish.
+
+---
+
+### Meta Row (progressive disclosure)
+
+Condenses a section's secondary config into one ~28px row: a rep **Note** (left, progressive disclosure) + a compact **General Stock** control (right).
+
+- **Row:** `display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px`.
+- **Note (left) — three states:**
+  - *empty* → ghost button: `sticky_note_2` 14px + muted "Add a note about this section" (`cursor: text`).
+  - *click* → inline input (28px, `1px --p-primary`, `box-shadow 0 0 0 3px rgba(0,124,255,.12)`, autofocus); commit on Enter / blur, cancel on Esc.
+  - *filled* → the ghost button showing the truncated note (`--p-text-2`).
+  - **Rule:** for optional, rarely-set free text on a dense row, prefer this **ghost → inline → text** disclosure over an always-present empty input.
+- **General Stock control (right):** optional amber **Chip "Suggested"** (only when off *and* the section name implies variable stock) · a `shuffle` 14px glyph + "General Stock Area" label (turns `--p-primary-ink` when on) · an `info` glyph carrying the educational **Tooltip** (`side="bottom" maxWidth={340}`) · a `Toggle`.
+
+---
+
+### General Stock Area (Arrangement Board sub-pattern)
+
+A section that holds **variable inventory with no fixed list / sequence** (back stock, cold storage). Marking it "General Stock" means **no product list, no sequence, no drops** — just a tracked container.
+
+- Toggling **on while placements exist** opens a **confirm** first (placements return to Unassigned): title **"Mark As General Stock Area?"**, body *"General stock areas do not have a stable and defined list of products within them. Any products that are currently listed in this section will be removed."* + *"{n} product placement(s) will be removed from this section."*; action **"Mark As General Stock Area"** (`shuffle`, `--p-warning`).
+- When **on**: Add Product / Set Capacity hidden, drops blocked, the header shows a neutral **"General Stock"** badge (`shuffle` 13px), and the body becomes a centered **info empty-state** (`1px dashed --p-border` on `--p-surface-alt`, `inventory_2` 24px): "General Stock Area" + *"Products can't be placed here. Use this section to track variable inventory."*
+- **Nudge, don't force:** the amber "Suggested" Chip only *hints* for back-stock-like section names; never auto-enable.
+
+---
+
+### Inline Quantity Control
+
+A dense, encouraged-but-optional **capacity + unit** control for a placement row.
+
+```css
+display: inline-flex; align-items: center; height: 30px; border-radius: 6px; overflow: hidden;
+border: 1px solid var(--p-border-strong);   /* unset → 1px solid var(--p-warning) */
+background: #fff;                            /* unset → var(--g-gold-10) */
+```
+
+- A muted **label** ("Capacity"), a right-aligned `<input type=number>` (46px), and a **unit toggle** ("units" ⇄ "cases") separated by a 1px divider.
+- **Unset cue:** when empty, the control takes the amber border + `--g-gold-10` fill — the canonical **"soft-required"** affordance (amber, *not* red; see Inputs & Forms).
+- **Animated label swap:** when the placement's **Display** toggle is on, the label morphs "Capacity" → "Display Size" via the `gr-label-swap` keyframe (keyed span so React re-mounts).
+- **Bulk apply:** a section kebab action **"Set Capacity For All"** opens a small modal (number + units / cases) that writes one value to every placement — the pattern: *per-row control + a "set for all" bulk shortcut in the container's menu*.
+
+---
+
+### Add-items Picker (grouped multi-select)
+
+A centered overlay (480px, max-height 82vh) for adding several items to a destination at once — prioritizing what's already in scope while still allowing out-of-scope picks. Built on the `Modal` primitive. (Store Layouts: add products to a section.)
+
+- **Header:** title + "Into **{section}** · select one or more", then a search input.
+- **Scroll body — two groups separated by a divider:**
+  - **"At This Store · N"** (carried + pending) on top.
+  - **"Not At This Store · M"** as a **collapsible** group (chevron). When expanded it shows an **amber note** — *"Any products selected will be added to the account when this layout is published."* — then its rows.
+- **Rows** are multi-select (custom 18px `PickCheck`, primary fill when checked; selected row tints `--p-primary-tint`). An item already in *this* section renders disabled with a green `check_circle` + "Placed".
+- **Footer:** "{n} selected" (left); **Cancel** + **Done** (disabled at 0) on the right — adds all at once, no reopening.
+- **Rule:** selection **survives search-filtering** — resolve picks against a full-source `byId` map, not the rendered subset. Group labels: `600 11px Inter; letter-spacing: .06em; uppercase; --p-muted`.
+
+This mirrors the **Filter Menu** search pattern (SELECTED-on-top, capped results) but for *adding* rather than *filtering* — see Filter Menu.
+
+---
+
+### CSV Import
+
+A two-step **upload / paste → validate → preview → commit** flow — the canonical bulk-import pattern (it also fulfills the Empty States "first-run / import" cause). Built on the `Modal` primitive (540px step 1, 760px preview). Reference: `preview/components-csv-import.html`.
+
+**Step 1 — input.** A **dashed dropzone** button (`cloud_upload` 30px, primary; hover → `--p-primary-tint`) reading "Choose a CSV file" + a one-line schema hint, an **"or paste rows"** divider, and a **monospace textarea**. Footer: **Download Template** (neutral, `download`) + **Validate** (primary, disabled until input). Selecting a file auto-validates.
+
+**Step 2 — preview.** Four mini **stat tiles** (Accounts / Sections / Placements / **New to Store** highlighted blue); conditional **InfoBanners** (amber "*N rows will be skipped*", info "*N accounts have an existing draft*"); a scrollable **per-account list** — each row shows id + name + an amber **Chip "Draft exists"** on conflict, with a **Replace / Skip** segmented control (one draft per account); non-conflicts show a green "New draft" marker. A collapsible **`<details>` of skipped rows** ("Row {n} — {message}"). Footer: **Back** + **Import {N} Draft(s)** (count reflects skips). On commit → success toast → land on the **Drafts** tab.
+
+**Rules**
+
+- **Validate-then-commit, always** — never import blind. Show totals, skipped rows (with reasons), and conflicts up front; resolve conflicts inline before committing.
+- **Partial success is fine:** invalid rows are listed and skipped; valid rows still import.
+- Pair every import with a **Download Template** and a round-trippable **Export** (the editor emits the same CSV shape).
+- **CSV shape** (one row per placement; section fields repeat per row): `account_id, section_name, section_note, general_stock, product_id, capacity, capacity_unit, display, sequence`.
+
+---
+
 ## 10. Motion
 
 Animation is minimal — the portal reads as mostly static.
@@ -1717,6 +1949,8 @@ These named keyframes ship in `colors_and_type.css` and back every entrance / lo
 | `gr-tab-in` | tab-panel & wizard-step arrival |
 | `gr-bar-in` | bottom-anchored bar (keeps `translate(-50%, …)` centering) |
 | `ep-echo` | Echo Pulse rings (see §9 Echo Pulse) |
+| `gr-label-swap` | inline label morph (Capacity → Display Size) — fade + 5px rise + slight blur |
+| `gr-drawer-in` | drawer / side-sheet entrance |
 
 **Transform-first rule.** Entrance animations must animate a transform, not opacity alone. A backgrounded iframe can freeze an opacity-only keyframe at `0`, leaving content permanently invisible — always pair opacity with a `translate`/`scale`. Honor `prefers-reduced-motion`: the stylesheet collapses durations and disables the Echo Pulse rings.
 
@@ -1749,7 +1983,21 @@ These named keyframes ship in `colors_and_type.css` and back every entrance / lo
 "64 of 71 products"
 "Thursday, Apr 23 • Kenny D'Amica   ·   5 stops"
 "Pending Additions"  /  "Pending Discontinue"  /  "Discontinued & Draining"
+
+— Store Layouts (Phase 3) —
+"Manage where products exist in each store — arrange sections and placements, publish or schedule resets."
+"Products at this store that aren't placed in any section appear here. Drag one into a section to place it."
+"Every authorized product is placed."
+"Add a note about this section"  /  "Add a note for reps — where to find it, inventory tips…"
+"General Stock Area"  /  "Products can't be placed here. Use this section to track variable inventory."
+"You're editing an upcoming reset (goes live {date}). Changes here do not affect the current live layout."
+"This is a draft with no go-live date yet. Publish it to make it live, or schedule it for a future date."
+"Any products selected will be added to the account when this layout is published."
+"N rows will be skipped due to errors below — the rest import normally."
+"1 skipped — a draft already exists for: Bluewater Bistro"
 ```
+
+**Phase-3 actions stay Title Case** — "Save as Draft", "Publish Now", "Schedule For Later", "Set Capacity For All", "Mark As General Stock Area", "Import N Drafts"; the helper / banner / tooltip strings above remain sentence case.
 
 ---
 
