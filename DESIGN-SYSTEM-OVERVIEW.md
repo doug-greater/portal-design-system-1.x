@@ -62,6 +62,7 @@ Header, and a full app shell with a collapsible Navigation Sidebar.
 | `/products` ("In the Market") | Inventory table — products × accounts × coverage, with category pills and placement counts. |
 | `/accounts` | Account directory + detail pages (Account Type Icon identity header). |
 | `/users` | User management — list, detail (Profile / Role & Permissions / Team), with role pills and permission cards. |
+| `/store-layouts` | Per-account drag-and-drop merchandising — sections, placements, an Unassigned tray, drafts / scheduled resets, CSV import (`@dnd-kit`). In-shell editor at `/store-layouts/:accountId/:version`. |
 
 The portal is **information-dense**: big data tables, filter chips, stat
 cards, comparison charts. It's designed for operators who live in the tool
@@ -296,11 +297,17 @@ coverage:
 - **New in 1.1** — the **Wizard** (full-screen multi-step flow + `SelectionTable`,
   `CopyToAllChip`, `ActionSegment`, `StepHeader`), the **Audit Log, Change Row & Restore**
   family (timeline modal + portal-wide ledger), **Echo Pulse**, and **Expandable Rows**.
+- **New in Phase 3 (Store Layouts)** — the **Chip** (micro status) + **Chip Toggle**, a
+  documented **Tooltip** (`maxWidth` / `side`), **MenuButton** (off-table disclosure), the
+  **Arrangement Board** (drag-and-drop, on `@dnd-kit`) with its **Meta Row** / **General
+  Stock Area** / **Inline Quantity Control**, the **Add-items Picker**, and **CSV Import**.
 
 **Terminology (1.1 canon).** "Store Promotions" (short "Store Promos", `/store-promotions`),
 "POD Planner" (`/pod-planner`), "Audit Log" (events Created / Updated / Restored / Deleted;
 value columns Removed / Added), "Batch Actions" (not "Bulk actions"), "Restore This Version"
 (teal). Company shown in-shell: "Coastal Beverage Company".
+
+**Terminology (Phase 3 — Store Layouts).** "Store Layouts" (nav under Accounts, before Store Promotions; `/store-layouts`); ordered **Sections** → **Placements** (unplaced ones sit in the **Unassigned tray**); **Capacity** + **unit** (`units` / `cases`, "Display Size" when a Display); **General Stock Area** = variable inventory, no fixed list; a future change is a **scheduled reset** (versions: **active · scheduled · draft**); bulk load = **CSV Import** / **Export** / **Template**.
 
 The full spec for every component lives in `Greater Design System.md`.
 
@@ -318,6 +325,7 @@ The full spec for every component lives in `Greater Design System.md`.
   - `feedback.jsx` — Toast (+ `window.toast`), Spinner, Skeleton, EmptyState, **EchoPulse**.
   - `tables.jsx` — Pagination · `dates.jsx` — Calendar / DateField (min/max, context-aware presets, drop-up).
   - **`wizard.jsx`** — WizardShell + SelectionTable + Check + CopyToAllChip + ActionSegment + StepHeader · **`audit.jsx`** — AuditLogModal + ChangeRow.
+  - **`layout-board.jsx`** — structural Arrangement Board (sections · placements · capacity control · Unassigned tray · General Stock); production drag uses **`@dnd-kit`** (the one new runtime dependency). Plus `Chip` / `ChipToggle` / `Tooltip` (primitives) and `MenuButton` (overlays).
   - `FilterMenu.jsx`, `AppShell.jsx`, and screens: `LoginScreen`, `ProductsScreen`, `UsersScreen`, `RoutesScreen`, `ScenarioScreen` (+ `SCREENS-1.1.md` notes for POD Planner, Store Promotions, Audit Log, Settings).
   - `interactive-primitives.html` — a click-to-test harness for the behavioral components.
   - **Icons are Material Symbols (font) only** — Lucide and Iconify have been removed.

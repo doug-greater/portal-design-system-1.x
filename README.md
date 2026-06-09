@@ -26,3 +26,10 @@ This repository is our **shared design system** — the single source of truth f
 - **Casing rule changed:** Title Case is now **mandatory** for all button / link-button / SplitButton labels and Modal · Drawer · Dialog headers. Body copy, helper text, banners, and toasts stay sentence case.
 - **App Shell bottom nav reworked:** "Ops Tools" removed; the utility nav is now **Help Center · Audit Log · Settings · Account · Sign Out** (Audit Log and Settings are routed, with an active state).
 - The vertical `more_vert` kebab is **banned** portal-wide — overflow triggers always use horizontal `more_horiz`.
+
+## What's new in Phase 3 (Store Layouts)
+
+- **New primitives:** the **Chip** (micro status — the canonical small tinted pill, replacing one-off badges), **Chip Toggle**, a documented **Tooltip** (`maxWidth` + downward `side`), and **MenuButton** (a full-height header/toolbar disclosure — the off-table sibling of SplitButton).
+- **New patterns:** the **Arrangement Board** (drag-and-drop sections + placements + an Unassigned tray, on `@dnd-kit`), the **Section Meta Row**, **General Stock Area**, the **Inline Quantity Control** (amber "soft-required" cue), the grouped **Add-items Picker**, and a **CSV Import** (validate → preview → commit) flow.
+- **Extended:** Batch Actions now covers **row-checkbox tables** with a tab-conditional menu and partial-result two-toasts; the App Shell documents an **in-shell detail editor**; Info Banners gain an **amber** tone; a **soft-required = amber** input state; plus `.g-textlink`, `gr-label-swap`, and ~25 Store-Layouts icons.
+- **`@dnd-kit`** (core / sortable / utilities) is the one new runtime dependency.

@@ -18,6 +18,11 @@ Interactive hi-fi build of the Greater Portal — the maintained reference imple
 - `audit.jsx` — `AuditLogModal` + `ChangeRow` (the shared diff primitive) + `DEMO_AUDIT`.
 - `SCREENS-1.1.md` — notes on the four 1.1 flows (POD Planner, Store Promotions, Audit Log, Settings) and how they compose these parts.
 
+**New in Phase 3 (Store Layouts)**
+- `layout-board.jsx` — structural **Arrangement Board** reference (section cards, placement rows, inline capacity control, Unassigned tray, General Stock empty-state). Production drag uses `@dnd-kit`.
+- `SCREENS-phase3.md` — notes on the Store Layouts list + in-shell editor flows.
+- `primitives.jsx` also gains **Chip**, **ChipToggle**, **Tooltip**; `overlays.jsx` gains **MenuButton**.
+
 **Screens**
 - `LoginScreen.jsx` — email sign-in with neo-brutalist Next button.
 - `AppShell.jsx` — collapsible sidebar nav (+ flyout) + bottom utility nav (Help Center · Audit Log · Settings · Account · Sign Out).
