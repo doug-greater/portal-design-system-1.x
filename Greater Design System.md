@@ -251,6 +251,7 @@ Inter is the **only** UI family (Regular / Medium / Semibold / Bold / Light). No
 | `.g-overline` | Inter Regular 12 UPPERCASE, ls +0.05em, dark-gray | Overline labels |
 | `.g-overline-tag` | As overline, on `#F5F5F5` pill with 4px radius | Overline on soft-gray pill |
 | `.g-link` | Inter Medium, primary blue, no underline (underline on hover) | Text hyperlinks |
+| `.g-textlink` | Inter Medium 14, primary blue, button-as-link (no border/bg), underline on hover | Inline links inside banners / sentences |
 | `.g-error` | Inter Medium 12, danger red | Error messages below fields |
 | `.g-mono` | Geist Mono 12 | Code / IDs |
 | `.g-info` | Inter Regular 14, blue-tint bg, 8px radius | Inline info callout |
@@ -402,6 +403,8 @@ Use variable-font axes (`FILL`, `wght`, `GRAD`, `opsz`) sparingly — prefer out
 
 `search`, `filter_alt`, `expand_more`, `unfold_more`, `storefront` (Products in Market), `inventory_2` (All Products), `location_on`, `more_horiz`, `close`, `check`, `info`, `arrow_outward`, `fullscreen`, `account_circle`, `bar_chart`, `settings`, `home`, `apartment`, `route`, `schedule`, `notifications`, `help`, `edit`, `delete`
 
+**Store Layouts (Phase 3):** `dashboard_customize` (Layout Editor / Edit Layout), `drag_indicator` (drag handle), `shuffle` (General Stock Area), `curtains` (Display placement), `move_down` (drag-here empty state), `fit_width` (Set Capacity For All), `sticky_note_2` (section note), `lightbulb` (Suggested), `draft` / `edit_note` (drafts), `event_upcoming` (scheduled reset), `event_busy` (cancel reset), `publish` (Publish), `history` (History), `download` (Export), `cloud_upload` / `upload_file` / `library_add` / `add_circle` (CSV import), `format_list_bulleted` (Product List tab), `remove_shopping_cart` / `add_business` (plan chips). All outline weight (`FILL 0`).
+
 **Account-type icons** (rendered inside the Account Type Icon avatar — see §9): `storefront` (Retail / Store), `fastfood` (Restaurant), `shopping_cart` (Grocery), `local_convenience_store` (C-Store), `local_bar` (Bar), `attach_money` (Discount Store). All outline weight (`FILL 0`).
 
 ### Special Characters
@@ -449,7 +452,7 @@ border: 1px solid #E5484D;
 /* disabled */ color: rgba(229,72,77,.25); border-color: rgba(229,72,77,.25);
 ```
 
-**Danger (solid)** — red fill, white text; for an **already-confirmed, terminal** destructive action. Use **Secondary · Warning** (outline) to *open* a `confirm` modal per the existing rule; use **solid Danger** only for the final, irreversible commit inside it.
+**Danger (solid)** — red fill, white text; for an **already-confirmed, terminal** destructive action. **The rule:** an at-rest destructive button in a **table or header** uses outline **Secondary · Warning** — it *opens* a `confirm`; only the **terminal commit inside that confirm** uses **solid Danger**. Never use solid danger for a button that merely opens a dialog.
 
 ```css
 background: #E5484D;
@@ -589,6 +592,7 @@ background: #fff;
 | Default | `1px solid #D1D5DC` | `#fff` | — |
 | Focus | `1px solid #007CFF` | `#fff` | `box-shadow: 0 0 0 3px rgba(0,124,255,.15)` |
 | Error | `1px solid #E5484D` | `#fff` | Error message below: 12px 500 Inter, `#E5484D` |
+| Soft-required (unset) | `1px solid var(--p-warning)` | `var(--g-gold-10)` | Encouraged-but-optional field left empty — **amber, not red**. It's a nudge ("adding one is encouraged"), not an error. E.g. an unset Capacity. |
 | Disabled | `1px solid #E5E7EB` | `#fff` | `color: #99A1AF; -webkit-text-fill-color: #99A1AF; opacity: 1; cursor: not-allowed` — label, value, border &amp; chevron all use one gray |
 
 #### Floating label
@@ -1039,10 +1043,16 @@ border-radius: 8px;
 padding: 10px 12px;
 font: 400 14px/1.4 Inter;
 
+/* Amber (warning tint) — e.g. "editing a scheduled reset", CSV import warnings */
+background: var(--g-gold-10);
+color: var(--p-ink);
+
 /* Danger (red tint) */
 background: rgba(255,107,107,.12);
 color: var(--p-danger-strong);
 ```
+
+**Three tones:** **info** (blue), **amber** (warning / "heads-up" context), **danger** (red). Amber is for non-blocking context an operator should notice (cross-version editing banners, partial-import warnings) — not an error.
 
 Example usage:
 > "Select one or more products below, then press 'Continue' to choose a desired action for each product. (Step 1 of 4)"
@@ -1790,6 +1800,8 @@ These named keyframes ship in `colors_and_type.css` and back every entrance / lo
 | `gr-tab-in` | tab-panel & wizard-step arrival |
 | `gr-bar-in` | bottom-anchored bar (keeps `translate(-50%, …)` centering) |
 | `ep-echo` | Echo Pulse rings (see §9 Echo Pulse) |
+| `gr-label-swap` | inline label morph (Capacity → Display Size) — fade + 5px rise + slight blur |
+| `gr-drawer-in` | drawer / side-sheet entrance |
 
 **Transform-first rule.** Entrance animations must animate a transform, not opacity alone. A backgrounded iframe can freeze an opacity-only keyframe at `0`, leaving content permanently invisible — always pair opacity with a `translate`/`scale`. Honor `prefers-reduced-motion`: the stylesheet collapses durations and disables the Echo Pulse rings.
 
@@ -1822,7 +1834,21 @@ These named keyframes ship in `colors_and_type.css` and back every entrance / lo
 "64 of 71 products"
 "Thursday, Apr 23 • Kenny D'Amica   ·   5 stops"
 "Pending Additions"  /  "Pending Discontinue"  /  "Discontinued & Draining"
+
+— Store Layouts (Phase 3) —
+"Manage where products exist in each store — arrange sections and placements, publish or schedule resets."
+"Products at this store that aren't placed in any section appear here. Drag one into a section to place it."
+"Every authorized product is placed."
+"Add a note about this section"  /  "Add a note for reps — where to find it, inventory tips…"
+"General Stock Area"  /  "Products can't be placed here. Use this section to track variable inventory."
+"You're editing an upcoming reset (goes live {date}). Changes here do not affect the current live layout."
+"This is a draft with no go-live date yet. Publish it to make it live, or schedule it for a future date."
+"Any products selected will be added to the account when this layout is published."
+"N rows will be skipped due to errors below — the rest import normally."
+"1 skipped — a draft already exists for: Bluewater Bistro"
 ```
+
+**Phase-3 actions stay Title Case** — "Save as Draft", "Publish Now", "Schedule For Later", "Set Capacity For All", "Mark As General Stock Area", "Import N Drafts"; the helper / banner / tooltip strings above remain sentence case.
 
 ---
 

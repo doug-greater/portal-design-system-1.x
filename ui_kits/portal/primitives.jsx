@@ -260,6 +260,7 @@ function Tooltip({ text, children, side = 'top', maxWidth }) {
 function InfoBanner({ tone = 'info', children }) {
   const tones = {
     info: { bg: 'var(--p-primary-tint)', fg: 'var(--p-ink)' },
+    amber: { bg: 'var(--g-gold-10)', fg: 'var(--p-ink)' },
     danger: { bg: 'rgba(255,107,107,.12)', fg: 'var(--p-danger-strong)' },
   };
   return <div style={{ background: tones[tone].bg, color: tones[tone].fg, borderRadius: 8, padding: '10px 12px', font: '400 14px/1.4 Inter, sans-serif' }}>{children}</div>;
