@@ -1868,6 +1868,39 @@ background: #fff;                            /* unset → var(--g-gold-10) */
 
 ---
 
+### Add-items Picker (grouped multi-select)
+
+A centered overlay (480px, max-height 82vh) for adding several items to a destination at once — prioritizing what's already in scope while still allowing out-of-scope picks. Built on the `Modal` primitive. (Store Layouts: add products to a section.)
+
+- **Header:** title + "Into **{section}** · select one or more", then a search input.
+- **Scroll body — two groups separated by a divider:**
+  - **"At This Store · N"** (carried + pending) on top.
+  - **"Not At This Store · M"** as a **collapsible** group (chevron). When expanded it shows an **amber note** — *"Any products selected will be added to the account when this layout is published."* — then its rows.
+- **Rows** are multi-select (custom 18px `PickCheck`, primary fill when checked; selected row tints `--p-primary-tint`). An item already in *this* section renders disabled with a green `check_circle` + "Placed".
+- **Footer:** "{n} selected" (left); **Cancel** + **Done** (disabled at 0) on the right — adds all at once, no reopening.
+- **Rule:** selection **survives search-filtering** — resolve picks against a full-source `byId` map, not the rendered subset. Group labels: `600 11px Inter; letter-spacing: .06em; uppercase; --p-muted`.
+
+This mirrors the **Filter Menu** search pattern (SELECTED-on-top, capped results) but for *adding* rather than *filtering* — see Filter Menu.
+
+---
+
+### CSV Import
+
+A two-step **upload / paste → validate → preview → commit** flow — the canonical bulk-import pattern (it also fulfills the Empty States "first-run / import" cause). Built on the `Modal` primitive (540px step 1, 760px preview). Reference: `preview/components-csv-import.html`.
+
+**Step 1 — input.** A **dashed dropzone** button (`cloud_upload` 30px, primary; hover → `--p-primary-tint`) reading "Choose a CSV file" + a one-line schema hint, an **"or paste rows"** divider, and a **monospace textarea**. Footer: **Download Template** (neutral, `download`) + **Validate** (primary, disabled until input). Selecting a file auto-validates.
+
+**Step 2 — preview.** Four mini **stat tiles** (Accounts / Sections / Placements / **New to Store** highlighted blue); conditional **InfoBanners** (amber "*N rows will be skipped*", info "*N accounts have an existing draft*"); a scrollable **per-account list** — each row shows id + name + an amber **Chip "Draft exists"** on conflict, with a **Replace / Skip** segmented control (one draft per account); non-conflicts show a green "New draft" marker. A collapsible **`<details>` of skipped rows** ("Row {n} — {message}"). Footer: **Back** + **Import {N} Draft(s)** (count reflects skips). On commit → success toast → land on the **Drafts** tab.
+
+**Rules**
+
+- **Validate-then-commit, always** — never import blind. Show totals, skipped rows (with reasons), and conflicts up front; resolve conflicts inline before committing.
+- **Partial success is fine:** invalid rows are listed and skipped; valid rows still import.
+- Pair every import with a **Download Template** and a round-trippable **Export** (the editor emits the same CSV shape).
+- **CSV shape** (one row per placement; section fields repeat per row): `account_id, section_name, section_note, general_stock, product_id, capacity, capacity_unit, display, sequence`.
+
+---
+
 ## 10. Motion
 
 Animation is minimal — the portal reads as mostly static.
