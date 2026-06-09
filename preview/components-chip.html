@@ -1,0 +1,63 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0"><style>
+body{margin:0;padding:24px;background:#fff;color:var(--p-ink)}
+.mi{font-family:'Material Symbols Rounded';line-height:1;display:inline-flex;align-items:center;vertical-align:middle}
+.lbl{font:500 11px/1.2 'Geist Mono',monospace;color:var(--p-muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+/* Chip (micro status) — ~19px soft pill, optional 12px icon, no dot */
+.chip{display:inline-flex;align-items:center;gap:3px;height:19px;padding:0 7px;border-radius:999px;font:600 10.5px/1 Inter;white-space:nowrap;flex-shrink:0}
+.chip .mi{font-size:12px}
+.c-neutral{background:var(--p-surface-tint);color:var(--p-text-2)}
+.c-info{background:var(--p-primary-tint);color:var(--p-primary-ink)}
+.c-amber{background:var(--g-gold-10);color:var(--p-warning)}
+.c-danger{background:var(--g-red-10);color:var(--p-danger-strong)}
+.c-success{background:#ECFDF5;color:#047857}
+/* ChipToggle — boolean attribute pill */
+.ctog{display:inline-flex;align-items:center;gap:4px;height:26px;padding:0 9px;border-radius:999px;font:500 12px/1 Inter;cursor:pointer;border:1px solid var(--p-border-strong);background:#fff;color:var(--p-muted)}
+.ctog .mi{font-size:13px;color:var(--p-placeholder)}
+.ctog.on{border-color:var(--p-primary);background:var(--p-primary-tint);color:var(--p-primary-ink)}
+.ctog.on .mi{color:var(--p-primary)}
+.section{margin-top:30px;padding-top:20px;border-top:1px solid var(--p-border)}
+.notes{font:400 13px/1.5 Inter;color:var(--p-text-2);max-width:760px}
+.notes p{margin:0 0 8px}.notes code{font:500 12px 'Geist Mono',monospace;color:var(--p-text);background:var(--p-surface-tint);padding:1px 5px;border-radius:4px}
+</style></head><body>
+
+<p class="lbl">Tones</p>
+<div class="row">
+  <span class="chip c-neutral">12 items</span>
+  <span class="chip c-info"><span class="mi">schedule</span>Adds Aug 1</span>
+  <span class="chip c-amber">New to store</span>
+  <span class="chip c-danger"><span class="mi">remove_shopping_cart</span>Disc. Sep 1</span>
+  <span class="chip c-success"><span class="mi">check</span>Confirmed</span>
+</div>
+
+<p class="lbl">Canonical icon + copy map</p>
+<div class="row">
+  <span class="chip c-info"><span class="mi">schedule</span>Adds Aug 1</span>
+  <span class="chip c-danger"><span class="mi">remove_shopping_cart</span>Disc. Sep 1</span>
+  <span class="chip c-amber"><span class="mi">add_business</span>New to store</span>
+  <span class="chip c-info"><span class="mi">curtains</span>1 Display</span>
+  <span class="chip c-amber">Draft exists</span>
+  <span class="chip c-amber"><span class="mi">lightbulb</span>Suggested</span>
+</div>
+
+<p class="lbl">Clickable status pills (Chip visual, but &lt;button&gt; that stops propagation + navigates)</p>
+<div class="row">
+  <button class="chip c-amber" style="border:none;cursor:pointer"><span class="mi">event_upcoming</span>Reset Sep 1, 2026</button>
+  <button class="chip c-neutral" style="border:none;cursor:pointer"><span class="mi">edit_note</span>Draft</button>
+</div>
+
+<p class="lbl">Chip Toggle (boolean attribute on a dense row)</p>
+<div class="row">
+  <span class="ctog"><span class="mi">curtains</span>Display</span>
+  <span class="ctog on"><span class="mi">curtains</span>Display</span>
+</div>
+
+<div class="section">
+  <div class="notes">
+    <p><b>Chip vs Status Badge vs Pill:</b> Chip = micro flag / marker (icon, <b>no dot</b>, 10.5px). Status Badge = lifecycle state (<b>dot</b>, no icon, 12px). Pill = category / role tag (12px, no dot / icon).</p>
+    <p><b>Tone = meaning</b> — map to the nearest of the five tones (neutral / info / amber / danger / success); never mint a per-feature color. Copy is one to three words; the leading icon is optional.</p>
+    <p><b>Chip Toggle</b> is the interactive sibling — a boolean attribute pill (off: gray outline; on: <code>--p-primary-tint</code> + <code>--p-primary-ink</code>). Distinct from the 32px Filter Chip.</p>
+  </div>
+</div>
+
+</body></html>

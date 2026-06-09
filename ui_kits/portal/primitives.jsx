@@ -139,6 +139,37 @@ function Pill({ kind = 'Beer', children }) {
   return <span style={{ display: 'inline-flex', alignItems: 'center', padding: '2px 10px', borderRadius: 999, background: c.bg, color: c.fg, font: '500 12px/1.5 Inter, sans-serif', letterSpacing: '.02em', whiteSpace: 'nowrap' }}>{children || kind}</span>;
 }
 
+/* ---------------- Chip (micro status) ----------------
+   Smallest inline indicator: ~19px soft-tinted pill + optional 12px icon.
+   No dot (that's Status Badge); smaller than a category Pill. */
+const CHIP_TONES = {
+  neutral: { bg: 'var(--p-surface-tint)', fg: 'var(--p-text-2)' },
+  info:    { bg: 'var(--p-primary-tint)', fg: 'var(--p-primary-ink)' },
+  amber:   { bg: 'var(--g-gold-10)',      fg: 'var(--p-warning)' },
+  danger:  { bg: 'var(--g-red-10)',       fg: 'var(--p-danger-strong)' },
+  success: { bg: '#ECFDF5',               fg: '#047857' },
+};
+function Chip({ tone = 'neutral', icon, children, title, style }) {
+  const t = CHIP_TONES[tone] || CHIP_TONES.neutral;
+  return (
+    <span title={title} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, height: 19, padding: '0 7px', borderRadius: 999, background: t.bg, color: t.fg, font: '600 10.5px/1 Inter, sans-serif', whiteSpace: 'nowrap', flexShrink: 0, ...style }}>
+      {icon && <Icon name={icon} size={12} color="currentColor" />}{children}
+    </span>
+  );
+}
+
+/* ---------------- ChipToggle (boolean attribute pill) ---------------- */
+function ChipToggle({ on, onClick, icon, label }) {
+  return (
+    <button onClick={onClick} title={label}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 4, height: 26, padding: '0 9px', borderRadius: 999, cursor: 'pointer', whiteSpace: 'nowrap',
+        border: `1px solid ${on ? 'var(--p-primary)' : 'var(--p-border-strong)'}`, background: on ? 'var(--p-primary-tint)' : '#fff',
+        color: on ? 'var(--p-primary-ink)' : 'var(--p-muted)', font: '500 12px/1 Inter, sans-serif' }}>
+      <Icon name={icon} size={13} color={on ? 'var(--p-primary)' : 'var(--p-placeholder)'} /> {label}
+    </button>
+  );
+}
+
 /* ---------------- FilterChip ---------------- */
 function FilterChip({ icon = 'filter_list', label, count, active, onClick }) {
   return (
@@ -234,4 +265,4 @@ function StatsToggle({ visible, onToggle }) {
   );
 }
 
-Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, FilterChip, SegmentedTabs, StatCard, InfoBanner, StatsToggle, useStatsVisible });
+Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, Chip, ChipToggle, FilterChip, SegmentedTabs, StatCard, InfoBanner, StatsToggle, useStatsVisible });

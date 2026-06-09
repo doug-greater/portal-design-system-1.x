@@ -645,6 +645,21 @@ Off: border 1.5px solid #D1D5DC, bg #fff
 On:  border 1.5px solid #007CFF, inner 8px circle bg #007CFF
 ```
 
+#### Chip Toggle
+
+A pill that toggles a single **boolean attribute** on a dense row — when a `Toggle` is too big and a checkbox would read as *selection* (e.g. "is this a Display?" on a placement row).
+
+```css
+display: inline-flex; align-items: center; gap: 4px;
+height: 26px; padding: 0 9px; border-radius: 999px;
+font: 500 12px/1 Inter; cursor: pointer;
+/* off */ border: 1px solid var(--p-border-strong); background: #fff; color: var(--p-muted);
+/* on  */ border: 1px solid var(--p-primary); background: var(--p-primary-tint); color: var(--p-primary-ink);
+/* leading icon 13px: --p-placeholder off / --p-primary on */
+```
+
+Distinct from the **Filter Chip** (32px, opens a filter) and from **Chip** (status, non-interactive) — use only for an always-visible label + icon boolean.
+
 ---
 
 ### Filter Chips
@@ -854,6 +869,46 @@ font: 500 12px/1.5 Inter;
 **Lifecycle mappings (examples — reuse a tone, don't re-mint one).**
 - **Store Promotion:** Active → **Info** (blue, live dot) · Upcoming → **Pending** (amber) · Past → **Neutral** (gray).
 - **User:** Active → **Success** (green) "Active" · Deactivated → **Neutral** (gray) "Deactivated".
+
+---
+
+### Chip (micro status)
+
+The smallest inline indicator: a **soft tinted pill (~19px tall) with an optional 12px leading icon**. Use on dense rows where a Status Badge (with its dot) or a category Pill would be too heavy — a plan flag ("Adds Aug 1"), a presence marker ("1 Display"), a soft warning ("Draft exists"). This is the single spec for these micro-chips; do **not** hand-roll new ones. Reference: `preview/components-chip.html`.
+
+```css
+display: inline-flex; align-items: center; gap: 3px;
+height: 19px; padding: 0 7px; border-radius: 999px;
+font: 600 10.5px/1 Inter; white-space: nowrap; flex-shrink: 0;
+/* optional leading icon: 12px, color = currentColor */
+```
+
+| Tone | Background | Text | Typical use |
+|---|---|---|---|
+| `neutral` | `--p-surface-tint` | `--p-text-2` | Generic / count tags |
+| `info` | `--p-primary-tint` | `--p-primary-ink` | Plan add ("Adds Aug 1"), presence ("1 Display") |
+| `amber` | `--g-gold-10` | `--p-warning` | Soft warning ("New to store", "Draft exists", "Suggested") |
+| `danger` | `--g-red-10` | `--p-danger-strong` | Removal / discontinue ("Disc. Sep 1") |
+| `success` | `#ECFDF5` | `#047857` | Positive confirmation |
+
+**Rules**
+
+- **Tone = meaning.** Map to the nearest tone; never mint a per-feature color.
+- **Chip vs Status Badge vs Pill:** Chip = micro flag / marker (icon, **no dot**, 10.5px). Status Badge = lifecycle state (**dot**, no icon, 12px). Pill = category / role tag (12px, no dot / icon).
+- **Copy:** one to three words; an icon is optional and only when it adds clarity.
+
+**Canonical icon + tone + copy map** (battle-tested — adopt verbatim):
+
+| Meaning | Tone | Icon | Copy template |
+|---|---|---|---|
+| Pending add (future) | `info` | `schedule` | `Adds {Mon D}` |
+| Pending discontinue | `danger` | `remove_shopping_cart` | `Disc. {Mon D}` |
+| Not yet at store | `amber` | `add_business` | `New to store` |
+| Display presence (count) | `info` | `curtains` | `{n} Display` |
+| Existing draft warning | `amber` | *(none)* | `Draft exists` |
+| Suggested setting | `amber` | `lightbulb` | `Suggested` |
+
+**Clickable status pills.** A row may carry a Chip that is *interactive* — e.g. amber "Reset {Mon D, YYYY}" (`event_upcoming`) or gray "Draft" (`edit_note`) that deep-links into a version's editor. It uses the Chip visual but is a `<button>`: it must `stopPropagation` from the row's own click and expose a `title` / aria-label.
 
 ---
 
