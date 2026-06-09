@@ -301,6 +301,11 @@ coverage:
   documented **Tooltip** (`maxWidth` / `side`), **MenuButton** (off-table disclosure), the
   **Arrangement Board** (drag-and-drop, on `@dnd-kit`) with its **Meta Row** / **General
   Stock Area** / **Inline Quantity Control**, the **Add-items Picker**, and **CSV Import**.
+- **New in Portal 1.3 (shell + motion)** — the **`--p-shell`** page canvas + **`--shadow-surface`**
+  elevation tier; **StatCard count-up** + the **informational (no-action)** variant +
+  **filter-responsive** stats; the **pending-delta count cell** (`CountDeltaCell`); **URL-facet
+  deep-linking** + the `/in-the-market` route rename; and **App Shell collapse/expand motion**
+  (logo crossfade + wrap-safe company-name reveal). *(Phase 3 above = the Portal 1.2 delta.)*
 
 **Terminology (1.1 canon).** "Store Promotions" (short "Store Promos", `/store-promotions`),
 "POD Planner" (`/pod-planner`), "Audit Log" (events Created / Updated / Restored / Deleted;
