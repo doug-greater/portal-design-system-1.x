@@ -1771,6 +1771,103 @@ A table row can **expand in place** to reveal related detail — Store Promotion
 
 ---
 
+### Arrangement Board (drag-and-drop)
+
+A direct-manipulation board for arranging **sections** and the **product placements** within them, with an **Unassigned tray** of unplaced SKUs. Built on **`@dnd-kit`** (core + sortable + utilities) for accessible, keyboard-operable drag-and-drop — the only new runtime dependency. Reference: `ui_kits/portal/layout-board.jsx` (structural; live: `components/layout/LayoutBoard.js`).
+
+**Layout.** Two-column grid: `grid-template-columns: minmax(0,1fr) 340px; gap: 20px; align-items: start` — editor column (left) + a sticky Unassigned tray (right).
+
+**Section card.**
+
+```css
+border: 1px solid var(--p-border); border-radius: 10px; background: #fff; box-shadow: var(--shadow-card);
+/* header (sticky): */ position: sticky; top: {headerH}; z-index: 6;
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  background: var(--p-surface-alt); border-radius: 10px 10px 0 0;
+  border-bottom: 1px solid var(--p-border);   /* none + radius 10px when collapsed */
+```
+
+Header L→R: **drag handle** (`drag_indicator` 20px, `cursor: grab`, `touch-action: none`), **Section Name control** (preset `Select` + "Custom…"), an **item-count** (`{n} items`, mono) *or* a **"General Stock" badge**, a **collapse** chevron (rotates −90° when collapsed), and a **Kebab** → `[Add Product · Set Capacity For All · Delete Section (danger)]`.
+
+**Section name control.** A `Select` of canonical presets **+ a trailing "Custom…"** entry; choosing Custom reveals an inline free-text input (168px). Presets come from the backend (`/meta.sectionTypes`). Document the pattern: **"preset dropdown + Custom… escape hatch"** for any constrained-but-extensible name field.
+
+**Placement row.**
+
+```css
+display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+border: 1px solid var(--p-border); border-radius: 8px; background: #fff;
+/* dragging: opacity .4 */
+```
+
+Contents: drag handle (`drag_indicator` 18px) · **sequence chip** (mono `{n}` in a `--p-surface-alt` 6px box) · product name (500 14px) + category **Pill** + plan **Chip** + `brand · size` sub-line · **Inline Quantity Control** · **Chip Toggle "Display"** (`curtains`) · a `close` remove button (hover → `--g-red-10` / `--p-danger`).
+
+**Empty section drop-zone.** `1px dashed --p-border; radius 8; min-height 52px`, centered "Drag products here" with a `move_down` glyph.
+
+**Unassigned tray.**
+
+```css
+/* sticky at top: {headerH}; label row: inventory_2 + "Unassigned" + mono count pill */
+border: 1px dashed var(--p-border-strong); border-radius: 10px;
+background: var(--p-surface-alt); padding: 10px; min-height: 120px;
+/* active drop target: border-color --p-primary; background --p-primary-tint */
+```
+
+Tray chips are compact (name 13px + `category · size` + plan Chip). Helper: *"Products at this store that aren't placed in any section appear here. Drag one into a section to place it."* Empty: *"Every authorized product is placed."*
+
+**Drag overlay.** Use `@dnd-kit` `DragOverlay` (no drop animation): a product ghost (white card, 1px `--p-primary` border, `--shadow-float`) or a section-name ghost — keeps the dragged item legible above sticky headers.
+
+**Drag / drop rules (real product rules — document them):**
+
+1. A product **may live in multiple sections**, so **dragging a placement into the tray is forbidden** (ambiguous "remove from where?"). The tray only *emits* unplaced SKUs; it never *accepts* placements.
+2. A **General Stock Area** section rejects all drops.
+3. After any move, **self-heal tray membership** (unplaced = full catalog − placed).
+4. **Keyboard:** `KeyboardSensor` + `sortableKeyboardCoordinates`; `PointerSensor` with a 6px activation distance so clicks aren't swallowed.
+
+**A11y / motion:** honor `prefers-reduced-motion`; drag handles get `aria-label`; collapse / menu are real buttons. No springy drop animations — motion is garnish.
+
+---
+
+### Meta Row (progressive disclosure)
+
+Condenses a section's secondary config into one ~28px row: a rep **Note** (left, progressive disclosure) + a compact **General Stock** control (right).
+
+- **Row:** `display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 28px`.
+- **Note (left) — three states:**
+  - *empty* → ghost button: `sticky_note_2` 14px + muted "Add a note about this section" (`cursor: text`).
+  - *click* → inline input (28px, `1px --p-primary`, `box-shadow 0 0 0 3px rgba(0,124,255,.12)`, autofocus); commit on Enter / blur, cancel on Esc.
+  - *filled* → the ghost button showing the truncated note (`--p-text-2`).
+  - **Rule:** for optional, rarely-set free text on a dense row, prefer this **ghost → inline → text** disclosure over an always-present empty input.
+- **General Stock control (right):** optional amber **Chip "Suggested"** (only when off *and* the section name implies variable stock) · a `shuffle` 14px glyph + "General Stock Area" label (turns `--p-primary-ink` when on) · an `info` glyph carrying the educational **Tooltip** (`side="bottom" maxWidth={340}`) · a `Toggle`.
+
+---
+
+### General Stock Area (Arrangement Board sub-pattern)
+
+A section that holds **variable inventory with no fixed list / sequence** (back stock, cold storage). Marking it "General Stock" means **no product list, no sequence, no drops** — just a tracked container.
+
+- Toggling **on while placements exist** opens a **confirm** first (placements return to Unassigned): title **"Mark As General Stock Area?"**, body *"General stock areas do not have a stable and defined list of products within them. Any products that are currently listed in this section will be removed."* + *"{n} product placement(s) will be removed from this section."*; action **"Mark As General Stock Area"** (`shuffle`, `--p-warning`).
+- When **on**: Add Product / Set Capacity hidden, drops blocked, the header shows a neutral **"General Stock"** badge (`shuffle` 13px), and the body becomes a centered **info empty-state** (`1px dashed --p-border` on `--p-surface-alt`, `inventory_2` 24px): "General Stock Area" + *"Products can't be placed here. Use this section to track variable inventory."*
+- **Nudge, don't force:** the amber "Suggested" Chip only *hints* for back-stock-like section names; never auto-enable.
+
+---
+
+### Inline Quantity Control
+
+A dense, encouraged-but-optional **capacity + unit** control for a placement row.
+
+```css
+display: inline-flex; align-items: center; height: 30px; border-radius: 6px; overflow: hidden;
+border: 1px solid var(--p-border-strong);   /* unset → 1px solid var(--p-warning) */
+background: #fff;                            /* unset → var(--g-gold-10) */
+```
+
+- A muted **label** ("Capacity"), a right-aligned `<input type=number>` (46px), and a **unit toggle** ("units" ⇄ "cases") separated by a 1px divider.
+- **Unset cue:** when empty, the control takes the amber border + `--g-gold-10` fill — the canonical **"soft-required"** affordance (amber, *not* red; see Inputs & Forms).
+- **Animated label swap:** when the placement's **Display** toggle is on, the label morphs "Capacity" → "Display Size" via the `gr-label-swap` keyframe (keyed span so React re-mounts).
+- **Bulk apply:** a section kebab action **"Set Capacity For All"** opens a small modal (number + units / cases) that writes one value to every placement — the pattern: *per-row control + a "set for all" bulk shortcut in the container's menu*.
+
+---
+
 ## 10. Motion
 
 Animation is minimal — the portal reads as mostly static.
