@@ -1,7 +1,7 @@
 // Portal UI Kit — shared primitives
 // Exposed globally so other <script type="text/babel"> files can use them.
 
-const { useState, useEffect, useRef } = React;
+const { useState, useEffect, useRef, useMemo } = React;
 
 /* ---------------- Icon (Material Symbols Rounded font) ---------------- */
 // `name` is a Material Symbols glyph name (e.g. "search", "expand_more"). Outline by default.
@@ -223,15 +223,63 @@ function SegmentedTabs({ value, onChange, items }) {
   );
 }
 
-/* ---------------- StatCard (with drill-in `active` state) ----------------
-   Pass `onClick` to make the card a filter shortcut; `active` marks it as the
-   live drill target — border, inset ring, and action link adopt its color. */
+/* ---------------- StatCard count-up (ease-out-quart + coupled opacity) ----------------
+   Parse a value ("30%", "15.1k", 4.9, "1,234", "—") into an animatable numeric core +
+   prefix/suffix and count up from 0 on mount / value change. Reduced-motion aware. */
+function parseStatValue(value) {
+  const str = String(value);
+  const m = str.match(/[\d,]*\.?\d+/);
+  if (!m) return null;
+  const raw = m[0];
+  const target = parseFloat(raw.replace(/,/g, ''));
+  if (!isFinite(target)) return null;
+  const dot = raw.indexOf('.');
+  return { prefix: str.slice(0, m.index), suffix: str.slice(m.index + raw.length), target,
+    decimals: dot === -1 ? 0 : raw.length - dot - 1, grouped: raw.includes(',') };
+}
+function formatStat(n, decimals, grouped) {
+  return grouped
+    ? n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+    : n.toFixed(decimals);
+}
+function useCountUp(value, duration = 760) {
+  const parsed = useMemo(() => parseStatValue(value), [value]);
+  const [state, setState] = useState(() =>
+    parsed ? { text: parsed.prefix + formatStat(0, parsed.decimals, parsed.grouped) + parsed.suffix, op: 0 }
+           : { text: String(value), op: 1 });
+  const rafRef = useRef(0);
+  useEffect(() => {
+    if (!parsed) { setState({ text: String(value), op: 1 }); return; }
+    const reduce = typeof window !== 'undefined' && window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const full = parsed.prefix + formatStat(parsed.target, parsed.decimals, parsed.grouped) + parsed.suffix;
+    if (reduce || parsed.target === 0) { setState({ text: full, op: 1 }); return; }
+    const start = performance.now();
+    const ease = (t) => 1 - Math.pow(1 - t, 4); // ease-out-quart (no bounce)
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / duration);
+      const num = parsed.prefix + formatStat(parsed.target * ease(t), parsed.decimals, parsed.grouped) + parsed.suffix;
+      const op = Math.min(1, 0.15 + t * 1.9); // fully opaque by ~t=0.45
+      setState({ text: num, op });
+      if (t < 1) rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [parsed, value, duration]);
+  return state; // { text, op }
+}
+
+/* ---------------- StatCard ----------------
+   Values count up from 0 (ease-out-quart + fade). Drill-in: pass `onClick` (filter
+   shortcut) + `active` (live target → border/ring/link adopt its color). Omit
+   `action` for an INFORMATIONAL StatCard (a pure KPI with no drill-in). */
 function StatCard({ value, label, color = 'ink', action, active, onClick }) {
   const colors = { ink: 'var(--p-ink)', blue: 'var(--p-primary)', green: 'var(--p-success)', red: 'var(--p-danger)', gold: 'var(--p-warning)' };
   const c = colors[color] || colors.ink;
+  const { text: animated, op: animOp } = useCountUp(value);
   return (
     <div onClick={onClick} style={{ background: '#fff', border: `1px solid ${active ? c : 'var(--p-border)'}`, borderRadius: 6, padding: '14px 16px', display: 'flex', gap: 10, alignItems: 'baseline', boxShadow: active ? `inset 0 0 0 1px ${c}, var(--shadow-card)` : 'var(--shadow-card)', cursor: onClick ? 'pointer' : 'default', transition: 'border-color .12s, box-shadow .12s' }}>
-      <span style={{ font: "700 20px/1 'Geist Mono', monospace", color: c }}>{value}</span>
+      <span style={{ font: "700 20px/1 'Geist Mono', monospace", color: c, opacity: animOp }}>{animated}</span>
       <span style={{ font: '400 14px/1.3 Inter, sans-serif', color: 'var(--p-text-2)' }}>{label}</span>
       {action && <span style={{ marginLeft: 'auto', font: '500 12px/1 Inter, sans-serif', color: active ? c : 'var(--p-muted)', cursor: 'pointer', textDecoration: 'underline', textDecorationColor: active ? c : '#C4C9D2', textDecorationThickness: '1px', textUnderlineOffset: '2px' }}>{action}</span>}
     </div>
@@ -251,6 +299,34 @@ function Tooltip({ text, children, side = 'top', maxWidth }) {
       {children}
       {show && text && (
         <span role="tooltip" style={{ position: 'absolute', ...pos, whiteSpace: maxWidth ? 'normal' : 'nowrap', width: maxWidth, maxWidth: maxWidth ? 'calc(100vw - 32px)' : undefined, background: 'var(--p-ink)', color: '#fff', font: `500 11px/${maxWidth ? '1.5' : '1.3'} Inter, sans-serif`, padding: maxWidth ? '7px 10px' : '4px 8px', borderRadius: 6, boxShadow: 'var(--shadow-float)', zIndex: 200, pointerEvents: 'none', textAlign: 'left' }}>{text}</span>
+      )}
+    </span>
+  );
+}
+
+/* ---------------- CountDeltaCell — count + pending +N / −N deep-link chips ----------------
+   A carried count followed by clickable green +N / red −N mono chips (pending adds /
+   discontinues). Counts are NOT netted (+5 and −2 both show). The minus is U+2212 (−),
+   not a hyphen. Distinct from Chip (status flags) — these are signed numeric deltas. */
+function CountDeltaCell({ count = 0, adds = 0, discontinues = 0, onAdds, onDiscontinues, unit = 'product', testid }) {
+  if (!count && !adds && !discontinues)
+    return <span style={{ font: '400 13px Inter', color: 'var(--p-placeholder)' }} data-testid={testid}>—</span>;
+  const chip = { font: "500 11px 'Geist Mono', monospace", padding: '2px 7px', borderRadius: 999, border: 'none' };
+  const stop = (fn) => (e) => { e.stopPropagation(); fn && fn(); };
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }} data-testid={testid}>
+      <Tooltip text={`${count} ${unit}${count === 1 ? '' : 's'} carried at this store`}>
+        <span style={{ font: "500 13px 'Geist Mono', monospace", color: count ? 'var(--p-text)' : 'var(--p-placeholder)', cursor: 'default' }}>{count}</span>
+      </Tooltip>
+      {adds > 0 && (
+        <Tooltip text={`${adds} pending addition${adds === 1 ? '' : 's'} — view in POD Planner`}>
+          <button onClick={stop(onAdds)} style={{ ...chip, color: 'var(--p-success)', background: 'var(--g-green-10)', cursor: onAdds ? 'pointer' : 'default' }}>+{adds}</button>
+        </Tooltip>
+      )}
+      {discontinues > 0 && (
+        <Tooltip text={`${discontinues} pending discontinue${discontinues === 1 ? '' : 's'} — view in POD Planner`}>
+          <button onClick={stop(onDiscontinues)} style={{ ...chip, color: 'var(--p-danger)', background: 'var(--g-red-10)', cursor: onDiscontinues ? 'pointer' : 'default' }}>−{discontinues}</button>
+        </Tooltip>
       )}
     </span>
   );
@@ -284,4 +360,4 @@ function StatsToggle({ visible, onToggle }) {
   );
 }
 
-Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, Chip, ChipToggle, FilterChip, SegmentedTabs, StatCard, InfoBanner, Tooltip, StatsToggle, useStatsVisible });
+Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, Chip, ChipToggle, FilterChip, SegmentedTabs, StatCard, CountDeltaCell, InfoBanner, Tooltip, StatsToggle, useStatsVisible });

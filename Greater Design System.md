@@ -37,6 +37,7 @@
    - [Maps](#maps)
    - **New in 1.1:** [Wizard (multi-step flow)](#wizard-multi-step-flow) · [Audit Log, Change Row & Restore](#audit-log-change-row--restore) · [Echo Pulse](#echo-pulse-brand-moment) · [Expandable Rows](#expandable-rows) · [Batch Actions](#batch-actions-header-dropdown)
    - **New in Phase 3 (Store Layouts):** [Chip](#chip-micro-status) · [Tooltip](#tooltip) · [MenuButton](#menubutton-off-table-disclosure) · [Arrangement Board](#arrangement-board-drag-and-drop) · [Meta Row](#meta-row-progressive-disclosure) · [General Stock Area](#general-stock-area-arrangement-board-sub-pattern) · [Inline Quantity Control](#inline-quantity-control) · [Add-items Picker](#add-items-picker-grouped-multi-select) · [CSV Import](#csv-import)
+   - **New in 1.3 (shell + motion):** [Deep-linking (URL facets)](#deep-linking-url-facets) · StatCard count-up + informational variant (§9 Stat Cards) · `--p-shell` / `--shadow-surface` (§3 / §7) · pending-delta count cell (§9 Tables) · App Shell collapse motion (§9 App Shell)
 10. [Motion](#motion)
 11. [Voice & Copy](#voice--copy)
 12. [Layout](#layout)
@@ -136,9 +137,10 @@ The portal is information-dense — big data tables, filter chips, stat cards, c
 | `--p-placeholder` | `#99A1AF` | Input placeholder / muted count |
 | `--p-border` | `#E5E7EB` | 1px dividers, table borders |
 | `--p-border-strong` | `#D1D5DC` | Input borders |
-| `--p-surface` | `#FFFFFF` | Default surface |
+| `--p-surface` | `#FFFFFF` | Default surface (cards, tables, nav, modals) |
 | `--p-surface-alt` | `#F9FAFB` | Table header / zebra rows |
 | `--p-surface-tint` | `#F3F4F6` | Tab-strip background |
+| `--p-shell` | `#FDFCF9` | **Page / canvas background** — warm off-white; never for cards |
 
 ### Portal Primary Blue
 
@@ -193,7 +195,7 @@ The portal is information-dense — big data tables, filter chips, stat cards, c
 
 - Tints are always 25% / 10% / 5% of the accent over white — never ad-hoc.
 - No gradients in product surfaces. No full-bleed imagery. No repeating patterns.
-- The login screen is a sea of white with the raven logo centered — that restraint is the brand.
+- **Page canvas = `--p-shell` (#FDFCF9); surfaces = white.** The app content area, the wizard workflow area, the login screen, and the loading screens render on Shell. Cards, tables, panels, modals, popovers, the side nav, and wizard chrome stay white (`--p-surface`) so they lift off the warm canvas — never paint a full page white. (Login is the raven centered on Shell; the restraint is still the brand.)
 
 ---
 
@@ -356,11 +358,14 @@ Base unit is **4px**. All spacing tokens are multiples of this base.
 | Token | Value | Usage |
 |---|---|---|
 | `--shadow-tooltip` | `0 2px 6px 0 rgba(0,0,0,.15)` | Tooltip popovers |
-| `--shadow-card` | `0 1px 2px -1px rgba(0,0,0,.10), 0 1px 3px 0 rgba(0,0,0,.10)` | Stat cards, secondary buttons |
-| `--shadow-float` | `0 4px 6px -4px rgba(0,0,0,.10), 0 10px 15px -3px rgba(0,0,0,.10)` | Elevated floating cards (route popover) |
+| `--shadow-card` | `0 1px 2px -1px rgba(0,0,0,.10), 0 1px 3px 0 rgba(0,0,0,.10)` | **Small** elements (stat cards, secondary buttons) |
+| `--shadow-surface` | `0 1px 2px 0 rgba(16,24,40,.04), 0 6px 16px -8px rgba(16,24,40,.10)` | **Large** resting surfaces (tables, detail cards, ledgers) lifting off the shell |
+| `--shadow-float` | `0 4px 6px -4px rgba(0,0,0,.10), 0 10px 15px -3px rgba(0,0,0,.10)` | Elevated floating / transient layers (menus, popovers, tooltips, toasts) |
 | `--shadow-brutal` | `2px 2px 0 0 rgb(0,0,0)` | Foundation brand-moment buttons only |
 
-Cards in-table have **no shadow**. Use `--shadow-card` for stat cards and `--shadow-float` for detached popovers.
+Cards in-table have **no shadow**.
+
+> **Two elevation tiers by size.** Small elements use the tight `--shadow-card`; large resting surfaces (tables, detail cards, ledgers) use the soft diffuse `--shadow-surface` (ink-tinted `rgba(16,24,40,…)`, softer against the warm shell). Keep the 1px `--p-border` on surfaces — **border + soft shadow together**; the shadow doesn't replace the border. Floating transient layers keep `--shadow-float`.
 
 ---
 
@@ -977,9 +982,21 @@ Stat cards are laid out in 3-up rows.
 4       Discontinued & Draining    Show
 ```
 
+#### Count-up animation
+
+Every StatCard **value counts up from 0** on mount and whenever the value changes (e.g. a filter narrows the set), using **ease-out-quart** (`1 − (1−t)⁴`, ~760ms, no bounce) with a **coupled opacity ramp** (`opacity = min(1, 0.15 + t·1.9)`) so the number is faint exactly while the digits churn fastest — a graceful fade-in, not a flicker. The component owns this, so **don't reimplement per screen**. Prefix / suffix are preserved so formats survive (`30%`, `15.1k`, `2.5x`, `$1,234`, `4.9`; grouping + decimals re-applied each frame); non-numeric values (`—`, `N/A`) render as-is. Respects `prefers-reduced-motion` (snaps to final). The value stays **Geist Mono 700/20** so tabular digits don't jitter width. Reference: `useCountUp` / `parseStatValue` / `formatStat` in `primitives.jsx`.
+
 #### Drill-in & active state
 
 A stat card can act as a **filter shortcut**: clicking its value (or the "Show" link) applies the matching table filter — e.g. "Pending Additions" toggles the Action filter; "Ending ≤ 7 Days" applies a `today..+7` date range. When a stat is the **live drill target** it takes an **`active` state** — its border, an inset `1px` ring, and the action link all adopt the card's semantic color (`box-shadow: inset 0 0 0 1px {color}, var(--shadow-card)`).
+
+#### Informational vs drill-in
+
+`action` is **optional**. Omit `action` / `onClick` for an **informational** StatCard — a pure KPI with no clean 1:1 filter to drill into (e.g. "Layout Coverage", "Avg. Placements"). It shows `value` + `label` only (still count-up animated, still elevated), with no link styling. Use a **drill-in** StatCard when clicking it filters the list to that subset (the `active` state mirrors whether that filter is on). **Don't duplicate the tabs:** if a card would be 1:1 with a segmented tab's count, prefer a derived KPI instead. (Store Layouts dropped its tab-mirroring cards for Layout Coverage / Avg. Sections / Avg. Placements — all informational.)
+
+#### Filter-responsive
+
+**Stat cards reflect the page's active search + facet filters, and are tab-independent.** Compute stats over the *filtered* population (before the tab split) and fold them into the **list response** (`{ items, counts, stats }`) so they update in lockstep with the list on every filter change — never a separate, unfiltered `/stats` request. The segmented tab does **not** change the stat values (only search + facets do); the tab counts live on the tabs. Initialize with zero defaults so first paint is clean (the count-up then animates 0 → real value).
 
 #### Show / Hide Stats
 
@@ -990,9 +1007,10 @@ A **Neutral** Button toggles the whole stat row's visibility, **persisted per pa
 ### Tables
 
 ```css
-/* Wrapper */
+/* Wrapper (large surface — border + soft shadow on shell, see §7) */
 border: 1px solid var(--p-border);
 border-radius: 8px;
+box-shadow: var(--shadow-surface);
 overflow: hidden;
 
 /* Header row */
@@ -1031,6 +1049,18 @@ font-weight: 500;
 **Grid-row tables (read-only feeds).** Ultra-dense, fixed-schema, read-only ledgers (e.g. the Audit Log) may be built from CSS-grid `div` rows instead of a real `<table>`, to control 7–8 fixed/elastic columns precisely. Allowed **only** for read-only data feeds, and only if it keeps the standard chrome: the `#F9FAFB` / `11px` caps / `.08em` header, 1px row borders, the hover tint, and the standard footer. Anything interactive or selectable (e.g. the wizard `SelectionTable`) stays a real `<table>`.
 
 Columns auto-size to content with a `max-width: 300px` cap. Headers support column-resize via a drag handle (6px, highlights `--p-primary` on hover).
+
+#### Pending-delta count cell
+
+A count of items at a record, followed by clickable **`+N` (green)** / **`−N` (red)** mono chips for pending changes (additions / discontinues coming via Product Plans) — each a **deep-link** (see Navigation → deep-linking). Reference: `CountDeltaCell` in `primitives.jsx`.
+
+`[ count ]  [ +N ]  [ −N ]` → renders `—` (`--p-placeholder`) when all are zero.
+- **Count** — `Geist Mono 500/13`, `--p-text` (or `--p-placeholder` at 0), with a Tooltip ("N products carried at this store"); not clickable.
+- **`+N` chip** — `Geist Mono 500/11`, `padding: 2px 7px`, `radius 999`, **no border**, `color: --p-success` on `--g-green-10`. Tooltip: "N pending addition(s) — view in POD Planner".
+- **`−N` chip** — same shape, `color: --p-danger` on `--g-red-10`, using a **minus sign `−` (U+2212)**, never a hyphen.
+- **Counts are never netted** — `+5` and `−2` show independently (never collapse to `+3`). Chips `stopPropagation` so the row's own click doesn't also fire.
+
+Distinct from **Chip** (status flags): this is a fixed green/red **signed-delta** with mono numerals.
 
 ---
 
@@ -1347,6 +1377,15 @@ The sidebar must sit **outside** the scroll region (a sibling of `main`), never 
 - **Primary nav** — parent rows (40px, icon + 15px label + `expand_more` chevron when it has children) with expandable child lists. Active leaf / open group tints `rgba(0,124,255,.10)` with `--p-primary` icon; hover `rgba(0,124,255,.05)`. Active **child** row: solid `#007CFF` fill, white text, `30px` min-height.
 - **Bottom utility nav** — pinned to the bottom. Top → bottom: **Help Center** [external], **Audit Log**, **Settings**, **Account**, **Sign Out**. "Audit Log" (`/audit-log`) and "Settings" (`/settings`) are real routes and carry an **active/selected** state (`rgba(0,124,255,.10)` tint + `--p-primary` icon, like the primary nav); Help Center opens externally, Account and Sign Out are utilities. (The former "Ops Tools" toggle has been removed.)
 
+#### Collapse / expand motion
+
+The collapsible nav (72px ↔ 248px, `transition: width 180ms ease`) animates two things rather than snapping:
+
+- **Logo crossfade.** Don't swap the brand mark's `src`. Stack the **wordmark** and the **crow** absolutely in a width-animating container and **dissolve** between them (`opacity` over 160ms).
+- **Company-name reveal (wrap-safe).** The name **wraps freely** at full width — **never** `nowrap` / ellipsis-truncate it (that permanently clips a long customer name). Reveal it with **`grid-template-rows: 0fr ↔ 1fr`** so it animates to its **natural** (possibly multi-line) height, plus **asymmetric opacity timing** so the temporary reflow is never seen: on **collapse**, fade out fast (110ms) *then* close the row (60ms delay); on **expand**, open the row with the drawer *then* fade in after the width settles (220ms delay). The grid child needs `overflow: hidden; min-height: 0`.
+
+**Content region = `--p-shell`** (see §3 Color); the `aside` itself stays white. **Loading screens** — `FullScreenLoader` (initial auth) and the post-auth **Echo Pulse** overlay ("Entering Greater Portal…") — also sit on `--p-shell`, so entering and leaving the portal is continuous with the shelled app (the Echo Pulse mark is transparent, so no component change).
+
 #### Collapsed Flyout
 
 When collapsed (72px), hovering a nav icon opens a flyout so users navigate without expanding the rail.
@@ -1378,6 +1417,26 @@ A **full-page editor that stays inside the App Shell** (left nav visible) — no
 - **Header action bar** (right): a **dirty indicator** ("● Unsaved changes", `--p-warning`) + `History` + `Export` (neutral) + the version-specific Save / Publish controls (a **MenuButton**).
 - **Cross-version banners:** `InfoBanner tone="amber"` for "editing a scheduled reset" and `tone="info"` for "this is a draft", each with an inline `.g-textlink` to jump to the sibling version.
 - **Exit guard:** leaving with unsaved edits opens a `confirm` Modal ("Discard Unsaved Changes?").
+
+---
+
+### Deep-linking (URL facets)
+
+Cross-page affordances (a chip, a "View all", a stat) should land the user on the destination list **already filtered** — and that state should be a real, shareable URL.
+
+- **List filters are URL-addressable.** A list's search + facet state serializes to query params (`?q=…&account=A0011&chain=Pelican%20Grocers`). The list reads them on mount via the shared `readUrlFacets(search, mapping)` helper (`lib/urlFilters.js`), which maps query keys → facet groups.
+- **Cross-page links navigate with a facet query.** The pending-delta chips (see Tables) and the Accounts "Products" cell deep-link to `/pod-planner?account=<id>`; the account-detail "Products in Market" link goes to `/in-the-market?account=<id>`.
+- **Link to the record facet, not a sub-filter.** The `+N` and `−N` chips both link to the **same** account-filtered view (no `action=Add/Discontinue` param) — the user wants to see *that store's* pending plans; pre-filtering to only adds or only discontinues hides half the picture. Keep deep-links to the **stable record facet** only.
+- **Renamed routes redirect, preserving the query string.** When a route is renamed, the old path **301s** to the new one with `location.search` intact, so existing `…?account=…` deep-links keep working:
+
+```jsx
+function LegacyProductsRedirect() {
+  const { search } = useLocation();
+  return <Navigate to={`/in-the-market${search}`} replace />;
+}
+```
+
+**IA note — `/in-the-market`.** The "In the Market" catalog page route is **`/in-the-market`** (was `/products`); the home, post-login, and catch-all redirects point to it, and `/products` 301s to it (query preserved). **Back-end API paths are unchanged** — only the front-end route was renamed; calls like `GET /api/products…` stay as-is.
 
 ---
 
@@ -1954,6 +2013,12 @@ These named keyframes ship in `colors_and_type.css` and back every entrance / lo
 
 **Transform-first rule.** Entrance animations must animate a transform, not opacity alone. A backgrounded iframe can freeze an opacity-only keyframe at `0`, leaving content permanently invisible — always pair opacity with a `translate`/`scale`. Honor `prefers-reduced-motion`: the stylesheet collapses durations and disables the Echo Pulse rings.
 
+### JS animations (count-ups, asymmetric timing)
+
+- **JS count-ups use ease-out-quart** (`1 − (1−t)⁴`), ~720–760ms, no bounce/elastic — the JS sibling of the CSS `cubic-bezier(0.22, 1, 0.36, 1)` family (`.gr-rise` / `.gr-step-*` / `.gr-tab-in`). The StatCard value count-up (see §9 Stat Cards) is the canonical example.
+- **Asymmetric enter/exit timing is an approved technique.** When an element should *leave* quickly but *arrive* gently (or arrive only after a sibling settles), set different transition delays / durations per state (read the `transition` string from the current state). Documented examples: the StatCard opacity ramp and the sidebar company-name reveal (§9 App Shell).
+- **Reduced motion covers JS too.** The global `prefers-reduced-motion` rule neutralizes CSS transitions; JS animations additionally **check `matchMedia` and snap to the final value** (see `useCountUp`). New motion must keep both safeties.
+
 ---
 
 ## 11. Voice & Copy
@@ -2073,6 +2138,7 @@ All tokens are defined in `colors_and_type.css`. Load it first, then optionally 
   --p-surface: #FFFFFF;
   --p-surface-alt: #F9FAFB;
   --p-surface-tint: #F3F4F6;
+  --p-shell: #FDFCF9;          /* page / canvas background */
 
   /* Portal primary */
   --p-primary: #007CFF;
@@ -2116,6 +2182,7 @@ All tokens are defined in `colors_and_type.css`. Load it first, then optionally 
   /* Elevation */
   --shadow-tooltip: 0 2px 6px 0 rgba(0,0,0,.15);
   --shadow-card: 0 1px 2px -1px rgba(0,0,0,.10), 0 1px 3px 0 rgba(0,0,0,.10);
+  --shadow-surface: 0 1px 2px 0 rgba(16,24,40,.04), 0 6px 16px -8px rgba(16,24,40,.10);
   --shadow-float: 0 4px 6px -4px rgba(0,0,0,.10), 0 10px 15px -3px rgba(0,0,0,.10);
   --shadow-brutal: 2px 2px 0 0 rgb(0,0,0);
 

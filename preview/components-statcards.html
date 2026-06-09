@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><style>
-body{margin:0;padding:24px;background:#fff}
+body{margin:0;padding:24px;background:var(--p-shell)}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:660px}
 .card{background:#fff;border:1px solid var(--p-border);border-radius:6px;padding:14px 16px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow-card)}
 .num{font:700 20px/1 'Geist Mono',monospace}
@@ -28,5 +28,10 @@ body{margin:0;padding:24px;background:#fff}
   <div class="card"><span class="num green">1</span><span class="lbl">Pending Additions</span><span class="sub">Show</span></div>
   <div class="card"><span class="num red">1</span><span class="lbl">Pending Discontinue</span><span class="sub">Show</span></div>
   <div class="card"><span class="num gold">4</span><span class="lbl">Discontinued &amp; Draining</span><span class="sub">Show</span></div>
+</div>
+<div style="max-width:660px;margin-top:22px;padding-top:18px;border-top:1px solid var(--p-border);font:400 13px/1.5 Inter;color:var(--p-text-2)">
+  <p style="margin:0 0 8px"><b>Count-up:</b> every value animates 0 → target on mount / change (ease-out-quart, ~760ms) with a coupled fade-in; formats (<code>%</code>, <code>k</code>, <code>$</code>, decimals, grouping) are preserved, <code>—</code> renders as-is, and it snaps under reduced-motion. (Static HTML can't show the motion.)</p>
+  <p style="margin:0 0 8px"><b>Informational vs drill-in:</b> the top row (no link) = informational KPIs; the bottom row (<i>Show</i> link) = drill-in cards that filter the list. Omit the action for pure KPIs, and don't duplicate a tab's count.</p>
+  <p style="margin:0"><b>On shell:</b> the white cards lift off the warm <code>--p-shell</code> canvas with the tight <code>--shadow-card</code> (small elements keep the tight shadow; large surfaces use <code>--shadow-surface</code>).</p>
 </div>
 </body></html>

@@ -59,7 +59,7 @@ Header, and a full app shell with a collapsible Navigation Sidebar.
 | `/scenarios/:id/agent-configuration/*` | Configure AI agents — sales rep week defaults, call patterns, route planning. |
 | `/scenarios/:id/general-settings/*` | Scenario-level settings (work-week, constraints). |
 | `/orchestration/visualize-impact/*` | Line/area charts showing baseline vs. selected scenario impact ($ savings, workload). |
-| `/products` ("In the Market") | Inventory table — products × accounts × coverage, with category pills and placement counts. |
+| `/in-the-market` ("In the Market") | Inventory table — products × accounts × coverage, with category pills and placement counts. (Renamed from `/products`, which 301s here with the query string preserved; back-end API paths unchanged.) |
 | `/accounts` | Account directory + detail pages (Account Type Icon identity header). |
 | `/users` | User management — list, detail (Profile / Role & Permissions / Team), with role pills and permission cards. |
 | `/store-layouts` | Per-account drag-and-drop merchandising — sections, placements, an Unassigned tray, drafts / scheduled resets, CSV import (`@dnd-kit`). In-shell editor at `/store-layouts/:accountId/:version`. |
@@ -301,6 +301,11 @@ coverage:
   documented **Tooltip** (`maxWidth` / `side`), **MenuButton** (off-table disclosure), the
   **Arrangement Board** (drag-and-drop, on `@dnd-kit`) with its **Meta Row** / **General
   Stock Area** / **Inline Quantity Control**, the **Add-items Picker**, and **CSV Import**.
+- **New in Portal 1.3 (shell + motion)** — the **`--p-shell`** page canvas + **`--shadow-surface`**
+  elevation tier; **StatCard count-up** + the **informational (no-action)** variant +
+  **filter-responsive** stats; the **pending-delta count cell** (`CountDeltaCell`); **URL-facet
+  deep-linking** + the `/in-the-market` route rename; and **App Shell collapse/expand motion**
+  (logo crossfade + wrap-safe company-name reveal). *(Phase 3 above = the Portal 1.2 delta.)*
 
 **Terminology (1.1 canon).** "Store Promotions" (short "Store Promos", `/store-promotions`),
 "POD Planner" (`/pod-planner`), "Audit Log" (events Created / Updated / Restored / Deleted;

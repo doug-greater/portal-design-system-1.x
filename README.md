@@ -33,3 +33,16 @@ This repository is our **shared design system** — the single source of truth f
 - **New patterns:** the **Arrangement Board** (drag-and-drop sections + placements + an Unassigned tray, on `@dnd-kit`), the **Section Meta Row**, **General Stock Area**, the **Inline Quantity Control** (amber "soft-required" cue), the grouped **Add-items Picker**, and a **CSV Import** (validate → preview → commit) flow.
 - **Extended:** Batch Actions now covers **row-checkbox tables** with a tab-conditional menu and partial-result two-toasts; the App Shell documents an **in-shell detail editor**; Info Banners gain an **amber** tone; a **soft-required = amber** input state; plus `.g-textlink`, `gr-label-swap`, and ~25 Store-Layouts icons.
 - **`@dnd-kit`** (core / sortable / utilities) is the one new runtime dependency.
+
+## What's new in Portal 1.3
+
+> *(Phase 3 above = the Portal 1.2 delta; this is the 1.3 "shell + motion" pass on top of it.)*
+
+- **Shell background:** pages, the wizard workspace, login, and loaders now sit on a warm off-white **`--p-shell` (#FDFCF9)**; white is reserved for surfaces (cards, tables, side nav, wizard chrome) so they lift off the canvas.
+- **Surface elevation:** new **`--shadow-surface`** soft-diffuse shadow for large resting surfaces (cards / tables / ledgers); the tight `--shadow-card` stays for small elements.
+- **StatCard motion:** values **count up** from 0 (ease-out-quart) with a coupled fade-in; formats (`%`, `k`, `x`, `$`, decimals, grouping) are preserved; respects reduced-motion.
+- **Filter-responsive stats:** stat cards now reflect the page's active search + facet filters (tab-independent); stats fold into the list response. Plus an **informational StatCard** (no drill-in action) for derived KPIs like coverage / averages.
+- **Pending-delta count cell:** a carried count followed by clickable **`+N` (green) / `−N` (red)** mono chips for pending adds / discontinues — each a deep-link (`CountDeltaCell`).
+- **Deep-linking:** list filters are URL-addressable; cross-page chips / links navigate with a facet query (`?account=…`); renamed routes redirect **preserving the query string**.
+- **Route rename:** the catalog page is now **`/in-the-market`** (old `/products` 301s to it).
+- **App Shell motion:** the collapsible nav **crossfades** its logo (wordmark ↔ crow) and reveals the company name with a `grid-template-rows` animation that wraps freely at full width and is hidden during the transition (no 2-line flash, and **no truncation** of long names).

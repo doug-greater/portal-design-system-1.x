@@ -79,7 +79,9 @@ function Skeleton({ width = '100%', height = 12, radius = 4, circle = false, sty
 /* ---------------- EchoPulse — branded post-auth loading mark ----------------
    The raven inside two expanding intelligence-gradient rings. The .echo-pulse
    class + ep-echo keyframes live in colors_and_type.css (disabled under
-   prefers-reduced-motion). Use ONLY for the auth → portal transition. */
+   prefers-reduced-motion). Use ONLY for the auth → portal transition.
+   The host loader screen (FullScreenLoader / post-auth overlay) sits on
+   --p-shell; the mark itself is transparent, so it needs no change. */
 function EchoPulse({ size = 92, ring = 150, speed = '2.4s', label }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 36 }}>
