@@ -238,6 +238,24 @@ function StatCard({ value, label, color = 'ink', action, active, onClick }) {
   );
 }
 
+/* ---------------- Tooltip ----------------
+   Dark hover popover. `maxWidth` (px) switches to multi-line wrap (required for
+   copy longer than ~6 words); `side="bottom"` opens downward near the top edge. */
+function Tooltip({ text, children, side = 'top', maxWidth }) {
+  const [show, setShow] = useState(false);
+  const pos = side === 'top'
+    ? { bottom: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)' }
+    : { top: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)' };
+  return (
+    <span style={{ position: 'relative', display: 'inline-flex' }} onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}>
+      {children}
+      {show && text && (
+        <span role="tooltip" style={{ position: 'absolute', ...pos, whiteSpace: maxWidth ? 'normal' : 'nowrap', width: maxWidth, maxWidth: maxWidth ? 'calc(100vw - 32px)' : undefined, background: 'var(--p-ink)', color: '#fff', font: `500 11px/${maxWidth ? '1.5' : '1.3'} Inter, sans-serif`, padding: maxWidth ? '7px 10px' : '4px 8px', borderRadius: 6, boxShadow: 'var(--shadow-float)', zIndex: 200, pointerEvents: 'none', textAlign: 'left' }}>{text}</span>
+      )}
+    </span>
+  );
+}
+
 /* ---------------- InfoBanner ---------------- */
 function InfoBanner({ tone = 'info', children }) {
   const tones = {
@@ -265,4 +283,4 @@ function StatsToggle({ visible, onToggle }) {
   );
 }
 
-Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, Chip, ChipToggle, FilterChip, SegmentedTabs, StatCard, InfoBanner, StatsToggle, useStatsVisible });
+Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, Chip, ChipToggle, FilterChip, SegmentedTabs, StatCard, InfoBanner, Tooltip, StatsToggle, useStatsVisible });

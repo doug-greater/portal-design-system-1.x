@@ -1,0 +1,41 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0"><style>
+body{margin:0;padding:24px;background:#fff;color:var(--p-ink)}
+.mi{font-family:'Material Symbols Rounded';line-height:1;display:inline-flex;align-items:center;vertical-align:middle}
+.lbl{font:500 11px/1.2 'Geist Mono',monospace;color:var(--p-muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 10px}
+.bar{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 20px;min-width:88px;border-radius:4px;font:500 14px/1 Inter;cursor:pointer;border:1px solid transparent}
+.neutral{background:#fff;color:var(--p-text);border-color:var(--p-border-strong)}
+.warning{background:#fff;color:var(--p-danger);border-color:var(--p-danger)}
+.primary{background:var(--p-primary);color:#fff}
+.mbwrap{position:relative;display:inline-flex}
+.menu{position:absolute;top:42px;right:0;width:212px;background:#fff;border:1px solid var(--p-border);border-radius:8px;box-shadow:var(--shadow-float);padding:4px;z-index:60}
+.mitem{display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:6px;font:400 14px/1 Inter;color:var(--p-ink)}
+.mitem .mi{color:var(--p-muted);font-size:18px}
+.section{margin-top:120px;padding-top:20px;border-top:1px solid var(--p-border)}
+.notes{font:400 13px/1.5 Inter;color:var(--p-text-2);max-width:760px}
+.notes p{margin:0 0 8px}.notes code{font:500 12px 'Geist Mono',monospace;color:var(--p-text);background:var(--p-surface-tint);padding:1px 5px;border-radius:4px}
+</style></head><body>
+
+<p class="lbl">Editor action bar — MenuButton aligns with full-height sibling buttons</p>
+<div class="bar">
+  <span style="font:500 13px Inter;color:var(--p-warning);margin-right:8px"><span class="mi" style="font-size:10px">circle</span> Unsaved changes</span>
+  <button class="btn neutral"><span class="mi" style="font-size:16px">history</span> History</button>
+  <button class="btn neutral"><span class="mi" style="font-size:16px">download</span> Export</button>
+  <button class="btn warning">Discard Draft</button>
+  <span class="mbwrap">
+    <button class="btn primary"><span class="mi" style="font-size:16px">publish</span> Publish <span class="mi" style="font-size:18px">expand_more</span></button>
+    <div class="menu">
+      <div class="mitem"><span class="mi">publish</span>Publish Now</div>
+      <div class="mitem"><span class="mi">event</span>Schedule For Later</div>
+    </div>
+  </span>
+</div>
+
+<div class="section">
+  <div class="notes">
+    <p><b>MenuButton</b> = a full-height (36px) <code>Button</code> (any variant) + a trailing <code>expand_more</code> that opens the <b>identical Menu popover</b> used by SplitButton/Kebab. It lines up with sibling buttons in headers and action bars, where a 28px SplitButton would look stunted.</p>
+    <p><b>The rule:</b> inside a data-table row → SplitButton or Kebab (28px). Outside tables (header / action bar / toolbar) → MenuButton. Choose <code>variant</code> by intent; default <code>menuAlign="right"</code>.</p>
+  </div>
+</div>
+
+</body></html>

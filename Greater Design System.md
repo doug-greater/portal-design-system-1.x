@@ -541,11 +541,29 @@ Actions attached to a table row. There is **one primitive and two triggers** —
 - **Kebab:** `28×28px`, `border-radius: 6px`, `more_horiz` at 20px, `--p-muted`; hover `rgba(0,0,0,.05)`.
 - **Menu popover:** `border-radius: 8px`, `--shadow-float`, 1px `--p-border`, `padding: 4px`, `min-width: ~208px`. Items `34px`, `padding: 0 10px`, `400 14px Inter`, optional 18px `--p-muted` leading icon. Group with an uppercase label + `1px --p-border` divider when there are more than ~5 items; destructive items go **last**, in `--p-danger`. Opens on click; closes on outside-click, `Escape`, or selection.
 
+#### MenuButton (off-table disclosure)
+
+SplitButton and Kebab are tuned for **28px table rows**. In a page header, detail action bar, or toolbar you often want the same "primary action + a menu of alternatives" but at **full button height** so it lines up with its neighbors — that's **MenuButton**: a normal `Button` (any variant) with a trailing `expand_more` that opens the **identical Menu popover**.
+
+- **Inside a data-table row →** SplitButton or Kebab (28px).
+- **Outside tables (header / action bar / toolbar) →** MenuButton (36px `Button` + chevron). Choose `variant` by intent (primary for the encouraged action); default `menuAlign="right"`. Never a second menu style — it opens the same `Menu`.
+
+Example (`StoreLayoutEditor` action bar): `Publish ▾` → `[Publish Now · Schedule For Later]`, aligned with the adjacent Save / Discard buttons.
+
 #### Do not
 
 - **Never use the vertical `more_vert` ("⋮") kebab.** The overflow / kebab trigger is **always** the horizontal `more_horiz` — in list rows, cards, panel headers, and menus alike. `more_vert` is **banned portal-wide** (the `.g-kebab` class renders `more_horiz`).
 - Do not ship a "secondary" split button as a repeated table column — if viewing is the row's job, make the row clickable and put extras in a kebab.
 - Do not treat "button + kebab" as a distinct component — it is simply a slim button beside a kebab.
+
+---
+
+### Tooltip
+
+A dark popover (`--p-ink` bg, white text) anchored to its trigger; hover-only, `pointer-events: none`, `z-index: 200`. Pairs naturally with a 14px `info` glyph (`cursor: help`). Default is a single nowrap line (`font: 500 11px/1.3 Inter; padding: 4px 8px; border-radius: 6px; box-shadow: var(--shadow-float)`). Reference: `preview/components-tooltip.html`.
+
+- **`maxWidth` (px)** — for multi-line / educational copy. Switches to `white-space: normal`, sets `width: {maxWidth}`, `max-width: calc(100vw - 32px)`, `line-height: 1.5`, `padding: 7px 10px`, left-aligned. **Required** whenever the body runs longer than ~6 words — otherwise it shrink-wraps to one nowrap line that runs off-screen.
+- **`side`** — `"top"` (default) or `"bottom"`. Use `"bottom"` for any trigger near the top edge of the viewport (e.g. an in-card control) so the tooltip can't be clipped above the fold.
 
 ---
 

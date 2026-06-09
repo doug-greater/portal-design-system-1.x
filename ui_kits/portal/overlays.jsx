@@ -218,4 +218,23 @@ function Kebab({ items = [], align = 'right' }) {
   );
 }
 
-Object.assign(window, { MIcon, useDismiss, useOutside, Scrim, Modal, Drawer, Menu, SplitButton, Kebab });
+/* ---------------- MenuButton (off-table disclosure) ----------------
+   A full-height Button + trailing chevron that opens the same Menu popover.
+   Use in headers / toolbars where a 28px SplitButton would look stunted. */
+function MenuButton({ label, items = [], variant = 'primary', icon, disabled, loading, menuAlign = 'right' }) {
+  const [open, setOpen] = useState(false);
+  const ref = useOutside(() => setOpen(false));
+  return (
+    <span ref={ref} style={{ position: 'relative', display: 'inline-flex' }}>
+      <Button variant={variant} icon={icon} iconRight="expand_more" disabled={disabled} loading={loading}
+        onClick={() => setOpen((o) => !o)} aria-haspopup="menu" aria-expanded={open}>{label}</Button>
+      {open && (
+        <div style={{ position: 'absolute', top: 42, [menuAlign === 'right' ? 'right' : 'left']: 0, zIndex: 60 }}>
+          <Menu items={items} onSelect={() => setOpen(false)} />
+        </div>
+      )}
+    </span>
+  );
+}
+
+Object.assign(window, { MIcon, useDismiss, useOutside, Scrim, Modal, Drawer, Menu, SplitButton, Kebab, MenuButton });
