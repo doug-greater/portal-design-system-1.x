@@ -981,9 +981,21 @@ Stat cards are laid out in 3-up rows.
 4       Discontinued & Draining    Show
 ```
 
+#### Count-up animation
+
+Every StatCard **value counts up from 0** on mount and whenever the value changes (e.g. a filter narrows the set), using **ease-out-quart** (`1 − (1−t)⁴`, ~760ms, no bounce) with a **coupled opacity ramp** (`opacity = min(1, 0.15 + t·1.9)`) so the number is faint exactly while the digits churn fastest — a graceful fade-in, not a flicker. The component owns this, so **don't reimplement per screen**. Prefix / suffix are preserved so formats survive (`30%`, `15.1k`, `2.5x`, `$1,234`, `4.9`; grouping + decimals re-applied each frame); non-numeric values (`—`, `N/A`) render as-is. Respects `prefers-reduced-motion` (snaps to final). The value stays **Geist Mono 700/20** so tabular digits don't jitter width. Reference: `useCountUp` / `parseStatValue` / `formatStat` in `primitives.jsx`.
+
 #### Drill-in & active state
 
 A stat card can act as a **filter shortcut**: clicking its value (or the "Show" link) applies the matching table filter — e.g. "Pending Additions" toggles the Action filter; "Ending ≤ 7 Days" applies a `today..+7` date range. When a stat is the **live drill target** it takes an **`active` state** — its border, an inset `1px` ring, and the action link all adopt the card's semantic color (`box-shadow: inset 0 0 0 1px {color}, var(--shadow-card)`).
+
+#### Informational vs drill-in
+
+`action` is **optional**. Omit `action` / `onClick` for an **informational** StatCard — a pure KPI with no clean 1:1 filter to drill into (e.g. "Layout Coverage", "Avg. Placements"). It shows `value` + `label` only (still count-up animated, still elevated), with no link styling. Use a **drill-in** StatCard when clicking it filters the list to that subset (the `active` state mirrors whether that filter is on). **Don't duplicate the tabs:** if a card would be 1:1 with a segmented tab's count, prefer a derived KPI instead. (Store Layouts dropped its tab-mirroring cards for Layout Coverage / Avg. Sections / Avg. Placements — all informational.)
+
+#### Filter-responsive
+
+**Stat cards reflect the page's active search + facet filters, and are tab-independent.** Compute stats over the *filtered* population (before the tab split) and fold them into the **list response** (`{ items, counts, stats }`) so they update in lockstep with the list on every filter change — never a separate, unfiltered `/stats` request. The segmented tab does **not** change the stat values (only search + facets do); the tab counts live on the tabs. Initialize with zero defaults so first paint is clean (the count-up then animates 0 → real value).
 
 #### Show / Hide Stats
 
