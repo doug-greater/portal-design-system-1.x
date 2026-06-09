@@ -304,6 +304,34 @@ function Tooltip({ text, children, side = 'top', maxWidth }) {
   );
 }
 
+/* ---------------- CountDeltaCell — count + pending +N / −N deep-link chips ----------------
+   A carried count followed by clickable green +N / red −N mono chips (pending adds /
+   discontinues). Counts are NOT netted (+5 and −2 both show). The minus is U+2212 (−),
+   not a hyphen. Distinct from Chip (status flags) — these are signed numeric deltas. */
+function CountDeltaCell({ count = 0, adds = 0, discontinues = 0, onAdds, onDiscontinues, unit = 'product', testid }) {
+  if (!count && !adds && !discontinues)
+    return <span style={{ font: '400 13px Inter', color: 'var(--p-placeholder)' }} data-testid={testid}>—</span>;
+  const chip = { font: "500 11px 'Geist Mono', monospace", padding: '2px 7px', borderRadius: 999, border: 'none' };
+  const stop = (fn) => (e) => { e.stopPropagation(); fn && fn(); };
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }} data-testid={testid}>
+      <Tooltip text={`${count} ${unit}${count === 1 ? '' : 's'} carried at this store`}>
+        <span style={{ font: "500 13px 'Geist Mono', monospace", color: count ? 'var(--p-text)' : 'var(--p-placeholder)', cursor: 'default' }}>{count}</span>
+      </Tooltip>
+      {adds > 0 && (
+        <Tooltip text={`${adds} pending addition${adds === 1 ? '' : 's'} — view in POD Planner`}>
+          <button onClick={stop(onAdds)} style={{ ...chip, color: 'var(--p-success)', background: 'var(--g-green-10)', cursor: onAdds ? 'pointer' : 'default' }}>+{adds}</button>
+        </Tooltip>
+      )}
+      {discontinues > 0 && (
+        <Tooltip text={`${discontinues} pending discontinue${discontinues === 1 ? '' : 's'} — view in POD Planner`}>
+          <button onClick={stop(onDiscontinues)} style={{ ...chip, color: 'var(--p-danger)', background: 'var(--g-red-10)', cursor: onDiscontinues ? 'pointer' : 'default' }}>−{discontinues}</button>
+        </Tooltip>
+      )}
+    </span>
+  );
+}
+
 /* ---------------- InfoBanner ---------------- */
 function InfoBanner({ tone = 'info', children }) {
   const tones = {
@@ -332,4 +360,4 @@ function StatsToggle({ visible, onToggle }) {
   );
 }
 
-Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, Chip, ChipToggle, FilterChip, SegmentedTabs, StatCard, InfoBanner, Tooltip, StatsToggle, useStatsVisible });
+Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, Chip, ChipToggle, FilterChip, SegmentedTabs, StatCard, CountDeltaCell, InfoBanner, Tooltip, StatsToggle, useStatsVisible });

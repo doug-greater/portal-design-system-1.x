@@ -1,0 +1,37 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><style>
+body{margin:0;padding:24px;background:var(--p-shell);color:var(--p-ink)}
+.lbl{font:500 11px/1.2 'Geist Mono',monospace;color:var(--p-muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px}
+/* a representative table surface on shell */
+.tbl{max-width:560px;background:#fff;border:1px solid var(--p-border);border-radius:8px;box-shadow:var(--shadow-surface);overflow:hidden}
+.hd,.row{display:grid;grid-template-columns:1fr 160px;gap:12px;align-items:center;padding:11px 16px}
+.hd{background:#F9FAFB;border-bottom:1px solid var(--p-border-strong);font:500 11px/1 Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--p-muted)}
+.row{border-bottom:1px solid var(--p-border);font:400 14px Inter}
+.row:last-child{border-bottom:none}
+.cell{display:inline-flex;align-items:center;gap:7px}
+.num{font:500 13px/1 'Geist Mono',monospace;color:var(--p-text)}
+.num.zero{color:var(--p-placeholder)}
+.chip{font:500 11px/1 'Geist Mono',monospace;padding:2px 7px;border-radius:999px;border:none;cursor:pointer}
+.add{color:var(--p-success);background:var(--g-green-10)}
+.disc{color:var(--p-danger);background:var(--g-red-10)}
+.em{font:400 13px Inter;color:var(--p-placeholder)}
+.notes{font:400 13px/1.5 Inter;color:var(--p-text-2);max-width:560px;margin-top:22px;padding-top:18px;border-top:1px solid var(--p-border)}
+.notes p{margin:0 0 8px}.notes code{font:500 12px 'Geist Mono',monospace;background:#fff;padding:1px 5px;border-radius:4px}
+</style></head><body>
+
+<p class="lbl">Pending-delta count cell (count + +N / −N deep-link chips)</p>
+<div class="tbl">
+  <div class="hd"><span>Account</span><span>Products</span></div>
+  <div class="row"><span>Bluewater Bistro</span><span class="cell"><span class="num">128</span><button class="chip add">+5</button><button class="chip disc">−2</button></span></div>
+  <div class="row"><span>Harbor Market</span><span class="cell"><span class="num">96</span><button class="chip add">+3</button></span></div>
+  <div class="row"><span>Coastal #12</span><span class="cell"><span class="num">214</span><button class="chip disc">−8</button></span></div>
+  <div class="row"><span>Pelican Grocers</span><span class="cell"><span class="num">71</span></span></div>
+  <div class="row"><span>Driftwood Deli</span><span class="cell"><span class="em">—</span></span></div>
+</div>
+
+<div class="notes">
+  <p><b>Anatomy:</b> a carried <code>count</code> (mono, not clickable, with a "N carried" tooltip), then a green <code>+N</code> and/or red <code>−N</code> mono chip for pending adds / discontinues. Renders <code>—</code> when all are zero.</p>
+  <p><b>Never netted:</b> <code>+5</code> and <code>−2</code> show independently (never <code>+3</code>). The minus is <b>U+2212 (−)</b>, not a hyphen. Chips are <code>&lt;button&gt;</code>s that <code>stopPropagation</code> and <b>deep-link</b> (e.g. <code>/pod-planner?account=…</code>).</p>
+  <p>Distinct from <b>Chip</b> (status flags) — this is a fixed green/red <b>signed delta</b>. The table sits on the warm shell with <code>--shadow-surface</code>.</p>
+</div>
+
+</body></html>

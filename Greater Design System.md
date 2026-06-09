@@ -1006,9 +1006,10 @@ A **Neutral** Button toggles the whole stat row's visibility, **persisted per pa
 ### Tables
 
 ```css
-/* Wrapper */
+/* Wrapper (large surface — border + soft shadow on shell, see §7) */
 border: 1px solid var(--p-border);
 border-radius: 8px;
+box-shadow: var(--shadow-surface);
 overflow: hidden;
 
 /* Header row */
@@ -1047,6 +1048,18 @@ font-weight: 500;
 **Grid-row tables (read-only feeds).** Ultra-dense, fixed-schema, read-only ledgers (e.g. the Audit Log) may be built from CSS-grid `div` rows instead of a real `<table>`, to control 7–8 fixed/elastic columns precisely. Allowed **only** for read-only data feeds, and only if it keeps the standard chrome: the `#F9FAFB` / `11px` caps / `.08em` header, 1px row borders, the hover tint, and the standard footer. Anything interactive or selectable (e.g. the wizard `SelectionTable`) stays a real `<table>`.
 
 Columns auto-size to content with a `max-width: 300px` cap. Headers support column-resize via a drag handle (6px, highlights `--p-primary` on hover).
+
+#### Pending-delta count cell
+
+A count of items at a record, followed by clickable **`+N` (green)** / **`−N` (red)** mono chips for pending changes (additions / discontinues coming via Product Plans) — each a **deep-link** (see Navigation → deep-linking). Reference: `CountDeltaCell` in `primitives.jsx`.
+
+`[ count ]  [ +N ]  [ −N ]` → renders `—` (`--p-placeholder`) when all are zero.
+- **Count** — `Geist Mono 500/13`, `--p-text` (or `--p-placeholder` at 0), with a Tooltip ("N products carried at this store"); not clickable.
+- **`+N` chip** — `Geist Mono 500/11`, `padding: 2px 7px`, `radius 999`, **no border**, `color: --p-success` on `--g-green-10`. Tooltip: "N pending addition(s) — view in POD Planner".
+- **`−N` chip** — same shape, `color: --p-danger` on `--g-red-10`, using a **minus sign `−` (U+2212)**, never a hyphen.
+- **Counts are never netted** — `+5` and `−2` show independently (never collapse to `+3`). Chips `stopPropagation` so the row's own click doesn't also fire.
+
+Distinct from **Chip** (status flags): this is a fixed green/red **signed-delta** with mono numerals.
 
 ---
 
