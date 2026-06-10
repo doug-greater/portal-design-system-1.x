@@ -1,5 +1,5 @@
 # Greater Design System
-### Portal 1.0 · May 2026
+### Portal 1.5 · June 2026
 
 > Greater Industries builds AI that helps wholesalers and distributors make the smartest, most efficient, most profitable decisions across their entire business. From warehouse workers and truck drivers to sales reps and owners — Greater's portal is the cockpit that connects the people who power local economies.
 
@@ -39,6 +39,7 @@
    - **New in Phase 3 (Store Layouts):** [Chip](#chip-micro-status) · [Tooltip](#tooltip) · [MenuButton](#menubutton-off-table-disclosure) · [Arrangement Board](#arrangement-board-drag-and-drop) · [Meta Row](#meta-row-progressive-disclosure) · [General Stock Area](#general-stock-area-arrangement-board-sub-pattern) · [Inline Quantity Control](#inline-quantity-control) · [Add-items Picker](#add-items-picker-grouped-multi-select) · [CSV Import](#csv-import)
    - **New in 1.3 (shell + motion):** [Deep-linking (URL facets)](#deep-linking-url-facets) · StatCard count-up + informational variant (§9 Stat Cards) · `--p-shell` / `--shadow-surface` (§3 / §7) · pending-delta count cell (§9 Tables) · App Shell collapse motion (§9 App Shell)
    - **New in 1.4 (Coverage Map + unified filters):** [Inventory Conditions](#inventory-conditions-data-viz--domain-palette) · Coverage Map (§9 Maps) · [Account Type](#account-type-icon) primitives · `atrisk` Chip tone (§9 Chip) · Filter Menu `daterange` + related-record facet (§9 Filter Menu) · conditional/write-only-secret & async-uniqueness forms (§9 Inputs) · **Sharp icons** (§8) & **portal Tooltip** (§9) *supersede* prior specs
+   - **New in 1.5 (Dark Mode + governed UI):** **Theming — light/dark/system** (§3) · full dark token block + flip-pairs · **Conditions → Palette A** (§9, *supersedes*) · dark Coverage-Map basemap (§9 Maps) · disabled/locked control states + capability-lock banner (§9 Inputs/Info Banners) · **Permissions & Affordances** hide-vs-disable + **Unsaved-Changes guard** (§9) · two-step **Login** + dev sign-in (§9) · 4px control radii (§6) · pending-tint unification · **Days On Hand** (*supersedes* Weeks) · `ballot`=Sales (§8) · Appendix A (RBAC vocab)
 10. [Motion](#motion)
 11. [Voice & Copy](#voice--copy)
 12. [Layout](#layout)
@@ -2101,6 +2102,17 @@ The shared diff primitive used by the audit modal **and** the wizard Review step
 > | **Added** | new value by name — e.g. *"Section B"* |
 >
 > **Rule:** each change row resolves IDs → names, names the **smallest meaningful scope** (account · product · section), and reads as a sentence-fragment a human can audit at a glance.
+
+---
+
+### Login (two-step auth) (1.5)
+
+The authentication screen: the raven centered on `--p-shell` (the restraint *is* the brand — see §3 Color Rules).
+
+- **Two-step flow.** **Step 1** = email lookup → **Step 2** = greeting (*"Good evening, {First}."*) + masked password + an **Edit** link back to step 1. Directional step transitions (`gr-step-fwd` / `gr-step-back`); staggered entrance via `gr-rise` (`--i` index → ~80ms stagger; ease-out-quint `cubic-bezier(0.22,1,0.36,1)`).
+- **Auth inputs** are **56px tall, `--radius-sm` (4px)** (§H) — taller than in-app 36px controls.
+- **Dev quick sign-in (development only).** Below the form, render **one dashed secondary button per dev account**, labelled **"Sign in as {Role} ({email})"** with a leading **`bolt`** icon. Clicking it **prefills email + password and advances through the real two-step flow** — it must **not** one-shot-bypass auth (the point is to exercise the genuine flow). Contract: a public `GET /auth/config` returns `{ devLoginEnabled, devAccounts: [{ label, email, password }] }` (only when enabled); the screen renders the list dynamically, so adding a role is a **config/data** change, not a UI change. `data-testid="dev-login-<slug>"`. **Clearly dev-only** — never ship enabled to production.
+- **Theme toggle** sits **flat, bottom-left**, no card chrome (the same control as the App-Shell utility nav, §A / §3 Theming).
 
 ---
 
