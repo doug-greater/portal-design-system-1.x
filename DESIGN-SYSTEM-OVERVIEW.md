@@ -272,9 +272,9 @@ inside the product. Don't skew, don't recolor.
 Each concept is documented as a standalone card in `preview/`. Current
 coverage:
 
-- **Foundations** — Colors (neutrals, accents, the **10-color pill palette**, Intelligence gradient, opacity), Type
+- **Foundations** — Colors (neutrals, accents, the **10-color pill palette**, the **Inventory Conditions** scale, Intelligence gradient, opacity), Type
   (headings, body, mono, voice), Spacing (scale, radii, shadows),
-  Iconography (**Material Symbols only**), Brand (logo, maps).
+  Iconography (**Material Symbols Sharp** only), Brand (logo, maps incl. the **Coverage Map** hexbin overlay).
 - **Controls & forms** — Buttons (primary / secondary / warning / **solid danger** / **neutral** / ghost /
   neo), Inputs & Forms (floating-label field, search bar,
   disabled states), Toggle / Checkbox / Radio.
@@ -291,7 +291,7 @@ coverage:
   Info Banners, two selection patterns — the header **Batch Actions** dropdown (default for tables) and the floating **Selection Bar** (canvas surfaces) — and the **Date Picker** (single + range, context-aware preset rails, min/max, drop-up).
 - **Identity & detail** — **User Avatars & Role Pills** (dotless; ring = the role's
   text color; both via the shared `.g-avatar` / `.g-role-pill` classes), the
-  **Account Type Icon**, and the **Page Detail Header**.
+  **Account Type Icon + Pill** (`AccountTypeIcon` / `AccountTypePill` primitives), and the **Page Detail Header**.
 - **Permissions** — **Permission Cards** and the **Confirmation Dialog** (now the
   `confirm` variant of Modal).
 - **New in 1.1** — the **Wizard** (full-screen multi-step flow + `SelectionTable`,
@@ -306,6 +306,18 @@ coverage:
   **filter-responsive** stats; the **pending-delta count cell** (`CountDeltaCell`); **URL-facet
   deep-linking** + the `/in-the-market` route rename; and **App Shell collapse/expand motion**
   (logo crossfade + wrap-safe company-name reveal). *(Phase 3 above = the Portal 1.2 delta.)*
+- **New in Portal 1.4 (Coverage Map + unified filters)** — **Material Symbols Sharp** replaces
+  Rounded app-wide; the **Tooltip** is now **portal-rendered** (`position: fixed`, viewport-clamped,
+  `z-index: 4000`); a new **Chip `atrisk`** tone (`--g-orange-10` / `--p-atrisk-strong`); the
+  **`AccountTypeIcon` + `AccountTypePill`** primitives; the **Inventory Conditions** palette
+  (fixed 6-level diverging health scale, `--cond-*`); the **Coverage Map** (Leaflet basemap + D3
+  hexbin overlay — color = Condition, fill area = Demand velocity — pins⇄hexbin modes, legend
+  spotlight, floating overlay cards; ships as `maps.css`); the Filter Menu **`daterange`** attribute
+  type + the **related-record facet**; the **conditional / write-only-secret** and **async
+  field-level uniqueness** form patterns; `FloatingField`/`Input` **`onBlur(value)` + `helper`**;
+  and the conventions (mono summary values, "Average", unit-suffixed values, magnitude-as-area).
+  **Deps:** `leaflet` 1.9.x, `d3-hexbin`, `d3-scale`, `d3-array`; CARTO "Light All" tiles.
+  *(Two items **supersede** earlier specs: Sharp icons and the portal Tooltip.)*
 
 **Terminology (1.1 canon).** "Store Promotions" (short "Store Promos", `/store-promotions`),
 "POD Planner" (`/pod-planner`), "Audit Log" (events Created / Updated / Restored / Deleted;

@@ -38,6 +38,7 @@
    - **New in 1.1:** [Wizard (multi-step flow)](#wizard-multi-step-flow) · [Audit Log, Change Row & Restore](#audit-log-change-row--restore) · [Echo Pulse](#echo-pulse-brand-moment) · [Expandable Rows](#expandable-rows) · [Batch Actions](#batch-actions-header-dropdown)
    - **New in Phase 3 (Store Layouts):** [Chip](#chip-micro-status) · [Tooltip](#tooltip) · [MenuButton](#menubutton-off-table-disclosure) · [Arrangement Board](#arrangement-board-drag-and-drop) · [Meta Row](#meta-row-progressive-disclosure) · [General Stock Area](#general-stock-area-arrangement-board-sub-pattern) · [Inline Quantity Control](#inline-quantity-control) · [Add-items Picker](#add-items-picker-grouped-multi-select) · [CSV Import](#csv-import)
    - **New in 1.3 (shell + motion):** [Deep-linking (URL facets)](#deep-linking-url-facets) · StatCard count-up + informational variant (§9 Stat Cards) · `--p-shell` / `--shadow-surface` (§3 / §7) · pending-delta count cell (§9 Tables) · App Shell collapse motion (§9 App Shell)
+   - **New in 1.4 (Coverage Map + unified filters):** [Inventory Conditions](#inventory-conditions-data-viz--domain-palette) · Coverage Map (§9 Maps) · [Account Type](#account-type-icon) primitives · `atrisk` Chip tone (§9 Chip) · Filter Menu `daterange` + related-record facet (§9 Filter Menu) · conditional/write-only-secret & async-uniqueness forms (§9 Inputs) · **Sharp icons** (§8) & **portal Tooltip** (§9) *supersede* prior specs
 10. [Motion](#motion)
 11. [Voice & Copy](#voice--copy)
 12. [Layout](#layout)
