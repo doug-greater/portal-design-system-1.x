@@ -83,8 +83,9 @@ function Button({ variant = 'primary', size = 'md', icon, iconRight, children, o
    `onBlur(value)` — fires the field's value (not the event) on blur; used by
    the async field-level uniqueness check (§J). `helper` — muted sub-label text
    rendered UNDER the field; SUPPRESSED while an `error` shows (error wins).
-   `error` may be a boolean (red border only) or a string (red border + message). */
-function Input({ icon, value, onChange, placeholder, type = 'text', error, style, onFocus, onBlur, helper }) {
+   `error` may be a boolean (red border only) or a string (red border + message).
+   `disabled` (1.5): readOnly + tinted bg + not-allowed cursor, no focus ring. */
+function Input({ icon, value, onChange, placeholder, type = 'text', error, style, onFocus, onBlur, helper, disabled }) {
   const [focus, setFocus] = useState(false);
   return (
     <div style={{ position: 'relative', display: 'inline-block', ...style }}>
@@ -94,13 +95,17 @@ function Input({ icon, value, onChange, placeholder, type = 'text', error, style
         </span>
       )}
       <input type={type} value={value} onChange={onChange} placeholder={placeholder}
-        onFocus={(e) => { setFocus(true); onFocus?.(e); }}
+        disabled={disabled} readOnly={disabled}
+        onFocus={(e) => { if (disabled) return; setFocus(true); onFocus?.(e); }}
         onBlur={(e) => { setFocus(false); onBlur?.(e.target.value); }}
         style={{
           width: '100%', height: 36, padding: icon ? '0 12px 0 32px' : '0 12px',
           border: `1px solid ${error ? 'var(--p-danger)' : focus ? 'var(--p-primary)' : 'var(--p-border-strong)'}`,
-          borderRadius: 4, font: '400 14px Inter, sans-serif', color: 'var(--p-ink)', background: '#fff',
-          outline: 'none', boxShadow: focus ? '0 0 0 3px rgba(21,93,252,.15)' : 'none',
+          borderRadius: 4, font: '400 14px Inter, sans-serif',
+          color: disabled ? 'var(--p-placeholder)' : 'var(--p-ink)',
+          background: disabled ? 'var(--p-surface-tint)' : '#fff',
+          cursor: disabled ? 'not-allowed' : 'text',
+          outline: 'none', boxShadow: focus && !disabled ? '0 0 0 3px rgba(21,93,252,.15)' : 'none',
           transition: 'border-color .12s, box-shadow .12s',
           boxSizing: 'border-box',
         }} />
@@ -125,18 +130,49 @@ function Toggle({ on, onChange }) {
   );
 }
 
-/* ---------------- Checkbox ---------------- */
-function Checkbox({ on, onChange }) {
+/* ---------------- Checkbox ----------------
+   `disabled` (1.5): muted (tinted box, placeholder-grey check), ignores clicks. */
+function Checkbox({ on, onChange, disabled }) {
   return (
-    <span onClick={() => onChange?.(!on)} style={{
-      width: 18, height: 18, borderRadius: 3, cursor: 'pointer',
-      border: on ? '1.5px solid var(--p-primary)' : '1.5px solid var(--p-border-strong)',
-      background: on ? 'var(--p-primary)' : '#fff',
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#fff',
-      flexShrink: 0,
+    <span onClick={() => !disabled && onChange?.(!on)} style={{
+      width: 18, height: 18, borderRadius: 3, cursor: disabled ? 'not-allowed' : 'pointer',
+      border: `1.5px solid ${disabled ? 'var(--p-border-strong)' : on ? 'var(--p-primary)' : 'var(--p-border-strong)'}`,
+      background: disabled ? 'var(--p-surface-tint)' : on ? 'var(--p-primary)' : '#fff',
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      color: disabled ? 'var(--p-placeholder)' : '#fff', flexShrink: 0,
     }}>
-      {on && <Icon name="check" size={14} />}
+      {on && <Icon name="check" size={14} color="currentColor" />}
     </span>
+  );
+}
+
+/* ---------------- Select ----------------
+   DS-styled native select (4px radius, 36px). `options` = strings or
+   {value,label}. `disabled` (1.5): swaps the trailing `expand_more` chevron
+   for a `lock` glyph, tints the field, and is inert (native disabled — does
+   not open). The canonical control for read-only / capability-locked dropdowns. */
+function Select({ value, onChange, options = [], placeholder, disabled, style }) {
+  return (
+    <div style={{ position: 'relative', display: 'inline-block', ...style }}>
+      <select value={value} onChange={(e) => onChange?.(e.target.value)} disabled={disabled}
+        style={{
+          width: '100%', height: 36, padding: '0 34px 0 12px', appearance: 'none', WebkitAppearance: 'none',
+          border: '1px solid var(--p-border-strong)', borderRadius: 4, font: '400 14px Inter, sans-serif',
+          color: disabled ? 'var(--p-placeholder)' : 'var(--p-ink)',
+          background: disabled ? 'var(--p-surface-tint)' : '#fff',
+          cursor: disabled ? 'not-allowed' : 'pointer', outline: 'none', boxSizing: 'border-box',
+        }}>
+        {placeholder && <option value="">{placeholder}</option>}
+        {options.map((o) => {
+          const val = typeof o === 'string' ? o : o.value;
+          const lbl = typeof o === 'string' ? o : o.label;
+          return <option key={val} value={val}>{lbl}</option>;
+        })}
+      </select>
+      <span style={{ position: 'absolute', right: 10, top: 18, transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--p-placeholder)', display: 'flex' }}>
+        <Icon name={disabled ? 'lock' : 'expand_more'} size={disabled ? 14 : 18} />
+      </span>
+    </div>
   );
 }
 
@@ -439,4 +475,4 @@ function StatsToggle({ visible, onToggle }) {
   );
 }
 
-Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, Chip, ChipToggle, AccountTypeIcon, AccountTypePill, ACCOUNT_TYPE_ICONS, FilterChip, SegmentedTabs, StatCard, CountDeltaCell, InfoBanner, Tooltip, StatsToggle, useStatsVisible });
+Object.assign(window, { Icon, Logo, Crow, Button, Input, Select, Toggle, Checkbox, Pill, Chip, ChipToggle, AccountTypeIcon, AccountTypePill, ACCOUNT_TYPE_ICONS, FilterChip, SegmentedTabs, StatCard, CountDeltaCell, InfoBanner, Tooltip, StatsToggle, useStatsVisible });

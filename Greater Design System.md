@@ -658,15 +658,23 @@ Label sits at `z-index: 2` so it clips cleanly over a styled `<select>` box.
 
 Required fields append ` *` to the label string.
 
-#### Disabled state
+#### Disabled / locked state (1.5)
 
-Disabled fields keep a **white background** (never gray) and dim the whole control to one consistent gray, `#99A1AF`, applied to label, value text, border, and select chevron. Both `color` and `-webkit-text-fill-color` are set (to override the browser's `-webkit-text-fill-color` default), and `opacity: 1` is forced — native `<select>` ships a default `opacity: 0.7` when disabled, which otherwise makes a select read lighter than an identically-colored input. Input and select are pixel-consistent as a result.
+Three form primitives — **`Select`**, **`Checkbox`**, **`FloatingField`/`Input`** — share one first-class **`disabled`** language, so read-only forms (RBAC, self-edit, view-only cards — see §Permissions & Affordances) render consistently:
+
+- **Shared:** background `--p-surface-tint`, text `--p-placeholder`, `cursor: not-allowed`, **no focus ring**, inner marks slightly muted.
+- **`Select`** swaps its trailing `expand_more` chevron for a **`lock` glyph** when disabled and is **non-interactive** (native `disabled` — does not open). This `lock`-chevron is the at-a-glance signal that a dropdown is capability-locked.
+- **`Checkbox`** renders muted (tinted box, placeholder-grey check) and ignores clicks.
+- **`FloatingField`/`Input`** set the native input to `readOnly + disabled`, tinted bg, `cursor: not-allowed`.
+- **`Toggle`** already supported `disabled` (1.2) — keep.
+
+(Pair a locked surface with the amber **capability-lock banner**, §Info Banners, to explain *why* it's read-only.)
 
 #### Variants
 
 - **Text field** — standard floating-label, `padding: 0 14px`
 - **Monospace field** — same shell, `font-family: 'Geist Mono', monospace` — used for PIN, Route ID, codes
-- **Select / Dropdown** — same 44px shell, `padding-right: 36px`, custom chevron SVG at right 12px, `appearance: none`
+- **Select / Dropdown** — same shell, `appearance: none`; trailing `expand_more` chevron — **or a `lock` glyph when `disabled`** (§1.5).
 
 #### Field props (`FloatingField` / `Input`)
 
@@ -677,6 +685,7 @@ Disabled fields keep a **white background** (never gray) and dim the whole contr
 | `error` | Boolean → red border only; string → red border **+** a `.g-error` message below (`500 12px/1.4`, `--p-danger`). |
 | **`onBlur(value)`** *(§1.4)* | Fires the field's **value** (not the DOM event) on blur — used by the async field-level uniqueness check (§Forms / Patterns). |
 | **`helper`** *(§1.4)* | Muted sub-label text rendered **under** the field (`400 13px/1.4 Inter`, `--p-muted`); **suppressed while an `error` shows** (error wins). For "leave blank to keep current PIN", format hints, etc. |
+| **`disabled`** *(§1.5)* | `readOnly + disabled`; tinted `--p-surface-tint` bg, `--p-placeholder` text, `not-allowed`, no focus ring. On `Select`, also swaps the chevron for a `lock` glyph. |
 
 #### Search Bar (list pages)
 
@@ -746,6 +755,7 @@ Transition: left .15s, background .15s
 18×18px, border-radius 3px
 Off: border 1.5px solid #D1D5DC, bg #fff
 On:  border 1.5px solid #007CFF, bg #007CFF, white checkmark (12px, stroke-width 3)
+Disabled (1.5): bg --p-surface-tint, placeholder-grey check, cursor not-allowed, inert
 ```
 
 #### Radio
@@ -1196,6 +1206,25 @@ color: var(--p-danger-strong);
 
 Example usage:
 > "Select one or more products below, then press 'Continue' to choose a desired action for each product. (Step 1 of 4)"
+
+#### Capability-lock banner (1.5)
+
+A reusable variant: an **amber `InfoBanner` with a leading `lock` icon** that explains *why* a surface is read-only. Place it at the top of any form section the user can **see but not edit** (pairs with the §Disabled/locked control states and the §Permissions & Affordances pattern).
+
+```jsx
+<InfoBanner tone="amber" style={{ display:'flex', alignItems:'center', gap:10 }}>
+  <Icon name="lock" size={18} />
+  <span>{reason}</span>
+</InfoBanner>
+```
+
+**Copy conventions** — sentence case, actionable, **role-neutral** (the viewer may not be an admin, so say *"Ask an administrator,"* **not** *"another administrator"*):
+
+| Situation | Copy |
+|---|---|
+| Editing your own privileged settings | "You can't change your own role, permissions, or warehouse access. Ask an administrator to update these for you." |
+| View-only on a record you can open but not edit | "You have view-only access to users, so these settings can't be changed." |
+| Partial permission | "You don't have permission to manage roles & permissions. You can still edit this user's other details." |
 
 ---
 
