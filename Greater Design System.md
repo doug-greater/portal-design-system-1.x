@@ -1592,7 +1592,16 @@ function LegacyProductsRedirect() {
 
 ### Maps
 
-Maps use **Leaflet 1.9.x** with **CARTO "Light All" @2x retina tiles** (muted neutral — never satellite).
+Maps use **Leaflet 1.9.x** with **CARTO @2x retina tiles** (muted neutral — never satellite): **`light_all`** in light, **`dark_all`** in dark.
+
+> **Dark basemap (1.5).** The tile layer swaps `light_all`↔`dark_all` on the **resolved theme** and is **rebuilt inside an effect keyed on `resolved`** — which is exactly why theme state must live in one shared `useSyncExternalStore` store (§3 Theming): a per-component copy wouldn't re-fire the map's effect, and the tiles would stay light after a toggle. The overlay cards/legend/tooltip already use DS tokens (they theme for free); only the basemap, the Leaflet chrome, and the raw SVG overlay layers (`.g-hex-*`, `.g-cov-pin`) need the dark overrides in `maps.css`.
+>
+> ```js
+> L.tileLayer(dark
+>   ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+>   : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+>   { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>' });
+> ```
 
 #### Map Tokens
 
@@ -1687,7 +1696,7 @@ A full-bleed geographic view of store coverage, in two scopes: **single product*
 
 **Summary stats above the map (`SummaryStat`).** A row of headline metrics: **values are Geist Mono** (`600 22px`), labels Inter, values **unit-suffixed** (§Stats/Voice). Aggregate: `Accounts` · `Products` · `Average Demand` (`12.5 cs/wk`) · `Average On Hand` (`45 days`). Single product: `Accounts` · `In Market` (`471 cs`) · `Average Demand` · `Average On Hand`. The page also renders the active In-the-Market facets as **removable chips** (carried via the deep-link query, §Deep-linking), so the map's scope is explicit and adjustable.
 
-> **Maps pattern (publish).** Maps are a **Leaflet basemap (CARTO Light @2x) + a D3 SVG analytic overlay**, wrapped in a rounded `.g-map` card. All map UI lives in floating `.g-map-card` panels (title top-left, controls top-right, legend bottom-left). Leaflet's own chrome (zoom, attribution) is restyled to the DS. Interactive overlay SVG must set `pointer-events: all !important` to beat Leaflet's `none` on the overlay pane. Re-render the overlay on every mode/filter/spotlight change and on map `move`/`zoom`/`resize`. **Deps:** `leaflet` 1.9.x, `d3-hexbin`, `d3-scale`, `d3-array`; basemap tiles **CARTO "Light All" @2x** with the required OpenStreetMap + CARTO attribution.
+> **Maps pattern (publish).** Maps are a **Leaflet basemap (CARTO Light @2x) + a D3 SVG analytic overlay**, wrapped in a rounded `.g-map` card. All map UI lives in floating `.g-map-card` panels (title top-left, controls top-right, legend bottom-left). Leaflet's own chrome (zoom, attribution) is restyled to the DS. Interactive overlay SVG must set `pointer-events: all !important` to beat Leaflet's `none` on the overlay pane. Re-render the overlay on every mode/filter/spotlight change and on map `move`/`zoom`/`resize`; **rebuild the tile layer on theme change** (`light_all`↔`dark_all`). **Deps:** `leaflet` 1.9.x, `d3-hexbin`, `d3-scale`, `d3-array`; basemap tiles **CARTO "Light All" / "Dark All" @2x** with the required OpenStreetMap + CARTO attribution.
 
 > **Multivariate choropleth encoding rule (publish).** When a map/visualization shows **two** variables per cell, encode the **categorical / health** variable as **color** (from a fixed semantic palette) and a **magnitude** variable as **fill *area*** (scale the inner shape by `sqrt(value/max)` so area ≈ value) — **not** as opacity (opacity reads as uncertainty and muddies the color). The legend must explain **both** channels. Allow **spotlighting a single category** (click-to-isolate) as a lightweight filter, with a "Show all" reset. The **headline metric follows the encoding** — surface the same magnitude the fill encodes as a top `SummaryStat`.
 

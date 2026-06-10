@@ -7,19 +7,25 @@
 
    Stack:
    - Leaflet 1.9.x for the engine (basemap)
-   - CARTO "Light All" @2x retina tiles (muted neutral, never satellite)
+   - CARTO tiles @2x retina (muted neutral, never satellite): "Light All"
+     (light_all) in light, "Dark All" (dark_all) in dark — swapped on the
+     resolved theme (§A). Rebuild the tile layer in an effect keyed on
+     `resolved` (this is why theme lives in one shared store, §A).
    - D3 (d3-hexbin / d3-scale / d3-array) for the SVG analytic overlay
 
    Two map families share this language:
    - Routes: #007CFF polylines (portal primary, 70% opacity) + two pin
      styles (numbered stop, ink / active location, red).
    - Coverage Map: a D3 multivariate hexbin overlay where
-       color    = average inventory Condition  (the §Conditions palette)
+       color    = average inventory Condition  (Palette A, theme-aware §D)
        fill AREA = a magnitude (avg Demand velocity, cs/wk) — NOT opacity
      plus a Stores pins mode, a condition legend with click-to-spotlight,
      and floating overlay cards (title TL · controls TR · legend BL).
+     (On-hand inventory is reported as "Days on Hand", §Q.)
 
    z-index ladder: overlay cards 500 · hex tooltip 600 · DS Tooltip 4000.
+   Overlay cards / legend / tooltip use DS tokens, so they theme automatically;
+   only the basemap + raw SVG overlay layers need the dark overrides below.
 
    Include this file AFTER colors_and_type.css and AFTER leaflet.css.
    ======================================================================= */
@@ -366,3 +372,19 @@
   font: 400 11px/1.4 var(--font-sans);
   color: var(--p-muted);
 }
+
+/* =======================================================================
+   DARK THEME overrides (1.5)
+   =======================================================================
+   The basemap swaps to CARTO dark_all (in JS, keyed on `resolved`); these
+   rules dark-tune the Leaflet chrome + the raw SVG overlay layers. Overlay
+   cards, legend, and the hex tooltip already use DS tokens, so they flip
+   automatically — they are NOT repeated here. */
+html[data-theme="dark"] .g-map,
+html[data-theme="dark"] .g-map .leaflet-container { background: #15151A; }
+html[data-theme="dark"] .g-map .leaflet-control-attribution { background: rgba(10,10,11,.82); color: #8A8A93; }
+html[data-theme="dark"] .g-hex-outline { fill: rgba(255,255,255,.04); stroke: rgba(255,255,255,.18); }
+html[data-theme="dark"] .g-hex-cell:hover .g-hex-outline { stroke: #FFFFFF; fill: rgba(255,255,255,.10); }
+html[data-theme="dark"] .g-hex-fill { stroke: rgba(10,10,11,.55); }   /* gap stroke goes dark */
+html[data-theme="dark"] .g-hex-grid { stroke: rgba(255,255,255,.10); }
+html[data-theme="dark"] .g-cov-pin { stroke: #0A0A0B; }               /* pin halo = shell */
