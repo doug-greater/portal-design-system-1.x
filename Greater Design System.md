@@ -1228,6 +1228,22 @@ A reusable variant: an **amber `InfoBanner` with a leading `lock` icon** that ex
 
 ---
 
+### Permissions & Affordances — hide vs disable (1.5)
+
+As the portal gained real role-based capabilities, a consistent rule emerged for *how the UI reflects what you can and can't do*. (The capability ids themselves are product logic — see Appendix A.)
+
+1. **HIDE** an affordance the user has **no capability to use at all**:
+   - **Nav destinations** — e.g. the **Users** nav item disappears without `users.view`; the **Accounts** group without `acct.view`.
+   - **Page-level create / destructive actions** — **New**, **Batch Actions**, **Save**, **Deactivate / Reactivate**.
+2. **DISABLE + lock-state** a control inside a surface the user *can* see but not change *in that dimension* (use the §Disabled/locked states + a §capability-lock banner explaining why). Example: a Department Manager can edit a user's profile, but the **Role** selector and **Permission** toggles are disabled.
+3. **"View only" surface label.** A whole card the user can read but not edit shows a muted **"View only"** label where its save/status indicator would be (e.g. the Account *App Requirements* card without `acct.edit`).
+4. **Self-guard.** Users can **never** edit their **own** role / permissions / warehouse access (anti privilege-escalation), even if they otherwise hold the capability; surface it with the self-variant capability-lock banner.
+5. **Backend is the source of truth.** Hiding / disabling is **UX only**; the API still enforces (403 / silently drops locked fields). **Never rely on the UI alone.**
+
+> **Rule of thumb.** *No capability at all → hide. Capability but not in this dimension (or self-guarded) → show it disabled + locked, and say why.* Mirror the disabled control with a §capability-lock banner so the read-only state never reads as a bug.
+
+---
+
 ### Selection Bar (floating)
 
 > **One of two selection patterns.** For operator **list / table pages with a footer + pager, the [Batch Actions header dropdown](#batch-actions-header-dropdown) is the default** — it sits with the data-table chrome instead of floating over it. Reserve this **floating** Selection Bar for **canvas / non-tabular surfaces** (maps, boards, galleries) where there is no table footer to anchor to.
@@ -1833,6 +1849,24 @@ box-shadow: var(--shadow-float);
 - **Scrim:** `rgba(16,24,40,.45)`, no blur.
 - **Motion:** modal — 180ms ease-out, scale `0.98 → 1` + scrim fade. Drawer — 180ms ease-out `translateX(16px → 0)` (transform-only). Honor `prefers-reduced-motion`.
 - **Behavior:** trap focus while open; restore focus to the trigger on close. `default` and `Drawer` close on scrim-click, `✕`, and `Escape`. `confirm` closes on **Cancel** or `Escape` only — never scrim-click — to prevent accidental dismissal of a consequential choice.
+
+#### Unsaved-changes "Discard" guard (1.5)
+
+Any **edit surface** (detail editor, wizard step with local edits) guards navigation away when there are unsaved changes.
+
+**Pattern:**
+- Track **dirty** = a JSON snapshot of the editable fields differs from the loaded / last-saved snapshot.
+- Intercept the in-page **Back link / exit** affordance → open a **`confirm`** Modal (danger).
+- Add a `window` **`beforeunload`** guard while dirty (covers refresh / tab close / browser-back-out-of-app).
+- **Re-baseline** the snapshot after a successful save so it doesn't false-trigger.
+
+**Modal (danger `confirm`; Title-Case header, sentence-case body):**
+- **Title:** "Discard Unsaved Changes?"
+- **Body:** *"You have unsaved changes that haven't been saved yet. Leave this page anyway?"*
+- **Footer:** **Keep Editing** (ghost) · **Discard & Leave** (warning/danger).
+- testids: `…-leave-modal`, `…-keep-editing`, `…-confirm-leave`.
+
+> **Documented limitation (important for adopters).** With a **declarative** `<BrowserRouter>` + `<Routes>`, React Router's **`useBlocker` is unavailable** (it requires a *data router* via `createBrowserRouter`). So the guard covers the explicit back link + hard unloads, **not** in-app sidebar-link navigation. Apps that want full coverage of every in-app transition should adopt a **data router** so `useBlocker` can intercept all navigations — note this trade-off so the next implementer chooses deliberately.
 
 ---
 
@@ -2503,8 +2537,33 @@ Import `colors_and_type.css`, copy the logo assets, load Material Symbols from G
 - **Fonts:** Inter + Geist Mono from Google Fonts. Some references to "Helvetica Neue" in map attribution are acceptable as system-font fallback.
 - **Icon set:** Material Symbols (Sharp), one system everywhere — the variable font, addressed by ligature name. Lucide and Iconify have been fully removed.
 - **Portal chrome (global nav, user menu):** designed from first principles and shipped as the **App Shell + Navigation Sidebar** (see §9).
-- **Map tiles:** CARTO Light All `https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png`
+- **Map tiles:** CARTO `light_all` (light) / `dark_all` (dark) — `https://{s}.basemaps.cartocdn.com/{light_all|dark_all}/{z}/{x}/{y}{r}.png` (§Maps).
 
 ---
 
-*Greater Design System · Portal 1.0 · Exported May 2026*
+## Appendix A — RBAC capability vocabulary (product logic, *not* design tokens)
+
+So the affordance rules in §Permissions & Affordances have a shared vocabulary, this appendix lists the capability ids the UI keys off and the role baseline. **This is application/product logic, not a design token** — designers/implementers need it only to know *which* affordances are gated. The canonical definition is the app's roles config.
+
+**Capabilities referenced by the UI:** `users.view`, `users.edit`, `users.roles`, `acct.view`, `acct.edit` (plus the existing `insights.*`, `sales.*`, billing/settings caps).
+
+**Role → capability baseline (seed):**
+
+| Role | Has (relevant to affordances) |
+|------|-------------------------------|
+| Executive / IT Admin | all (incl. `users.edit`, `users.roles`, `acct.edit`) |
+| Department Manager | `users.view`, `users.edit`, `acct.view`, `acct.edit` — **not** `users.roles` |
+| Supervisor | `users.view`, `acct.view` (view-only on Users) |
+| Sales Rep | `acct.view`, `sales.*` — **no** `users.*` (no Users nav) |
+
+**Mapping to §Permissions & Affordances:**
+- No `users.view` → Users nav **hidden** (Reps); own profile still reachable via the user menu.
+- `users.view` only → Users list visible, **no** New / Batch / Save / Deactivate.
+- `users.edit` w/o `users.roles` → can edit profile + warehouses; **Role + Permissions disabled** (+ capability-lock banner).
+- No `acct.edit` → Account *App Requirements* card is **"View only."**
+
+*(Informational only — it lives here to give the visual affordance rules a vocabulary.)*
+
+---
+
+*Greater Design System · Portal 1.5 · Exported June 2026*
