@@ -656,6 +656,37 @@ font: 400 15px Inter;
 
 Floating "Search" label sits at `top: -7px; left: 12px`.
 
+#### Conditional (dependent) fields & write-only secrets (§1.4)
+
+Some fields exist only in a particular state, and some hold credentials that must never come back from the server. Reference: the Users form's **Mobile PIN** (gated by "Allow PIN Login for Mobile App").
+
+**Conditional (dependent) required field.**
+- **Visibility is bound to a controlling input** (a `Toggle`). Render the field only when the controller is on; on toggling **off**, also clear that field's error.
+- **Conditional requirement** — required *only while shown*. Validate in the **submit handler**: if the controller is on and the value is missing/invalid, set a field error and keep focus on that tab.
+- **Mask at the boundary.** `FloatingField` forwards no native `inputMode`/`maxLength`, so sanitize in `onChange` — e.g. a numeric PIN: `onChange={(v) => patch({ pin: v.replace(/\D/g, "").slice(0, 5) })}`.
+- **Validation copy is specific:** `"PIN must be exactly 5 digits"` (format) vs `"Enter a 5-digit PIN"` (required-but-empty).
+
+**Write-only secret with an "isSet" flag (the credential rule).**
+- The server **never returns** the secret; it returns a **boolean** (`pinSet`, mirroring how passwords already work). Strip the hash from list/detail/create/update responses.
+- **On create / first set:** the field is **required** (when the controller is on).
+- **On edit of a record that already has it** (`pinSet === true`): the field renders **empty** with `helper` *"A PIN is set. Leave blank to keep the current PIN."* and is **not** required — a blank submit preserves the value; a non-blank submit replaces it.
+- Persist by hashing with the existing password-hash utility; expose only the boolean.
+
+> **Rule.** **Conditional fields** appear only when their controlling input enables them, are **required only while shown**, and validate in the submit handler (clear their error when hidden). **Mask** input at the boundary (`onChange` sanitize). **Secrets are write-only:** the API returns a `*Set` boolean, never the value; when set, the field is optional and shows "leave blank to keep current," and a blank submit preserves it.
+
+#### Async field-level uniqueness check (§1.4)
+
+On the New/Edit User form, the email must be unique. Rather than only failing on submit, check on **blur** and branch the UI on the *state* of any existing match — turning a dead-end error into a recovery path.
+
+- **On blur** (`FloatingField`'s `onBlur(value)`, §Field props), POST the value to a lightweight check endpoint.
+- **Branch on the match:**
+  - **No match** → clear any inline notice; proceed.
+  - **Match is a *deactivated* user** → an **amber** inline callout offering **"Reactivate"** (recover the record instead of blocking).
+  - **Match is an *active* user** → a **red** field error ("This email is already in use") with a **"View profile"** deep-link to that user.
+- **On submit**, the server still enforces uniqueness and returns a **structured `409`** (status + the conflicting record's id/state) so the client renders the same branch even without the blur check.
+
+> **Rule.** Validate unique fields **on blur** against a check endpoint and **branch the UI on the match's state** — **Reactivate** for a deactivated match (amber), **View profile** for an active one (red) — rather than a generic "already exists." Back it with a **structured `409`** on submit so the recovery branch also appears for race conditions.
+
 ---
 
 ### Controls (Toggle, Checkbox, Radio)
@@ -991,6 +1022,8 @@ gap: 10px;
 align-items: center;
 box-shadow: var(--shadow-card);
 ```
+
+> **Numeric summary values are Geist Mono (§1.4).** *Every* headline / summary numeric value renders in **Geist Mono** — the tabular feel keeps the digits a stable width while a count-up ticks. The exact weight/size is **contextual**: `StatCard` = `700 20px`, the map's `SummaryStat` = `600 22px`. Label + unit copy follows the §Voice conventions: spell out **"Average"** (not "Avg."), **unit-suffix the value** (`12.5 cs/wk`, `45 days`, `471 cs`) while the label names the metric, and let the **headline metric follow the viz encoding** (surface the magnitude a map's fill encodes; "Accounts" not "Stores" when the dot is an account; "In Market" for total cases).
 
 **Value:** `font: 700 20px/1 'Geist Mono', monospace` — color varies by semantic meaning:
 
@@ -2128,7 +2161,9 @@ These named keyframes ship in `colors_and_type.css` and back every entrance / lo
 - **Plainspoken, operational, slightly wry.** Product copy is literal and straightforward.
 - **Second-person, sparingly.** "Sign in to your account." Never cutesy ("Hey! Let's get you signed in 👋"). No first-person.
 - **Sentence case** for prose; **Title Case** for actions & overlay headers. Sentence case everywhere except column headers, overlines, tab/chip labels, and — per §4 — every button / link-button / SplitButton label and Modal·Drawer·Dialog header (see Typography → Sentence Case Rules).
-- **Numbers carry weight.** Stat cards lead with large bold numbers. Use abbreviations: `21.1k`, `$482.7k`, `1,258`.
+- **Numbers carry weight.** Stat cards lead with large bold numbers, always in **Geist Mono** (§9 Stat Cards). Use abbreviations: `21.1k`, `$482.7k`, `1,258`.
+- **Spell out "Average" in metric labels (§1.4).** "Average Demand", "Average On Hand" — *not* "Avg." The extra characters read as more deliberate / credible in a sparse metric row.
+- **Unit-suffix the value, not the label (§1.4).** The label names the metric ("Average Demand"); the **value** carries the unit: `12.5 cs/wk`, `45 days`, `471 cs` (`cs` = cases). And the **headline metric follows the viz encoding** — when a map encodes a magnitude as hex-fill area, surface that same magnitude as a top metric, and rename stale labels to match ("Accounts," not "Stores," when the dot is an account; "In Market" for total cases).
 - **Verb-first** for actions, in Title Case: "Save Changes", "Finalize for Simulation", "Go Back".
 - **No emoji in product.** Emoji-free.
 - **Inline status words are colored** — not bolded, not badged. The color conveys the meaning.

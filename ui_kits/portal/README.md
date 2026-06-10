@@ -46,4 +46,14 @@ The layouts started from the Figma reference (`Page-1`), primarily:
 
 - The portal chrome (sidebar/topbar) is an original design built from the documented tokens (`AppShell`).
 - Icons: Material Symbols (Sharp) font — `<Icon name="…">` renders a glyph by its ligature name (e.g. `search`, `expand_more`).
-- Map: static SVG/CSS mock; no Leaflet integration.
+- Map: `brand-maps.html` runs a live Leaflet route sample; the Coverage Map hexbin overlay is shown as a static specimen (D3 isn't bundled into the kit).
+
+## Implementation notes (1.4 learnings)
+
+1. **Leaflet overlay pointer-events.** Leaflet's overlay pane is `pointer-events: none`; interactive SVG overlay elements (`.g-hex-outline`, `.g-cov-pin`) must force `pointer-events: all !important` or hover/click silently never fires. Keep non-interactive layers (fills, the lattice, pin labels) at `none`. (§Maps)
+2. **Map overlay z-index ladder.** Floating overlay cards `z-index: 500`; the hex tooltip `600`; the portal `Tooltip` `4000` (so DS tooltips still beat map UI). Keep these distinct.
+3. **Re-render the analytic overlay on state + map events.** Recompute/redraw the hexbin (or pins) on mode toggle, filter/spotlight change, and Leaflet `move`/`zoom`/`resize` — projected pixel positions are only valid for the current view.
+4. **Tooltip is portal-rendered and re-measures on open.** It positions from `getBoundingClientRect` at hover time; for anchors that move while shown, re-open to re-measure.
+5. **Mask masked inputs in `onChange`.** `FloatingField`/`Input` forwards no `maxLength`/`inputMode`; enforce numeric/length in the change handler.
+6. **Secrets never come back from the API.** Return a `*Set` boolean; "leave blank to keep current." Strip the hash from every response shape (list, detail, create, update).
+7. **Generalize count helpers before adding a non-Set facet value.** Adding the `daterange` `{from,to}` value to a Set-keyed value map stays safe only because every count read goes through one `attrCount` helper — route counts through one helper before introducing a differently-shaped value.
