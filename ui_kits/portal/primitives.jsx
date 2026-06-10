@@ -146,6 +146,7 @@ const CHIP_TONES = {
   neutral: { bg: 'var(--p-surface-tint)', fg: 'var(--p-text-2)' },
   info:    { bg: 'var(--p-primary-tint)', fg: 'var(--p-primary-ink)' },
   amber:   { bg: 'var(--g-gold-10)',      fg: 'var(--p-warning)' },
+  atrisk:  { bg: 'var(--g-orange-10)',    fg: 'var(--p-atrisk-strong)' },  // soft orange between amber & danger — "At Risk" / "~N draining" (§C)
   danger:  { bg: 'var(--g-red-10)',       fg: 'var(--p-danger-strong)' },
   success: { bg: '#ECFDF5',               fg: '#047857' },
 };
@@ -167,6 +168,41 @@ function ChipToggle({ on, onClick, icon, label }) {
         color: on ? 'var(--p-primary-ink)' : 'var(--p-muted)', font: '500 12px/1 Inter, sans-serif' }}>
       <Icon name={icon} size={13} color={on ? 'var(--p-primary)' : 'var(--p-placeholder)'} /> {label}
     </button>
+  );
+}
+
+/* ---------------- Account Type Icon + Pill (§D) ----------------
+   The canonical mark + label for an Account's type (Retail Store, Restaurant,
+   Grocery, C-Store, Bar, Discount Store). AccountTypeIcon: white disc, thin
+   neutral ring, dark outline glyph (glyph = container × 0.5). AccountTypePill:
+   neutral gray category pill that names the type. Pass an explicit `icon` to
+   override the type→glyph map; `ring={false}` inside a container that already
+   provides one. Extend ACCOUNT_TYPE_ICONS as new types appear (default storefront). */
+const ACCOUNT_TYPE_ICONS = {
+  'Retail Store': 'storefront',
+  'Restaurant': 'fastfood',
+  'Grocery': 'shopping_cart',
+  'C-Store': 'local_convenience_store',
+  'Bar': 'local_bar',
+  'Discount Store': 'attach_money',
+};
+function AccountTypeIcon({ type, icon, size = 32, ring = true }) {
+  const name = icon || ACCOUNT_TYPE_ICONS[type] || 'storefront';
+  return (
+    <span style={{ width: size, height: size, borderRadius: '50%', background: '#fff',
+      border: ring ? '1.5px solid #DDE1E6' : 'none', color: '#1C1C1E',
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <Icon name={name} size={Math.round(size * 0.5)} color="#1C1C1E" />
+    </span>
+  );
+}
+function AccountTypePill({ type }) {
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', padding: '2px 10px',
+      borderRadius: 999, background: '#F3F4F6', color: '#4A5565',
+      font: '500 12px/1.5 Inter', letterSpacing: '.02em', whiteSpace: 'nowrap' }}>
+      {type}
+    </span>
   );
 }
 
@@ -389,4 +425,4 @@ function StatsToggle({ visible, onToggle }) {
   );
 }
 
-Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, Chip, ChipToggle, FilterChip, SegmentedTabs, StatCard, CountDeltaCell, InfoBanner, Tooltip, StatsToggle, useStatsVisible });
+Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, Chip, ChipToggle, AccountTypeIcon, AccountTypePill, ACCOUNT_TYPE_ICONS, FilterChip, SegmentedTabs, StatCard, CountDeltaCell, InfoBanner, Tooltip, StatsToggle, useStatsVisible });

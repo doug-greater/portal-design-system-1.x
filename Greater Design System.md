@@ -921,12 +921,15 @@ font: 600 10.5px/1 Inter; white-space: nowrap; flex-shrink: 0;
 | `neutral` | `--p-surface-tint` | `--p-text-2` | Generic / count tags |
 | `info` | `--p-primary-tint` | `--p-primary-ink` | Plan add ("Adds Aug 1"), presence ("1 Display") |
 | `amber` | `--g-gold-10` | `--p-warning` | Soft warning ("New to store", "Draft exists", "Suggested") |
+| `atrisk` | `--g-orange-10` (`#FFF7ED`) | `--p-atrisk-strong` (`#C2410C`) | **"At Risk", "~N draining"** — a soft orange between `amber` and `danger` (§1.4) |
 | `danger` | `--g-red-10` | `--p-danger-strong` | Removal / discontinue ("Disc. Sep 1") |
 | `success` | `#ECFDF5` | `#047857` | Positive confirmation |
 
+> **`atrisk` vs the Condition palette.** `atrisk` is the **chip tint** for the At-Risk *condition* (tinted pill on white rows). The **map/legend** swatch for At Risk uses the Inventory Condition palette's saturated `#F59E0B` (`--cond-at`; see §Maps / Inventory Conditions). These are intentionally different surfaces (tinted chip vs. saturated fill on a gray basemap) — keep both.
+
 **Rules**
 
-- **Tone = meaning.** Map to the nearest tone; never mint a per-feature color.
+- **Tone = meaning.** Map to the nearest tone; never mint a per-feature color. (Six tones now: neutral · info · amber · **atrisk** · danger · success.)
 - **Chip vs Status Badge vs Pill:** Chip = micro flag / marker (icon, **no dot**, 10.5px). Status Badge = lifecycle state (**dot**, no icon, 12px). Pill = category / role tag (12px, no dot / icon).
 - **Copy:** one to three words; an icon is optional and only when it adds clarity.
 
@@ -1209,7 +1212,7 @@ Sizes: `md` (default, 12px) and `sm` (11px, 1px vertical padding). To expand the
 
 ### Account Type Icon
 
-White circle with a thin dark ring and a dark **outline** Material Symbols Sharp icon inside. Used wherever an Account is represented — tables, detail headers, search results.
+White circle with a thin **neutral** ring and a dark **outline** Material Symbols Sharp glyph inside. The canonical mark for an Account anywhere it's represented compactly — table leading cell, detail-header avatar slot, map callouts, search results. Shipped as the **`AccountTypeIcon`** primitive (with a sibling **`AccountTypePill`** and the **`ACCOUNT_TYPE_ICONS`** name→glyph map).
 
 ```css
 /* Shell */
@@ -1218,12 +1221,15 @@ align-items: center;
 justify-content: center;
 border-radius: 50%;
 background: #fff;
-border: 1.5px solid #1C1C1E;
+border: 1.5px solid #DDE1E6;   /* thin neutral ring (ring={false} to omit) */
 color: #1C1C1E;
 
 /* Icon size = container × 0.5  (e.g. 52px container → 26px icon) */
-/* Material Symbols Sharp, outline (FILL 0) */
+/* Material Symbols Sharp, outline (FILL 0) — glyph color #1C1C1E */
 ```
+
+- **`AccountTypeIcon({ type, icon, size = 32, ring = true })`** — resolves the glyph from `ACCOUNT_TYPE_ICONS[type]` (default `storefront`). Pass an explicit `icon` to override the map; `ring={false}` inside a container that already provides one.
+- **Tokenization:** the shipped literals are ring `#DDE1E6` and glyph `#1C1C1E`. Map to the nearest existing token (`--p-border` / `--p-ink`) only after confirming against the live app — the shipped values are these exact hexes.
 
 #### Account types & icons
 
@@ -1249,12 +1255,17 @@ Shares the same 4-step scale as User Avatars:
 
 #### Account Type Pill
 
-In page headers, pair the icon with an Account Type Pill. Uses the same pill shell as Role Pill but with a neutral background (no role color):
+In page headers and prose/rows, pair the icon with an **`AccountTypePill`** — a **neutral** category pill that names the type (text only; the glyph lives in the sibling `AccountTypeIcon`). Distinct from the colorful category `Pill` and from the dotted lifecycle `StatusBadge` — use it specifically to label an account's *type*.
 
 ```css
-background: #F3F4F6;
+display: inline-flex; align-items: center;
+padding: 2px 10px;
+border-radius: 999px;
+background: #F3F4F6;          /* neutral — no role/category color */
 color: #4A5565;
-/* Contains: 13px icon + label text */
+font: 500 12px/1.5 Inter;
+letter-spacing: .02em;
+white-space: nowrap;
 ```
 
 #### In the Page Detail Header
@@ -1442,6 +1453,32 @@ function LegacyProductsRedirect() {
 ```
 
 **IA note — `/in-the-market`.** The "In the Market" catalog page route is **`/in-the-market`** (was `/products`); the home, post-login, and catch-all redirects point to it, and `/products` 301s to it (query preserved). **Back-end API paths are unchanged** — only the front-end route was renamed; calls like `GET /api/products…` stay as-is.
+
+---
+
+### Inventory Conditions (data-viz / domain palette)
+
+**Condition** is Greater's SKU-level health verdict for on-hand stock at a store (from a depletion simulation). It appears as a **column** in the In-the-Market coverage panel and as the **color dimension** of the Coverage Map (§Maps). To keep those surfaces identical, the scale — its ordinal **severity** (`level`) and its **palette** — is defined **once** in `lib/conditions` and imported everywhere; never hand-pick condition colors at a call site.
+
+**Single source of truth:** the JS table in `lib/conditions` is canonical; the `--cond-*` CSS tokens in `colors_and_type.css` mirror the same hexes for CSS surfaces.
+
+| `level` | `key` | Label | Short | Color | Token |
+|---|---|---|---|---|---|
+| 0 | `out_of_stock` | Out of Stock | Out of Stock | `#B42318` (deep red) | `--cond-out` |
+| 1 | `high_risk` | High Risk of OOS | High Risk | `#E5484D` (red) | `--cond-high` |
+| 2 | `at_risk` | At Risk of OOS | At Risk | `#F59E0B` (amber) | `--cond-at` |
+| 3 | `optimal` | Optimal | Optimal | `#00BC57` (green) | `--cond-optimal` |
+| 4 | `slight_overstock` | Slight Overstock | Slight Over | `#2D9CDB` (blue) | `--cond-slight` |
+| 5 | `heavy_overstock` | Heavy Overstock | Heavy Over | `#7B68EE` (violet) | `--cond-heavy` |
+
+- **`level` is the ordinal severity** (0 = worst stockout → 5 = worst overstock; 3 = healthy middle). Averaging a set of stores' `level`s and rounding to the nearest index yields the bin's representative condition — that's how the map hexbin reduces many SKUs/stores to one color.
+- **Diverging palette, centered on green (Optimal):** reds/orange below, blues/violet above. This is a **semantic** palette — do **not** re-skin it per theme; a viewer must read "red = bad, green = good, blue/violet = too much."
+- **Helpers shipped in `lib/conditions`:** `COND_BY_KEY`, `COND_BY_LEVEL` (index === level), `conditionColor(key)` (fallback `#C9CDD2` for unknown).
+
+> **Canonical education copy** (reused verbatim in the In-the-Market "What are Conditions?" info tooltip and on the map):
+> *"Greater's algorithm understands SKU-level demand and its variance for every product in every store. We take the current inventory-on-hand for a SKU and run it through a simulation of projected depletion to determine whether the product is at risk of out-of-stock, overstocked in excess, or at the optimal level."*
+
+> **Rule.** Inventory Condition is a **fixed 6-level diverging scale** with a locked palette and an ordinal severity. Define it once and import it; the same palette drives the table's Condition cell, the coverage-panel legend, and the map's hexbin color + legend swatches. (See also the soft-orange Chip `atrisk` tone, §Chip — the *chip-tint* sibling of `--cond-at`.)
 
 ---
 

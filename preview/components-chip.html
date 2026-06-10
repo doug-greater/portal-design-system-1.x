@@ -9,6 +9,7 @@ body{margin:0;padding:24px;background:var(--p-shell);color:var(--p-ink)}
 .c-neutral{background:var(--p-surface-tint);color:var(--p-text-2)}
 .c-info{background:var(--p-primary-tint);color:var(--p-primary-ink)}
 .c-amber{background:var(--g-gold-10);color:var(--p-warning)}
+.c-atrisk{background:var(--g-orange-10);color:var(--p-atrisk-strong)}
 .c-danger{background:var(--g-red-10);color:var(--p-danger-strong)}
 .c-success{background:#ECFDF5;color:#047857}
 /* ChipToggle — boolean attribute pill */
@@ -26,8 +27,15 @@ body{margin:0;padding:24px;background:var(--p-shell);color:var(--p-ink)}
   <span class="chip c-neutral">12 items</span>
   <span class="chip c-info"><span class="mi">schedule</span>Adds Aug 1</span>
   <span class="chip c-amber">New to store</span>
+  <span class="chip c-atrisk"><span class="mi">trending_down</span>At Risk</span>
   <span class="chip c-danger"><span class="mi">remove_shopping_cart</span>Disc. Sep 1</span>
   <span class="chip c-success"><span class="mi">check</span>Confirmed</span>
+</div>
+
+<p class="lbl">atrisk tone — soft orange between amber &amp; danger (At Risk / draining)</p>
+<div class="row">
+  <span class="chip c-atrisk">At Risk</span>
+  <span class="chip c-atrisk"><span class="mi">water_drop</span>~3 draining</span>
 </div>
 
 <p class="lbl">Canonical icon + copy map</p>
@@ -55,7 +63,8 @@ body{margin:0;padding:24px;background:var(--p-shell);color:var(--p-ink)}
 <div class="section">
   <div class="notes">
     <p><b>Chip vs Status Badge vs Pill:</b> Chip = micro flag / marker (icon, <b>no dot</b>, 10.5px). Status Badge = lifecycle state (<b>dot</b>, no icon, 12px). Pill = category / role tag (12px, no dot / icon).</p>
-    <p><b>Tone = meaning</b> — map to the nearest of the five tones (neutral / info / amber / danger / success); never mint a per-feature color. Copy is one to three words; the leading icon is optional.</p>
+    <p><b>Tone = meaning</b> — map to the nearest of the six tones (neutral / info / amber / <b>atrisk</b> / danger / success); never mint a per-feature color. Copy is one to three words; the leading icon is optional.</p>
+    <p><b><code>atrisk</code></b> (<code>--g-orange-10</code> / <code>--p-atrisk-strong</code>) is a soft orange between <code>amber</code> and <code>danger</code> — "At Risk" / "~N draining". It's the chip-tint sibling of the saturated Inventory Condition swatch <code>--cond-at</code> (<code>#F59E0B</code>) used on the map/legend.</p>
     <p><b>Chip Toggle</b> is the interactive sibling — a boolean attribute pill (off: gray outline; on: <code>--p-primary-tint</code> + <code>--p-primary-ink</code>). Distinct from the 32px Filter Chip.</p>
   </div>
 </div>
