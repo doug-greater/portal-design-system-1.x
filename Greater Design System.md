@@ -631,6 +631,16 @@ Disabled fields keep a **white background** (never gray) and dim the whole contr
 - **Monospace field** — same shell, `font-family: 'Geist Mono', monospace` — used for PIN, Route ID, codes
 - **Select / Dropdown** — same 44px shell, `padding-right: 36px`, custom chevron SVG at right 12px, `appearance: none`
 
+#### Field props (`FloatingField` / `Input`)
+
+| Prop | Effect |
+|---|---|
+| `mono` | Switches the value to `'Geist Mono'` (PIN, Route ID, codes). |
+| `required` | Appends ` *` after the label string. |
+| `error` | Boolean → red border only; string → red border **+** a `.g-error` message below (`500 12px/1.4`, `--p-danger`). |
+| **`onBlur(value)`** *(§1.4)* | Fires the field's **value** (not the DOM event) on blur — used by the async field-level uniqueness check (§Forms / Patterns). |
+| **`helper`** *(§1.4)* | Muted sub-label text rendered **under** the field (`400 13px/1.4 Inter`, `--p-muted`); **suppressed while an `error` shows** (error wins). For "leave blank to keep current PIN", format hints, etc. |
+
 #### Search Bar (list pages)
 
 Taller search input used at the top of list views (Users, Products).
@@ -748,6 +758,25 @@ The canonical pattern for filtering tables. **One** "Filters" button opens a two
 |---|---|
 | Small enumerable (Category, Coverage, Status) | Plain checkbox list of all options. |
 | Large (Account, Brand, Product — hundreds–thousands) | `type: 'search'` — a search `Input` at the top of the pane filters the list live (placeholder names the count, e.g. "Search 3,600 accounts…"). A **Select all N matches** row sits at the very top of the results (primary blue) — it selects/deselects the *entire* current match set, not just the rendered rows, so a search-then-select-all flow works even past the render cap. Currently-selected items pin to the top under a **`SELECTED · N`** group; results render under an **`N matches`** group, **capped at 50** with a "keep typing to narrow" note. Each row may show a secondary value (e.g. account type) right-aligned in `--p-muted`. |
+| Date range (`type: 'daterange'`) | Embedded **`DateRangeCalendar`** (preset rail + calendar) — see below. The pane widens to **640px** (vs 540) because the calendar is wider than a facet list. |
+
+**Date-range attribute (`daterange`) — §1.4.** A date range is a **first-class Filter Menu attribute**, not a separate toolbar button. Declare it as `{ id: "GoLive", label: "Go-Live Date", icon: "date_range", type: "daterange" }`. Its **value is an object `{ from, to }`** (ISO date strings) — *not* a `Set` like checkbox/search facets — so the component handles it specially without breaking existing attrs:
+
+- **Count helper.** Generalize the per-attr active count so Sets and date ranges both work, and route **every** count read (total "N filters" badge, rail-item badge, applied-token visibility) through it:
+  ```js
+  function attrCount(a) {
+    const v = value[a.id];
+    if (!v) return 0;
+    if (a.type === "daterange") return (v.from || v.to) ? 1 : 0;
+    return v.size || 0;          // Set-valued facets unchanged
+  }
+  ```
+- **Right pane** renders the `DateRangeCalendar` (preset rail + grid) instead of the checkbox/search list; selecting days or a preset writes `{ from, to }`.
+- **Applied token** summarizes the range (`"Jun 10 – Jun 16"`, `…` for an open end) instead of "N selected".
+- **Clear** a date-range token resets to `{ from: "", to: "" }` (not an empty `Set`); "Clear all" (`onChange({})`) clears it with everything else.
+- **Host integration:** the host stores the range *inside* its filter value object (`filters.GoLive = { from, to }`); helpers that iterate Set-valued facets must skip the date-range key. The old standalone "Date" toolbar button is removed.
+
+> **Rule.** The Filter Menu supports a **`daterange`** attribute type alongside checkbox and `search` facets. A date range is a first-class facet: it shows in the rail, contributes to the "N filters" count, and appears as a removable applied token summarizing the range. **Don't ship one-off "Date" toolbar buttons** beside the Filter Menu — add a `daterange` attribute instead, so all filtering is unified in one control with one applied-token row.
 
 **Applied-filter tokens**
 
@@ -775,6 +804,8 @@ Token summary text: list the values when ≤2 are selected (`Category: Wine`), o
 - **Per-attribute icons.** Each left-rail attribute row carries an icon matching its column — e.g. Chain → `account_tree`, Account → `storefront`, plus Brand / Category / Size / Supplier.
 - **Leading scope chip.** A filter step may begin with a **scope** chip that changes the *candidate set* rather than filtering it — e.g. Store Promotions' product step toggles "All Products" vs "Carried at Selected Accounts" (defaults to carried). It sits to the left of the attribute filters.
 - **Searchable single-chip (`ChipFilter`).** When exactly one high-cardinality attribute is filtered standalone (e.g. a Chain with hundreds of values), a single searchable chip is acceptable instead of opening the full menu — the bridge between "one Filter Chip" and "the consolidated menu".
+- **Related-record facet (§1.4).** A facet may filter on an attribute of a *related* record, not the row itself — e.g. In-the-Market's **Warehouse** filters the *product* list by the `market` (warehouse) of the *accounts* that carry each product (there's no "warehouse" field on a product; the **Chain** facet works the same way). Resolve the option list from the related collection (distinct `market`s across accounts, surfaced via the page's filter-meta endpoint), then filter rows by **set intersection**: compute the set of related-record IDs matching the selected values (accounts in those warehouses) and keep a product iff its `accountIds` intersect that set.
+  > **Rule.** Implement a related-record facet as a set-intersection against the related IDs, and apply the **same** guard across the list, the (filter-responsive) stat cards, and any map/aggregate view, so every surface reflects the identical filtered population.
 
 ---
 

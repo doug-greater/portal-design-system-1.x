@@ -77,26 +77,38 @@ function Button({ variant = 'primary', size = 'md', icon, iconRight, children, o
   );
 }
 
-/* ---------------- Input ---------------- */
-function Input({ icon, value, onChange, placeholder, type = 'text', error, style, onFocus, onBlur }) {
+/* ---------------- Input ----------------
+   `onBlur(value)` — fires the field's value (not the event) on blur; used by
+   the async field-level uniqueness check (§J). `helper` — muted sub-label text
+   rendered UNDER the field; SUPPRESSED while an `error` shows (error wins).
+   `error` may be a boolean (red border only) or a string (red border + message). */
+function Input({ icon, value, onChange, placeholder, type = 'text', error, style, onFocus, onBlur, helper }) {
   const [focus, setFocus] = useState(false);
   return (
     <div style={{ position: 'relative', display: 'inline-block', ...style }}>
       {icon && (
-        <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--p-placeholder)', pointerEvents: 'none', display: 'flex' }}>
+        <span style={{ position: 'absolute', left: 10, top: 18, transform: 'translateY(-50%)', color: 'var(--p-placeholder)', pointerEvents: 'none', display: 'flex' }}>
           <Icon name={icon} size={14} />
         </span>
       )}
       <input type={type} value={value} onChange={onChange} placeholder={placeholder}
         onFocus={(e) => { setFocus(true); onFocus?.(e); }}
-        onBlur={(e) => { setFocus(false); onBlur?.(e); }}
+        onBlur={(e) => { setFocus(false); onBlur?.(e.target.value); }}
         style={{
           width: '100%', height: 36, padding: icon ? '0 12px 0 32px' : '0 12px',
           border: `1px solid ${error ? 'var(--p-danger)' : focus ? 'var(--p-primary)' : 'var(--p-border-strong)'}`,
           borderRadius: 4, font: '400 14px Inter, sans-serif', color: 'var(--p-ink)', background: '#fff',
           outline: 'none', boxShadow: focus ? '0 0 0 3px rgba(21,93,252,.15)' : 'none',
           transition: 'border-color .12s, box-shadow .12s',
+          boxSizing: 'border-box',
         }} />
+      {error
+        ? (typeof error === 'string'
+            ? <div className="g-error" style={{ font: '500 12px/1.4 Inter, sans-serif', color: 'var(--p-danger)', marginTop: 4 }}>{error}</div>
+            : null)
+        : (helper
+            ? <div style={{ font: '400 13px/1.4 Inter, sans-serif', color: 'var(--p-muted)', marginTop: 4 }}>{helper}</div>
+            : null)}
     </div>
   );
 }

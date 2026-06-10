@@ -139,7 +139,7 @@ body{margin:0;padding:24px;background:var(--p-shell);color:var(--p-ink);font-fam
   </div>
 </div>
 
-<p class="note" style="margin-top:-8px">Two-pane popover: left rail lists every filterable attribute (active row = primary-tint fill, per-attribute count badge); right pane is the value selector. <b>Enumerable</b> attributes use a plain multi-select checkbox list. <b>Large</b> attributes (thousands of options) get a type-to-search field, a <b>Select all N matches</b> row that acts on the full match set, selected items pinned under <code>SELECTED · N</code>, and results capped at 50. Filters apply live; <b>Done</b> only closes.</p>
+<p class="note" style="margin-top:-8px">Two-pane popover: left rail lists every filterable attribute (active row = primary-tint fill, per-attribute count badge); right pane is the value selector. <b>Enumerable</b> attributes use a plain multi-select checkbox list. <b>Large</b> attributes (thousands of options) get a type-to-search field, a <b>Select all N matches</b> row that acts on the full match set, selected items pinned under <code>SELECTED · N</code>, and results capped at 50. A <b>date range</b> (<code>type: "daterange"</code>, §1.4) is a first-class facet: the pane widens to 640px and embeds a range calendar; its value is <code>{from, to}</code>, it counts toward the "N filters" badge, and its token summarizes the range (<code>Jun 10 – Jun 16</code>). Retires one-off "Date" toolbar buttons. Filters apply live; <b>Done</b> only closes.</p>
 
 <div>
   <div class="sec">Page-level tabs (underlined)</div>
