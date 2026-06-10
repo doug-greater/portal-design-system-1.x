@@ -1556,6 +1556,33 @@ font: 600 11px/1 Inter; color: #282838;
 
 Example: `"Thursday, Apr 23 · Kenny D'Amica · 5 stops"`
 
+#### Coverage Map — D3 multivariate hexbin overlay (§1.4)
+
+A full-bleed geographic view of store coverage, in two scopes: **single product** (`/in-the-market/:productId/map`) and **all products / aggregate** (`/in-the-market/coverage-map`). Built on a **Leaflet basemap** + a **D3 `d3-hexbin` SVG overlay** (the analytic layer). Ships as `maps.css`; screen specifics in `ui_kits/portal/SCREENS-1.4.md`.
+
+**The analytic layer encodes two dimensions at once:**
+- **Color = average Condition** of the stores in the bin (the §Inventory Conditions palette, via averaged `level`).
+- **Fill *area* = a magnitude** — currently average **Demand velocity** (cs/wk). The colored inner hex is scaled `prop = max(0.34, sqrt(avgMetric / maxMetric))` inside a fixed outline hex (`HEX_R = 20`). **Area, not opacity, encodes magnitude** (see the encoding rule below).
+- A **full hex lattice** (`.g-hex-grid`) is laid across the whole viewport, so empty cells read as "no coverage here," not "missing map." Each bin adds a faint **outline hex** (`.g-hex-outline`) + the scaled **fill hex** (`.g-hex-fill`).
+- **Hover** raises the outline (`--p-ink`, 1.5px) and shows a custom **`.g-hex-tooltip`** (store count, avg condition, magnitude).
+
+> **⚠ Leaflet overlay pointer-events.** Leaflet sets `pointer-events: none` on its overlay pane, which kills hover on SVG children. Interactive overlay elements **must force it back on** — `.g-hex-outline { pointer-events: all !important; }` (and keep non-interactive layers — `.g-hex-fill`, `.g-hex-grid`, pin labels — at `none`). Without the `!important`, the rich hex tooltip silently never fires.
+
+**Pins mode.** A `Stores` mode swaps hexbins for individual **store pins** (`.g-cov-pin`: circle, white 1.5px stroke, color = that store's condition; `.is-pending` uses `stroke-dasharray`). A segmented **`ModeBtn`** (Hexbin ⇄ Stores) toggles modes; the overlay re-renders on toggle **and on any filter/spotlight change**.
+
+**Floating overlay cards (the reusable map UI language).** All map UI sits in floating white cards over the basemap (`.g-map-card`: `--p-surface`, `--p-border`, `--radius-xl`, `--shadow-float`, absolutely positioned, `z-index: 500`):
+- **Title card** (`.g-map-title`, top-left, `max-width: 340`): screen title + a subtitle that states scope and **explicitly tells the user the page filters apply here** — e.g. *"Average inventory health across N products at M stores. Filters set on In the Market will apply here."*
+- **Controls card** (`.g-map-controls`, top-right): the Hexbin/Stores `ModeBtn`.
+- **Legend card** (`.g-map-legend`, bottom-left): the Condition palette as `.g-legend-swatch` rows + a `.g-legend-note` that **fill size = the magnitude metric** ("Fill size = avg demand (cs/wk)").
+
+**Legend spotlight (single-category focus).** Clicking a condition row in the legend **spotlights** just that condition (dims the rest via `.is-dimmed`); the row label toggles **"Only" → "Showing"** and a **"Show all"** link (`.cov-only-link`) clears it (`condFilter` state). This is the map analogue of a facet filter — a fast "where are my out-of-stocks?".
+
+**Summary stats above the map (`SummaryStat`).** A row of headline metrics: **values are Geist Mono** (`600 22px`), labels Inter, values **unit-suffixed** (§Stats/Voice). Aggregate: `Accounts` · `Products` · `Average Demand` (`12.5 cs/wk`) · `Average On Hand` (`45 days`). Single product: `Accounts` · `In Market` (`471 cs`) · `Average Demand` · `Average On Hand`. The page also renders the active In-the-Market facets as **removable chips** (carried via the deep-link query, §Deep-linking), so the map's scope is explicit and adjustable.
+
+> **Maps pattern (publish).** Maps are a **Leaflet basemap (CARTO Light @2x) + a D3 SVG analytic overlay**, wrapped in a rounded `.g-map` card. All map UI lives in floating `.g-map-card` panels (title top-left, controls top-right, legend bottom-left). Leaflet's own chrome (zoom, attribution) is restyled to the DS. Interactive overlay SVG must set `pointer-events: all !important` to beat Leaflet's `none` on the overlay pane. Re-render the overlay on every mode/filter/spotlight change and on map `move`/`zoom`/`resize`. **Deps:** `leaflet` 1.9.x, `d3-hexbin`, `d3-scale`, `d3-array`; basemap tiles **CARTO "Light All" @2x** with the required OpenStreetMap + CARTO attribution.
+
+> **Multivariate choropleth encoding rule (publish).** When a map/visualization shows **two** variables per cell, encode the **categorical / health** variable as **color** (from a fixed semantic palette) and a **magnitude** variable as **fill *area*** (scale the inner shape by `sqrt(value/max)` so area ≈ value) — **not** as opacity (opacity reads as uncertainty and muddies the color). The legend must explain **both** channels. Allow **spotlighting a single category** (click-to-isolate) as a lightweight filter, with a "Show all" reset. The **headline metric follows the encoding** — surface the same magnitude the fill encodes as a top `SummaryStat`.
+
 ---
 
 ### Toast

@@ -60,6 +60,32 @@
   .kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; font: 400 12px/1.6 'Geist Mono', monospace; color: var(--p-text-2); }
   .kv dt { color: var(--p-muted); }
   .kv dd { margin: 0; color: var(--p-ink); }
+
+  /* Coverage-map hexbin specimen (static; D3 won't run here) */
+  .hex-stage { display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
+    background: #E9EDF0; border-radius: 8px; padding: 24px; }
+  .hexcell { position: relative; width: 88px; height: 76px; display: flex;
+    align-items: center; justify-content: center; }
+  .hex { position: absolute; clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%); }
+  .hex-outline { width: 88px; height: 76px; background: rgba(16,24,40,.12); }
+  .hex-fill { box-shadow: none; }
+  .hexcap { font: 400 10px/1.3 'Geist Mono', monospace; color: var(--p-muted);
+    text-align: center; margin-top: 4px; }
+  .hexwrap { display: grid; justify-items: center; gap: 0; }
+  /* Condition legend */
+  .legend { display: grid; gap: 4px; }
+  .legrow { display: flex; align-items: center; gap: 8px; font: 500 12px/1.4 Inter; color: var(--p-text); }
+  .legsw { width: 12px; height: 12px; border-radius: 3px; border: 1px solid rgba(0,0,0,.06); flex-shrink: 0; }
+  .legnote { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--p-border);
+    font: 400 11px/1.4 Inter; color: var(--p-muted); }
+  /* Overlay-card layout diagram */
+  .ovl { position: relative; height: 200px; background: #E9EDF0; border-radius: 8px; overflow: hidden; }
+  .ovl .pan { position: absolute; background: #fff; border: 1px solid var(--p-border);
+    border-radius: 10px; box-shadow: var(--shadow-float); padding: 8px 10px;
+    font: 500 11px/1.3 Inter; color: var(--p-ink); }
+  .ovl .pan .t { font: 400 10px/1.3 'Geist Mono', monospace; color: var(--p-muted); }
+  .ovl .tl { top: 12px; left: 12px; } .ovl .tr { top: 12px; right: 12px; }
+  .ovl .bl { bottom: 12px; left: 12px; }
 </style>
 </head>
 <body>
@@ -69,9 +95,10 @@
   <div>
     <h2>Maps</h2>
     <p class="sub">
-      Any time the portal needs a map — routes, account locations, territory planning — use Leaflet
-      with the CARTO Light All basemap. Two pin styles, one route stroke, a fixed attribution treatment.
-      Never satellite, never colorful tiles.
+      Any time the portal needs a map — routes, account locations, territory planning, coverage
+      analytics — use Leaflet with the CARTO Light All basemap. Never satellite, never colorful tiles.
+      Two map families share this language: <b>Routes</b> (polylines + numbered pins) and the
+      <b>Coverage Map</b> (a D3 hexbin overlay; color = Condition, fill area = Demand velocity).
     </p>
   </div>
 
@@ -87,6 +114,69 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Coverage Map — D3 hexbin overlay (static specimen) -->
+  <div class="card">
+    <div class="cap">Coverage Map · D3 multivariate hexbin overlay (§1.4)</div>
+    <p class="sub" style="margin:0;">
+      A Leaflet basemap + a D3 <code>d3-hexbin</code> SVG overlay. Each bin encodes <b>two</b>
+      dimensions: <b>color = average Condition</b> of its stores; <b>fill area = a magnitude</b>
+      (avg Demand velocity). Area — not opacity — carries magnitude:
+      <code>prop = max(0.34, sqrt(avg/max))</code> inside a fixed outline hex.
+    </p>
+    <div class="hex-stage">
+      <div class="hexwrap">
+        <div class="hexcell"><div class="hex hex-outline"></div>
+          <div class="hex hex-fill" style="width:81px;height:70px;background:var(--cond-optimal)"></div></div>
+        <div class="hexcap">Optimal<br>high demand</div>
+      </div>
+      <div class="hexwrap">
+        <div class="hexcell"><div class="hex hex-outline"></div>
+          <div class="hex hex-fill" style="width:53px;height:46px;background:var(--cond-at)"></div></div>
+        <div class="hexcap">At Risk<br>mid demand</div>
+      </div>
+      <div class="hexwrap">
+        <div class="hexcell"><div class="hex hex-outline"></div>
+          <div class="hex hex-fill" style="width:30px;height:26px;background:var(--cond-out)"></div></div>
+        <div class="hexcap">Out of Stock<br>low demand</div>
+      </div>
+      <div class="hexwrap">
+        <div class="hexcell"><div class="hex hex-outline"></div></div>
+        <div class="hexcap">empty cell<br>(lattice = "no coverage")</div>
+      </div>
+    </div>
+
+    <div class="row2">
+      <!-- Condition legend -->
+      <div>
+        <div class="cap" style="margin-bottom:8px;">Legend (.g-map-legend)</div>
+        <div class="legend">
+          <div class="legrow"><span class="legsw" style="background:var(--cond-out)"></span> Out of Stock</div>
+          <div class="legrow"><span class="legsw" style="background:var(--cond-high)"></span> High Risk of OOS</div>
+          <div class="legrow"><span class="legsw" style="background:var(--cond-at)"></span> At Risk of OOS</div>
+          <div class="legrow"><span class="legsw" style="background:var(--cond-optimal)"></span> Optimal</div>
+          <div class="legrow"><span class="legsw" style="background:var(--cond-slight)"></span> Slight Overstock</div>
+          <div class="legrow"><span class="legsw" style="background:var(--cond-heavy)"></span> Heavy Overstock</div>
+          <div class="legnote">Fill size = avg demand (cs/wk) · click a row to spotlight ("Only" → "Showing"; "Show all" resets)</div>
+        </div>
+      </div>
+      <!-- Overlay-card layout -->
+      <div>
+        <div class="cap" style="margin-bottom:8px;">Overlay cards (.g-map-card, z-500)</div>
+        <div class="ovl">
+          <div class="pan tl">Title + scope<div class="t">.g-map-title · top-left</div></div>
+          <div class="pan tr">Hexbin ⇄ Stores<div class="t">.g-map-controls · TR</div></div>
+          <div class="pan bl">Condition legend<div class="t">.g-map-legend · BL</div></div>
+        </div>
+      </div>
+    </div>
+
+    <ul class="bullets">
+      <li><b>Leaflet overlay pointer-events.</b> Leaflet sets <code>pointer-events: none</code> on its overlay pane — interactive SVG (<code>.g-hex-outline</code>, <code>.g-cov-pin</code>) must force <code>pointer-events: all !important</code> or hover/click silently never fires. Keep <code>.g-hex-fill</code> / <code>.g-hex-grid</code> / pin labels at <code>none</code>.</li>
+      <li><b>z-index ladder:</b> overlay cards <code>500</code> · hex tooltip <code>600</code> · DS <code>Tooltip</code> <code>4000</code>.</li>
+      <li><b>Stores mode</b> (<code>ModeBtn</code>) swaps hexbins for <code>.g-cov-pin</code> circles (fill = each store's condition; <code>.is-pending</code> → dashed). Re-render the overlay on mode/filter/spotlight change and on map move/zoom/resize.</li>
+    </ul>
   </div>
 
   <!-- Tokens -->
