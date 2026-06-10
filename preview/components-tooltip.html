@@ -30,9 +30,10 @@ body{margin:0;padding:48px 24px;background:var(--p-shell);color:var(--p-ink)}
 
 <div class="section">
   <div class="notes">
-    <p>Dark popover (<code>--p-ink</code> bg, white), hover-only, <code>pointer-events: none</code>, <code>z-index: 200</code>. Pairs with a 14px <code>info</code> glyph (<code>cursor: help</code>).</p>
-    <p><b><code>maxWidth</code> (px)</b> switches to <code>white-space: normal</code> + <code>width</code> + <code>max-width: calc(100vw - 32px)</code> + line-height 1.5 — <b>required</b> for copy longer than ~6 words (else it shrink-wraps to one line that runs off-screen).</p>
-    <p><b><code>side="bottom"</code></b> for any trigger near the top edge of the viewport, so the tooltip isn't clipped above the fold.</p>
+    <p>Dark popover (<code>--p-ink</code> bg, white), hover-only, <code>pointer-events: none</code>. Pairs with a 14px <code>info</code> glyph (<code>cursor: help</code>). <i>(Bubbles above are positioned statically for the specimen.)</i></p>
+    <p><b>Portal-rendered (1.4).</b> The live <code>Tooltip</code> renders into <code>document.body</code> via <code>createPortal</code> with <code>position: fixed</code> and <code>z-index: 4000</code>, measuring the anchor with <code>getBoundingClientRect()</code> on hover and <b>clamping its center to the viewport</b>. So it never clips inside scrolling tables, transformed cards, or map overlays, and floats above modals/popovers. <i>(Supersedes the 1.2 absolutely-positioned, <code>z-index: 200</code> version.)</i></p>
+    <p><b><code>maxWidth</code> (px)</b> switches to <code>white-space: normal</code> + <code>width</code> + a cap of <code>min(maxWidth, calc(100vw - 24px))</code> + line-height 1.5 — <b>required</b> for copy longer than ~6 words (else it shrink-wraps to one line).</p>
+    <p><b><code>side</code></b> (<code>"top"</code>/<code>"bottom"</code>) only chooses which way the bubble opens now — the horizontal center-clamp handles left/right overflow on its own.</p>
   </div>
 </div>
 

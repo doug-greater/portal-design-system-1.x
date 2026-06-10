@@ -286,19 +286,48 @@ function StatCard({ value, label, color = 'ink', action, active, onClick }) {
   );
 }
 
-/* ---------------- Tooltip ----------------
-   Dark hover popover. `maxWidth` (px) switches to multi-line wrap (required for
-   copy longer than ~6 words); `side="bottom"` opens downward near the top edge. */
+/* ---------------- Tooltip (portal-rendered) ----------------
+   Dark hover popover rendered into document.body via ReactDOM.createPortal
+   (position:fixed, z-index 4000). It tracks the anchor with getBoundingClientRect
+   on hover and clamps its center to the viewport [90, innerWidth−90], so it never
+   clips inside scrolling tables, transformed cards, or map overlays — and floats
+   above modals/popovers/the map overlay. `maxWidth` (px) switches to multi-line
+   wrap (required for copy longer than ~6 words); `side="bottom"` opens downward.
+   Re-measures on each open (hover) — for anchors that move while shown, re-open.
+   (1.4: replaces the 1.2 absolutely-positioned implementation; maxWidth preserved.) */
 function Tooltip({ text, children, side = 'top', maxWidth }) {
   const [show, setShow] = useState(false);
-  const pos = side === 'top'
-    ? { bottom: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)' }
-    : { top: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)' };
+  const ref = useRef(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
+
+  const update = () => {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    // Clamp the horizontal center so the translateX(-50%) bubble stays on-screen.
+    const cx = Math.min(Math.max(r.left + r.width / 2, 90), window.innerWidth - 90);
+    setCoords({ top: side === 'top' ? r.top - 6 : r.bottom + 6, left: cx });
+  };
+  const open = () => { update(); setShow(true); };
+
   return (
-    <span style={{ position: 'relative', display: 'inline-flex' }} onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}>
+    <span ref={ref} style={{ position: 'relative', display: 'inline-flex' }}
+      onMouseEnter={open} onMouseLeave={() => setShow(false)}>
       {children}
-      {show && text && (
-        <span role="tooltip" style={{ position: 'absolute', ...pos, whiteSpace: maxWidth ? 'normal' : 'nowrap', width: maxWidth, maxWidth: maxWidth ? 'calc(100vw - 32px)' : undefined, background: 'var(--p-ink)', color: '#fff', font: `500 11px/${maxWidth ? '1.5' : '1.3'} Inter, sans-serif`, padding: maxWidth ? '7px 10px' : '4px 8px', borderRadius: 6, boxShadow: 'var(--shadow-float)', zIndex: 200, pointerEvents: 'none', textAlign: 'left' }}>{text}</span>
+      {show && text && ReactDOM.createPortal(
+        <span role="tooltip" style={{
+          position: 'fixed', top: coords.top, left: coords.left,
+          transform: side === 'top' ? 'translate(-50%, -100%)' : 'translate(-50%, 0)',
+          whiteSpace: maxWidth ? 'normal' : 'nowrap',
+          width: maxWidth,
+          maxWidth: maxWidth ? `min(${maxWidth}px, calc(100vw - 24px))` : 'calc(100vw - 24px)',
+          background: 'var(--p-ink)', color: '#fff',
+          font: `500 11px/${maxWidth ? '1.5' : '1.3'} Inter, sans-serif`,
+          padding: maxWidth ? '7px 10px' : '4px 8px',
+          borderRadius: 6, boxShadow: 'var(--shadow-float)',
+          zIndex: 4000, pointerEvents: 'none', textAlign: 'left',
+        }}>{text}</span>,
+        document.body
       )}
     </span>
   );

@@ -571,10 +571,13 @@ Example (`StoreLayoutEditor` action bar): `Publish ▾` → `[Publish Now · Sch
 
 ### Tooltip
 
-A dark popover (`--p-ink` bg, white text) anchored to its trigger; hover-only, `pointer-events: none`, `z-index: 200`. Pairs naturally with a 14px `info` glyph (`cursor: help`). Default is a single nowrap line (`font: 500 11px/1.3 Inter; padding: 4px 8px; border-radius: 6px; box-shadow: var(--shadow-float)`). Reference: `preview/components-tooltip.html`.
+A dark popover (`--p-ink` bg, white text) anchored to its trigger; hover-only, `pointer-events: none`. Pairs naturally with a 14px `info` glyph (`cursor: help`). Default is a single nowrap line (`font: 500 11px/1.3 Inter; padding: 4px 8px; border-radius: 6px; box-shadow: var(--shadow-float)`). Reference: `preview/components-tooltip.html`.
 
-- **`maxWidth` (px)** — for multi-line / educational copy. Switches to `white-space: normal`, sets `width: {maxWidth}`, `max-width: calc(100vw - 32px)`, `line-height: 1.5`, `padding: 7px 10px`, left-aligned. **Required** whenever the body runs longer than ~6 words — otherwise it shrink-wraps to one nowrap line that runs off-screen.
-- **`side`** — `"top"` (default) or `"bottom"`. Use `"bottom"` for any trigger near the top edge of the viewport (e.g. an in-card control) so the tooltip can't be clipped above the fold.
+> **Portal-rendered (changed in 1.4).** The `Tooltip` now renders into `document.body` via `ReactDOM.createPortal` with **`position: fixed`** and **`z-index: 4000`** — it is **not** an absolutely-positioned child of its anchor anymore. On hover it measures the anchor with `getBoundingClientRect()` and **clamps its horizontal center to the viewport** (`[90, innerWidth − 90]` px). The upshot: it never clips inside `overflow:hidden` / transformed / stacking-context containers — scrolling tables, transformed cards, **map overlays (Leaflet panes)** — and it floats above modals, popovers, and the map overlay (which sit at lower z-indexes; see the map z-index ladder in §Maps). *(This supersedes the 1.2 absolutely-positioned, `z-index: 200` implementation; the `maxWidth` wrapping behavior is preserved, just re-homed.)*
+
+- **`maxWidth` (px)** — for multi-line / educational copy. Switches to `white-space: normal`, sets `width: {maxWidth}`, caps at `min({maxWidth}px, calc(100vw − 24px))`, `line-height: 1.5`, `padding: 7px 10px`, left-aligned. **Required** whenever the body runs longer than ~6 words — otherwise it shrink-wraps to one nowrap line.
+- **`side`** — `"top"` (default) or `"bottom"`. Controls vertical placement (the horizontal center-clamp handles left/right overflow on its own, so `"bottom"` is now only about which way the bubble opens, not an anti-clipping workaround).
+- **Re-measures on each open.** Positions from `getBoundingClientRect` at hover time; for an anchor that moves *while* the tooltip is shown, re-open to re-measure.
 
 ---
 
