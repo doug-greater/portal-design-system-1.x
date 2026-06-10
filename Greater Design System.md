@@ -371,20 +371,22 @@ Cards in-table have **no shadow**.
 
 ## 8. Iconography
 
-Greater uses **Material Symbols (Rounded)** for all in-product iconography.
+Greater uses **Material Symbols (Sharp)** for all in-product iconography.
 
-> **One icon system.** Material Symbols Rounded is the *only* icon set, delivered as the variable **font** and addressed by ligature name (e.g. `search`, `expand_more`, `unfold_more`). Lucide and Iconify have been fully removed from the kit. In React, use the shared `Icon` component (`<Icon name="expand_more" size={16} />`); in plain HTML, a `<span class="material-symbols-rounded">expand_more</span>`. The only non-glyph exceptions are CSS background marks (e.g. the native `<select>` chevron data-URI) and map illustration.
+> **One icon system.** Material Symbols Sharp is the *only* icon set, delivered as the variable **font** and addressed by ligature name (e.g. `search`, `expand_more`, `unfold_more`). Lucide and Iconify have been fully removed from the kit. In React, use the shared `Icon` component (`<Icon name="expand_more" size={16} />`); in plain HTML, a `<span class="material-symbols-sharp">expand_more</span>`. The only non-glyph exceptions are CSS background marks (e.g. the native `<select>` chevron data-URI) and map illustration.
+
+> **One optical style — Sharp.** *(Changed in 1.4: the portal moved from Material Symbols **Rounded** to **Sharp** for a crisper, more precise "operational tooling" feel that matches the data-dense tables, mono numerals, and squared cards.)* **Never load Outlined or Rounded alongside Sharp** — mixing optical styles reads as inconsistent. Glyph names are **identical** across optical styles, so every existing icon reference (`more_horiz`, `draft`, `delete`, `curtains`, `hexagon`, …) keeps working; only the rendered style changes. Because the whole app flows through one `Icon` primitive, the family is set in exactly three places: the font `@import`/`<link>`, the `.material-symbols-sharp` class, and `Icon`'s wrapping `<span>`. (All prior icon rules still hold — see §9: `more_horiz` for overflow, `more_vert` banned; `delete` for destructive, not `delete_sweep`.)
 
 ### Loading
 
 ```html
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,400,0,0&display=block">
 ```
 
 ### Usage
 
 ```html
-<span class="material-symbols-rounded">search</span>
+<span class="material-symbols-sharp">search</span>
 ```
 
 ### Defaults
@@ -1204,7 +1206,7 @@ Sizes: `md` (default, 12px) and `sm` (11px, 1px vertical padding). To expand the
 
 ### Account Type Icon
 
-White circle with a thin dark ring and a dark **outline** Material Symbols Rounded icon inside. Used wherever an Account is represented — tables, detail headers, search results.
+White circle with a thin dark ring and a dark **outline** Material Symbols Sharp icon inside. Used wherever an Account is represented — tables, detail headers, search results.
 
 ```css
 /* Shell */
@@ -1217,7 +1219,7 @@ border: 1.5px solid #1C1C1E;
 color: #1C1C1E;
 
 /* Icon size = container × 0.5  (e.g. 52px container → 26px icon) */
-/* Material Symbols Rounded, outline (FILL 0) */
+/* Material Symbols Sharp, outline (FILL 0) */
 ```
 
 #### Account types & icons
@@ -2284,7 +2286,7 @@ Import `colors_and_type.css`, copy the logo assets, load Material Symbols from G
 ### Substitution notes
 
 - **Fonts:** Inter + Geist Mono from Google Fonts. Some references to "Helvetica Neue" in map attribution are acceptable as system-font fallback.
-- **Icon set:** Material Symbols (Rounded), one system everywhere — the variable font, addressed by ligature name. Lucide and Iconify have been fully removed.
+- **Icon set:** Material Symbols (Sharp), one system everywhere — the variable font, addressed by ligature name. Lucide and Iconify have been fully removed.
 - **Portal chrome (global nav, user menu):** designed from first principles and shipped as the **App Shell + Navigation Sidebar** (see §9).
 - **Map tiles:** CARTO Light All `https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png`
 

@@ -45,5 +45,5 @@ The layouts started from the Figma reference (`Page-1`), primarily:
 ## Caveats
 
 - The portal chrome (sidebar/topbar) is an original design built from the documented tokens (`AppShell`).
-- Icons: Material Symbols (Rounded) font — `<Icon name="…">` renders a glyph by its ligature name (e.g. `search`, `expand_more`).
+- Icons: Material Symbols (Sharp) font — `<Icon name="…">` renders a glyph by its ligature name (e.g. `search`, `expand_more`).
 - Map: static SVG/CSS mock; no Leaflet integration.

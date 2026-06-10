@@ -209,7 +209,7 @@ Sidebar component.
 
 ## Iconography
 
-Greater uses **Material Symbols (Rounded)** for all in-product
+Greater uses **Material Symbols (Sharp)** for all in-product
 iconography. Default rendering: weight 400, optical size 24, fill 0
 (outlined), color inherits from text. Variable-font axes (`FILL`,
 `wght`, `GRAD`, `opsz`) are used sparingly — prefer outline 400/24 for
@@ -218,13 +218,13 @@ everything unless there's a deliberate reason to switch.
 Load the stylesheet once per page:
 
 ```html
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@24,400,0,0">
 ```
 
 Render an icon by putting the glyph name as the text content:
 
 ```html
-<span class="material-symbols-rounded">search</span>
+<span class="material-symbols-sharp">search</span>
 ```
 
 Common icons used across Portal: `search`, `filter_alt`, `expand_more`,
@@ -254,7 +254,7 @@ inside the product. Don't skew, don't recolor.
 - **Fonts:** Inter + Geist Mono are pulled from Google Fonts. The Figma
   file lists "Helvetica Neue" as a bit-part (map attribution); we don't
   ship it — system-font fallback is fine.
-- **Icon set:** Material Symbols (Rounded) font, used everywhere in the UI kit.
+- **Icon set:** Material Symbols (Sharp) font, used everywhere in the UI kit.
   Lucide and Iconify have been fully removed.
 - **Portal chrome (global nav, user menu):** not present in the original
   Figma scrape — designed from first principles in this system. The UI kit

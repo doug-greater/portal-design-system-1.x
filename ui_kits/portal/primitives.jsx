@@ -3,12 +3,12 @@
 
 const { useState, useEffect, useRef, useMemo } = React;
 
-/* ---------------- Icon (Material Symbols Rounded font) ---------------- */
+/* ---------------- Icon (Material Symbols Sharp font) ---------------- */
 // `name` is a Material Symbols glyph name (e.g. "search", "expand_more"). Outline by default.
 function Icon({ name, size = 16, color, fill = 0, style }) {
   return (
-    <span className="material-symbols-rounded" style={{
-      fontFamily: "'Material Symbols Rounded'", fontSize: size, lineHeight: 1,
+    <span className="material-symbols-sharp" style={{
+      fontFamily: "'Material Symbols Sharp'", fontSize: size, lineHeight: 1,
       fontVariationSettings: `'FILL' ${fill}`, color,
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
       userSelect: 'none', flexShrink: 0, ...style,

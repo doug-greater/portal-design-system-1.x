@@ -37,8 +37,8 @@
 /* ---------------- MIcon (Material Symbols) — shared icon helper for the kit ---------------- */
 function MIcon({ name, size = 20, fill = 0, color, style }) {
   return (
-    <span className="material-symbols-rounded" style={{
-      fontFamily: "'Material Symbols Rounded'", fontSize: size, lineHeight: 1,
+    <span className="material-symbols-sharp" style={{
+      fontFamily: "'Material Symbols Sharp'", fontSize: size, lineHeight: 1,
       fontVariationSettings: `'FILL' ${fill}`, color, display: 'inline-flex',
       alignItems: 'center', justifyContent: 'center', userSelect: 'none', ...style,
     }}>{name}</span>
