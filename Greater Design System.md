@@ -1024,7 +1024,7 @@ font: 600 10.5px/1 Inter; white-space: nowrap; flex-shrink: 0;
 | `danger` | `--g-red-10` | `--p-danger-strong` | Removal / discontinue ("Disc. Sep 1") |
 | `success` | `#ECFDF5` | `#047857` | Positive confirmation |
 
-> **`atrisk` vs the Condition palette.** `atrisk` is the **chip tint** for the At-Risk *condition* (tinted pill on white rows). The **map/legend** swatch for At Risk uses the Inventory Condition palette's saturated `#F59E0B` (`--cond-at`; see §Maps / Inventory Conditions). These are intentionally different surfaces (tinted chip vs. saturated fill on a gray basemap) — keep both.
+> **`atrisk` vs the Condition palette.** `atrisk` is the **chip tint** for the At-Risk *condition* (tinted pill on white/dark rows). The **map/legend** swatch for At Risk uses the Inventory Condition palette's `--cond-at_risk` (Palette A — light `#AD7300`, dark `#FFC940`; see §Maps / Inventory Conditions). These are intentionally different surfaces (tinted chip vs. saturated fill on the basemap) — keep both.
 
 **Rules**
 
@@ -1561,25 +1561,32 @@ function LegacyProductsRedirect() {
 
 **Condition** is Greater's SKU-level health verdict for on-hand stock at a store (from a depletion simulation). It appears as a **column** in the In-the-Market coverage panel and as the **color dimension** of the Coverage Map (§Maps). To keep those surfaces identical, the scale — its ordinal **severity** (`level`) and its **palette** — is defined **once** in `lib/conditions` and imported everywhere; never hand-pick condition colors at a call site.
 
-**Single source of truth:** the JS table in `lib/conditions` is canonical; the `--cond-*` CSS tokens in `colors_and_type.css` mirror the same hexes for CSS surfaces.
+**Palette A (1.5) — supersedes the 1.4 scale.** The 1.4 Conditions colors were audited for **colour-blindness (deuteranopia / protanopia)** and **WCAG ≥3:1 contrast against both CARTO basemaps**, and replaced with **"Palette A" — a colour-blind-safe diverging ramp Orange → Gold → Teal → Blue → Purple.** The values were swapped **in place**; the **token names, the 6-level ordinal severity, and the `conditions.js` helper API are unchanged**, so call sites keep working.
 
-| `level` | `key` | Label | Short | Color | Token |
+**Single source of truth:** the JS table in `conditions.js` is canonical and returns **`var(--cond-…)` token strings** (never hex — so they stay theme-aware); the `--cond-*` CSS tokens in `colors_and_type.css` carry the actual values, defined in **both** the light `:root` and the `html[data-theme="dark"]` block.
+
+| `level` | `key` | Label | Token | Light (map-tuned) | Dark |
 |---|---|---|---|---|---|
-| 0 | `out_of_stock` | Out of Stock | Out of Stock | `#B42318` (deep red) | `--cond-out` |
-| 1 | `high_risk` | High Risk of OOS | High Risk | `#E5484D` (red) | `--cond-high` |
-| 2 | `at_risk` | At Risk of OOS | At Risk | `#F59E0B` (amber) | `--cond-at` |
-| 3 | `optimal` | Optimal | Optimal | `#00BC57` (green) | `--cond-optimal` |
-| 4 | `slight_overstock` | Slight Overstock | Slight Over | `#2D9CDB` (blue) | `--cond-slight` |
-| 5 | `heavy_overstock` | Heavy Overstock | Heavy Over | `#7B68EE` (violet) | `--cond-heavy` |
+| 0 | `out_of_stock` | Out of Stock | `--cond-out_of_stock` | `#C83214` | `#FF6B4A` |
+| 1 | `high_risk` | High Risk of OOS | `--cond-high_risk` | `#E65C00` | `#FF9933` |
+| 2 | `at_risk` | At Risk of OOS | `--cond-at_risk` | `#AD7300` | `#FFC940` |
+| 3 | `optimal` | Optimal | `--cond-optimal` | `#007A66` | `#2EE6C3` |
+| 4 | `slight_overstock` | Slight Overstock | `--cond-slight_overstock` | `#2D6BBA` | `#66A3FF` |
+| 5 | `heavy_overstock` | Heavy Overstock | `--cond-heavy_overstock` | `#6B3D99` | `#C299EB` |
+| — | (no data) | — | `--cond-empty` | `#C9CDD2` | `#2A2A30` |
+| — | (pending change) | — | `--cond-pending` | `#171717` | `#F5F5F5` |
 
-- **`level` is the ordinal severity** (0 = worst stockout → 5 = worst overstock; 3 = healthy middle). Averaging a set of stores' `level`s and rounding to the nearest index yields the bin's representative condition — that's how the map hexbin reduces many SKUs/stores to one color.
-- **Diverging palette, centered on green (Optimal):** reds/orange below, blues/violet above. This is a **semantic** palette — do **not** re-skin it per theme; a viewer must read "red = bad, green = good, blue/violet = too much."
-- **Helpers shipped in `lib/conditions`:** `COND_BY_KEY`, `COND_BY_LEVEL` (index === level), `conditionColor(key)` (fallback `#C9CDD2` for unknown).
+- **Diverging, not sequential:** the two "bad" ends (OOS orange-red / Heavy-overstock purple) are maximally distinct; **Optimal (teal) is the calm middle.** A viewer must read "orange/gold = under, teal = good, blue/purple = over."
+- **`level` is the ordinal severity** (0 = worst stockout → 5 = worst overstock; 3 = healthy middle). Averaging a set of stores' `level`s and rounding to the nearest index yields the bin's representative condition — how the map hexbin reduces many SKUs/stores to one color.
+- The same ordered scale drives **both** the In-the-Market Condition column and the map hexbin color; magnitude is encoded as **fill area** (not opacity) per the §Maps rule.
+- **Map-legibility values** (the hexes above) are *map-tuned* (light vs CARTO `light_all` ~#ededed; dark vs `dark_all` ~#262626); chip/table contexts may sit on `--p-surface` and are still legible.
+- **`--cond-empty`** = no-data; **`--cond-pending`** = pending-change (matches the map pending pin, §Maps / §pending-change tint).
+- **Helpers in `conditions.js`:** `COND_BY_KEY`, `COND_BY_LEVEL` (index === level), `conditionColor(key)` (fallback `--cond-empty`), `averageCondition(levels)` — all returning `var(--cond-…)`, **not** hex.
 
 > **Canonical education copy** (reused verbatim in the In-the-Market "What are Conditions?" info tooltip and on the map):
 > *"Greater's algorithm understands SKU-level demand and its variance for every product in every store. We take the current inventory-on-hand for a SKU and run it through a simulation of projected depletion to determine whether the product is at risk of out-of-stock, overstocked in excess, or at the optimal level."*
 
-> **Rule.** Inventory Condition is a **fixed 6-level diverging scale** with a locked palette and an ordinal severity. Define it once and import it; the same palette drives the table's Condition cell, the coverage-panel legend, and the map's hexbin color + legend swatches. (See also the soft-orange Chip `atrisk` tone, §Chip — the *chip-tint* sibling of `--cond-at`.)
+> **Rule.** Inventory Condition is a **fixed 6-level colour-blind-safe diverging scale (Palette A)** with theme-aware tokens and an ordinal severity. Define it once and import it (`var(--cond-…)`, never hex); the same palette drives the table's Condition cell, the coverage-panel legend, and the map's hexbin color + legend swatches.
 
 ---
 

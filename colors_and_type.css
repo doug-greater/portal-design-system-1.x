@@ -82,17 +82,22 @@
   --p-danger-strong: #DC2626;
   --p-atrisk-strong: #C2410C;  /* readable orange text on --g-orange-10 — Chip "atrisk" / "draining" (§C) */
 
-  /* ---------- Inventory Condition palette (diverging, centered on Optimal = green) ----------
-     Greater's fixed 6-level SKU-health scale (Out of Stock → Heavy Overstock). Ordinal severity
-     0–5; reds/orange below Optimal, blues/violet above. SEMANTIC — never re-skin per theme.
-     Single source of truth is lib/conditions (JS); these tokens mirror the same hexes for CSS
-     surfaces (the table Condition cell, the coverage-panel legend, the map hexbin + legend). */
-  --cond-out:      #B42318;   /* Out of Stock      (level 0) — deep red */
-  --cond-high:     #E5484D;   /* High Risk of OOS  (level 1) — red      */
-  --cond-at:       #F59E0B;   /* At Risk of OOS    (level 2) — amber     */
-  --cond-optimal:  #00BC57;   /* Optimal           (level 3) — green     */
-  --cond-slight:   #2D9CDB;   /* Slight Overstock  (level 4) — blue      */
-  --cond-heavy:    #7B68EE;   /* Heavy Overstock   (level 5) — violet    */
+  /* ---------- Inventory Condition palette — "Palette A" (1.5) ----------
+     Colour-blind-safe (deuteranopia/protanopia) diverging ramp Orange → Gold → Teal →
+     Blue → Purple, WCAG ≥3:1 against BOTH CARTO basemaps. Supersedes the 1.4 scale.
+     Fixed 6-level ordinal severity (L0 Out of Stock → L5 Heavy Overstock); the two
+     "bad" ends are maximally distinct, Optimal (teal) is the calm middle. SEMANTIC —
+     never re-skin per theme; values here are map-tuned (CARTO light_all ~#ededed) and
+     are also legible on --p-surface. Dark variants live in the dark block. Token names,
+     ordinal severity, and the conditions.js helper API are unchanged from 1.4. */
+  --cond-out_of_stock:     #C83214;   /* L0 Out of Stock      */
+  --cond-high_risk:        #E65C00;   /* L1 High Risk of OOS  */
+  --cond-at_risk:          #AD7300;   /* L2 At Risk of OOS    */
+  --cond-optimal:          #007A66;   /* L3 Optimal           */
+  --cond-slight_overstock: #2D6BBA;   /* L4 Slight Overstock  */
+  --cond-heavy_overstock:  #6B3D99;   /* L5 Heavy Overstock   */
+  --cond-empty:            #C9CDD2;   /* no data              */
+  --cond-pending:          #171717;   /* pending-change pin    */
 
   /* ---------- Restore / audit action accents ---------- */
   --p-restore:        #0D9488;             /* teal — restore / revert action + `restored` audit state */
@@ -274,7 +279,11 @@ html[data-theme="dark"] {
   --p-scroll-thumb: #3F3F46; --p-scroll-thumb-hover: #52525B;
   --ms-grad: -25;
 
-  /* Condition scale — Palette A dark variants live here (added in §D / Commit 2) */
+  /* Condition scale — Palette A dark variants, brightened to clear ≥3:1 against
+     CARTO dark_all (~#262626). Same token names / severity as light (§D). */
+  --cond-out_of_stock: #FF6B4A; --cond-high_risk: #FF9933; --cond-at_risk: #FFC940;
+  --cond-optimal: #2EE6C3; --cond-slight_overstock: #66A3FF; --cond-heavy_overstock: #C299EB;
+  --cond-empty: #2A2A30; --cond-pending: #F5F5F5;
 }
 
 /* =======================================================================
