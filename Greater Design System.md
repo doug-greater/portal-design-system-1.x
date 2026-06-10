@@ -200,6 +200,40 @@ The portal is information-dense — big data tables, filter chips, stat cards, c
 
 ---
 
+### Theming — light + dark (1.5)
+
+The portal ships a full **light + dark theme**, toggled live with no reload. This is the largest 1.5 change and the reason the dark token block, the dark Coverage-Map basemap, and the colour-blind-safe Conditions palette exist.
+
+**Theme model — three preferences, two resolved themes:**
+
+- **`pref`** — `"system" | "light" | "dark"`, persisted in `localStorage["gr-theme"]` (default `"system"`).
+- **`resolved`** — `"light" | "dark"`. `system` resolves via `window.matchMedia("(prefers-color-scheme: dark)")` and **follows OS changes live** while the pref is `system`.
+- Applied by setting **`document.documentElement.setAttribute("data-theme", resolved)`**. All dark tokens live under the **`html[data-theme="dark"]`** selector; light is the bare `:root`.
+
+> **Single-store rule (this caused a real bug — keep it).** Theme state **must live in one module-level store** read via **`useSyncExternalStore`**, not per-component `useState`. JS-driven views (the Leaflet Coverage Map) rebuild their tiles inside an effect keyed on `resolved`; if each `useTheme()` hook held its own copy, the map would **not** re-render on toggle. Reference module: `ui_kits/portal/theme.js`.
+
+> **No-flash bootstrap (required).** A tiny inline script in `index.html` must read `localStorage["gr-theme"]` and set `data-theme` **before React mounts**, so there is no white→dark flash on load.
+
+**Dark token model.** The dark theme is a complete inverted-neutral set using **deep tinted blacks** (Vercel/Linear lineage). **Elevation in dark is expressed by surface lightening + an inset highlight + a deep shadow** — *not* the light-mode soft drop shadows (see §7). The full block is in `colors_and_type.css` under `html[data-theme="dark"]`.
+
+> **Flip-pairs rule (the #1 authoring rule that makes dark "just work").** Any tinted **status / role / category** surface must be authored as a **bg/fg token pair** (`--p-*-bg` / `--p-*-fg`) so the dark block can flip both. Pattern: **light = pale tint bg + saturated fg; dark = low-alpha rgba tint of the same hue + luminous (light) fg.** Components must **never hardcode hex** for these surfaces — always reference the token, or dark mode silently breaks. Tokens that flip: the neutral ramp, primary set, 5 category-pill pairs, 4 feedback colors, the `--g-*-10` tints, the intel gradient, the 4 shadows, 3 status pairs (`--p-success/atrisk/neutral-bg/fg`), 5 role pairs, `--p-overlay-hover`, `--p-focus-ring`, `--p-backdrop`, 2 skeleton stops, `--g-gold-30`, 2 scrollbar stops, `--ms-grad`, and the 8 `--cond-*`.
+
+**Brand marks.** The wordmark + crow swap to **knock-out (KO) variants** in dark (`greater-logotype-ko.png` / `greater-crow-ko.png`), keyed on `resolved`.
+
+**Optical correction.** Material Symbols use a **negative grade in dark** (`--ms-grad: -25`, `0` in light) to counter the illusion that makes light glyphs on dark look bolder — wired through `font-variation-settings: 'FILL' …, 'GRAD' var(--ms-grad, 0)` in the `Icon` primitive.
+
+**Motion.** Limit the theme transition to large resting surfaces only — `body, aside { transition: background-color .2s ease, color .2s ease; }`. **Never** put `transition: all` on everything (it breaks transforms and janks the map).
+
+**Toggle.** A single App-Shell utility-nav control cycles **light → dark → system** (`data-testid="theme-toggle"`; tooltip/aria announce the next state). On **Login** the same control sits **flat, bottom-left**, no card chrome.
+
+| pref | icon | label |
+|------|------|-------|
+| `light` | `light_mode` | Light |
+| `dark` | `dark_mode` | Dark |
+| `system` | `contrast` | System |
+
+---
+
 ## 4. Typography
 
 ### Font Families
@@ -367,6 +401,8 @@ Base unit is **4px**. All spacing tokens are multiples of this base.
 Cards in-table have **no shadow**.
 
 > **Two elevation tiers by size.** Small elements use the tight `--shadow-card`; large resting surfaces (tables, detail cards, ledgers) use the soft diffuse `--shadow-surface` (ink-tinted `rgba(16,24,40,…)`, softer against the warm shell). Keep the 1px `--p-border` on surfaces — **border + soft shadow together**; the shadow doesn't replace the border. Floating transient layers keep `--shadow-float`.
+
+> **Dark elevation is inverted in technique (1.5).** In dark mode the four shadow tokens flip to **inset highlight + deep shadow** rather than soft drop shadows — `inset 0 1px 1px rgba(255,255,255,.04–.08)` for a top-edge catch-light, a deep `rgba(0,0,0,.5–.6)` drop, and a `0 0 0 1px` border ring on floating layers. Depth in dark comes from **surface lightening** (`--p-surface` `#121214` lifts off `--p-shell` `#0A0A0B`) plus the inset highlight — not from a darker shadow alone. Reference the tokens; they swap automatically (see §3 Theming).
 
 ---
 

@@ -9,7 +9,9 @@ function Icon({ name, size = 16, color, fill = 0, style }) {
   return (
     <span className="material-symbols-sharp" style={{
       fontFamily: "'Material Symbols Sharp'", fontSize: size, lineHeight: 1,
-      fontVariationSettings: `'FILL' ${fill}`, color,
+      // GRAD wired to --ms-grad (0 light, -25 dark) — optical correction so light
+      // glyphs on a dark surface don't read bolder. (§A, 1.5)
+      fontVariationSettings: `'FILL' ${fill}, 'GRAD' var(--ms-grad, 0)`, color,
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
       userSelect: 'none', flexShrink: 0, ...style,
     }}>{name}</span>
