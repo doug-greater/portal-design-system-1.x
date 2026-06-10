@@ -42,8 +42,8 @@ function AppShell({ currentRoute = 'route-assignments', onNavigate, userName = '
   ];
 
   const MS = (name, size = 20, color = 'currentColor') => (
-    <span className="material-symbols-rounded" style={{
-      fontFamily: '"Material Symbols Rounded"',
+    <span className="material-symbols-sharp" style={{
+      fontFamily: '"Material Symbols Sharp"',
       fontWeight: 'normal', fontStyle: 'normal',
       fontSize: size, lineHeight: 1, color,
       letterSpacing: 'normal', textTransform: 'none', whiteSpace: 'nowrap',

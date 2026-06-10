@@ -46,3 +46,19 @@ This repository is our **shared design system** — the single source of truth f
 - **Deep-linking:** list filters are URL-addressable; cross-page chips / links navigate with a facet query (`?account=…`); renamed routes redirect **preserving the query string**.
 - **Route rename:** the catalog page is now **`/in-the-market`** (old `/products` 301s to it).
 - **App Shell motion:** the collapsible nav **crossfades** its logo (wordmark ↔ crow) and reveals the company name with a `grid-template-rows` animation that wraps freely at full width and is hidden during the transition (no 2-line flash, and **no truncation** of long names).
+
+## What's new in Portal 1.4
+
+> *(The "Accounts → Coverage Map → unified-filters" pass, on top of 1.3. Two items **supersede** earlier specs — update, don't append: Sharp icons and the portal Tooltip.)*
+
+- **Iconography → Sharp.** The portal icon family is now **Material Symbols *Sharp*** (was Rounded) — one font import + the `Icon` class. Glyph names are unchanged, so every existing icon reference keeps working.
+- **Tooltip → portal.** `Tooltip` renders into `document.body` (`position: fixed`, viewport-clamped, `z-index: 4000`), so it never clips inside scrolling tables, transformed cards, or map overlays. Keeps the `maxWidth` wrapping variant.
+- **New Chip tone `atrisk`** (`#FFF7ED` / `#C2410C`) for "at risk" / "draining" semantics.
+- **New primitives: `AccountTypeIcon` + `AccountTypePill`** — the canonical mark + label for an account's type (white disc, thin ring, dark glyph; neutral pill).
+- **Inventory "Conditions" palette** — a fixed 6-level diverging health scale (Out of Stock → Heavy Overstock) with locked colors (`--cond-*`) and an ordinal severity, shared by the table and the map.
+- **Coverage Map** — a Leaflet basemap (CARTO Light) with a **D3 hexbin overlay** that encodes **two** variables at once (color = Condition, fill area = Demand velocity), plus pins⇄hexbin modes, a click-to-isolate condition legend, floating overlay cards, and a custom hex tooltip. Ships as `maps.css`.
+- **Filter Menu `daterange` attribute type** — date ranges are now a first-class facet (rail item → calendar, applied token, "N filters" count). Retires one-off "Date" toolbar buttons.
+- **Related-record facet** — filter a list by an attribute of a related record (e.g. Warehouse filters products by the carrying accounts' market).
+- **Form patterns** — conditional (toggle-gated) required fields with input masking; **write-only secrets** (`*Set` boolean, "leave blank to keep current"); **async field-level uniqueness** checks with Reactivate / View-profile branches; `FloatingField`/`Input` gain `onBlur(value)` + `helper`.
+- **Conventions** — numeric summary values are Geist Mono; spell out "Average"; unit-suffix the value (`12.5 cs/wk`, `45 days`, `471 cs`); encode magnitude as fill **area**, not opacity.
+- **Deps** — `leaflet` 1.9.x, `d3-hexbin`, `d3-scale`, `d3-array`; basemap tiles **CARTO "Light All" @2x** (with the required OpenStreetMap + CARTO attribution).

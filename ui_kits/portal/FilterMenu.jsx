@@ -87,8 +87,24 @@ const fmStyles = {
   footCount: { font: '400 13px Inter, sans-serif', color: 'var(--p-muted)' },
 };
 
-function _summarize(attr, selSet) {
-  const arr = [...selSet];
+const _MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const _toISO = (d) => d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : '';
+const _fmShort = (iso) => {
+  if (!iso) return '';
+  const d = new Date(iso + 'T00:00:00');
+  return isNaN(d) ? iso : `${_MON[d.getMonth()]} ${d.getDate()}`;
+};
+
+function _summarize(attr, sel) {
+  // daterange value is an object { from, to } (ISO strings) — not a Set.
+  if (attr.type === 'daterange') {
+    const f = _fmShort(sel.from), t = _fmShort(sel.to);
+    if (f && t) return `${f} – ${t}`;
+    if (f) return `${f} – …`;
+    if (t) return `… – ${t}`;
+    return 'Any date';
+  }
+  const arr = [...sel];
   if (attr.type === 'search') return `${arr.length} selected`;
   if (arr.length <= 2) return arr.join(', ');
   return `${arr.length} selected`;
@@ -111,10 +127,22 @@ function FilterMenu({ attributes, value, onChange, resultLabel }) {
 
   _useEffect(() => { setQuery(''); }, [activeId]);
 
-  const totalCount = attributes.reduce((s, a) => s + (value[a.id]?.size || 0), 0);
+  // Per-attribute active count. Generalized so Set-valued facets AND the
+  // {from,to} daterange value both work — route EVERY count read through this
+  // (totalCount, rail badge, applied-token visibility) before adding a
+  // differently-shaped value, or the Set path (.size) throws on the object.
+  const attrCount = (a) => {
+    const v = value[a.id];
+    if (!v) return 0;
+    if (a.type === 'daterange') return (v.from || v.to) ? 1 : 0;
+    return v.size || 0;          // Set-valued facets unchanged
+  };
+
+  const totalCount = attributes.reduce((s, a) => s + attrCount(a), 0);
   const activeAttr = attributes.find((a) => a.id === activeId) || attributes[0];
 
   const setSel = (attrId, next) => onChange({ ...value, [attrId]: next });
+  const clearAttr = (a) => setSel(a.id, a.type === 'daterange' ? { from: '', to: '' } : new Set());
   const toggleVal = (attrId, v) => {
     const cur = new Set(value[attrId] || []);
     cur.has(v) ? cur.delete(v) : cur.add(v);
@@ -124,9 +152,25 @@ function FilterMenu({ attributes, value, onChange, resultLabel }) {
   const openTo = (id) => { setActiveId(id); setOpen(true); };
 
   /* Right-pane value list */
-  const selSet = value[activeId] || new Set();
+  const isDateRange = activeAttr.type === 'daterange';
+  const selSet = (isDateRange ? null : value[activeId]) || new Set();
   const isSearch = activeAttr.type === 'search';
   const q = query.trim().toLowerCase();
+
+  /* daterange bridge: facet value is { from, to } ISO; the kit Calendar speaks
+     { start, end } Dates. Grid clicks accumulate from → to; presets set both. */
+  const drVal = isDateRange ? (value[activeId] || { from: '', to: '' }) : null;
+  const drRange = isDateRange
+    ? { start: drVal.from ? new Date(drVal.from + 'T00:00:00') : null, end: drVal.to ? new Date(drVal.to + 'T00:00:00') : null }
+    : null;
+  const drGridPick = (d) => {
+    const iso = _toISO(d);
+    // start a new range if none open or one already complete; else close it (ordered)
+    if (!drVal.from || (drVal.from && drVal.to)) { setSel(activeId, { from: iso, to: '' }); return; }
+    const a = drVal.from, b = iso;
+    setSel(activeId, b < a ? { from: b, to: a } : { from: a, to: b });
+  };
+  const drPickRange = (r) => setSel(activeId, { from: _toISO(r.start), to: _toISO(r.end) });
 
   let pinned = [], rest = [], totalMatches = 0, allMatchIds = [], allMatchesSelected = false;
   const CAP = 50;
@@ -169,15 +213,15 @@ function FilterMenu({ attributes, value, onChange, resultLabel }) {
 
       {/* Applied tokens */}
       {attributes.map((a) => {
+        if (attrCount(a) === 0) return null;
         const sel = value[a.id];
-        if (!sel || !sel.size) return null;
         return (
           <span key={a.id} style={fmStyles.token}>
             <button style={fmStyles.tokenBody} onClick={() => openTo(a.id)}>
               <span style={fmStyles.tokenLabel}>{a.label}:</span>
               <span style={{ fontWeight: 500 }}>{_summarize(a, sel)}</span>
             </button>
-            <button style={fmStyles.tokenX} onClick={() => setSel(a.id, new Set())} aria-label={`Clear ${a.label}`}>
+            <button style={fmStyles.tokenX} onClick={() => clearAttr(a)} aria-label={`Clear ${a.label}`}>
               <Icon name="close" size={13} />
             </button>
           </span>
@@ -186,14 +230,14 @@ function FilterMenu({ attributes, value, onChange, resultLabel }) {
 
       {totalCount > 0 && <button style={fmStyles.clearAll} onClick={() => onChange({})}>Clear all</button>}
 
-      {/* Popover */}
+      {/* Popover — wider when a date-range attr is active (calendar > facet list) */}
       {open && (
-        <div style={fmStyles.pop}>
+        <div style={{ ...fmStyles.pop, width: isDateRange ? 640 : 540 }}>
           <div style={fmStyles.panes}>
             {/* Left rail */}
             <div style={fmStyles.rail}>
               {attributes.map((a) => {
-                const c = value[a.id]?.size || 0;
+                const c = attrCount(a);
                 return (
                   <button key={a.id} style={fmStyles.railItem(a.id === activeId)} onClick={() => setActiveId(a.id)}>
                     <Icon name={a.icon || 'filter'} size={15} color={a.id === activeId ? 'var(--p-primary)' : 'var(--p-muted)'} />
@@ -206,7 +250,20 @@ function FilterMenu({ attributes, value, onChange, resultLabel }) {
 
             {/* Right pane */}
             <div style={fmStyles.pane}>
-              {isSearch ? (
+              {isDateRange ? (
+                <React.Fragment>
+                  <div style={{ ...fmStyles.paneHead, font: '600 14px/1 Inter, sans-serif', color: 'var(--p-ink)' }}>{activeAttr.label}</div>
+                  <div style={{ padding: 14 }}>
+                    {/* The embedded range calendar (preset rail + grid). The host stores the
+                        range inside its filter value as { from, to } ISO strings. */}
+                    <Calendar
+                      range={drRange}
+                      direction={activeAttr.direction || 'forward'}
+                      onChange={drGridPick}
+                      onPickRange={drPickRange} />
+                  </div>
+                </React.Fragment>
+              ) : isSearch ? (
                 <React.Fragment>
                   <div style={fmStyles.paneHead}>
                     <Input icon="search" value={query} onChange={(e) => setQuery(e.target.value)}

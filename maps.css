@@ -2,13 +2,24 @@
    Greater Design System — Maps
    =======================================================================
    Basemap + overlay language used wherever a map appears in Portal.
-   Reference: RoutesScreen / TableView route popover.
+   References: RoutesScreen / TableView route popover; ProductCoverageMap
+   (Coverage Map, §1.4).
 
    Stack:
-   - Leaflet 1.9.x for the engine
+   - Leaflet 1.9.x for the engine (basemap)
    - CARTO "Light All" @2x retina tiles (muted neutral, never satellite)
-   - #007CFF polylines for routes (portal primary, 70% opacity)
-   - Two pin styles: numbered stop (ink) + active location (red)
+   - D3 (d3-hexbin / d3-scale / d3-array) for the SVG analytic overlay
+
+   Two map families share this language:
+   - Routes: #007CFF polylines (portal primary, 70% opacity) + two pin
+     styles (numbered stop, ink / active location, red).
+   - Coverage Map: a D3 multivariate hexbin overlay where
+       color    = average inventory Condition  (the §Conditions palette)
+       fill AREA = a magnitude (avg Demand velocity, cs/wk) — NOT opacity
+     plus a Stores pins mode, a condition legend with click-to-spotlight,
+     and floating overlay cards (title TL · controls TR · legend BL).
+
+   z-index ladder: overlay cards 500 · hex tooltip 600 · DS Tooltip 4000.
 
    Include this file AFTER colors_and_type.css and AFTER leaflet.css.
    ======================================================================= */
@@ -207,7 +218,7 @@
   position: absolute;
   top: 16px;
   left: 16px;
-  z-index: 400;
+  z-index: 500;                       /* overlay-card tier (see ladder) */
   background: var(--p-surface);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-float);
@@ -222,4 +233,136 @@
   font: 400 12px/1.2 var(--font-sans);
   color: var(--p-muted);
   margin-top: 2px;
+}
+
+/* =======================================================================
+   COVERAGE MAP — D3 multivariate hexbin overlay + overlay cards (§1.4)
+   =======================================================================
+   The analytic layer is an <svg> pinned to the Leaflet overlay pane. Store
+   coordinates are projected with map.latLngToLayerPoint and binned with
+   d3-hexbin. Each bin draws a faint OUTLINE hex + a scaled FILL hex; a full
+   hex LATTICE is laid across the viewport so empty cells read as "no
+   coverage here", not "missing map".
+
+     color     = average Condition of the bin's stores (§Conditions palette)
+     fill AREA = a magnitude (avg Demand velocity): the colored inner hex is
+                 scaled prop = max(0.34, sqrt(avgMetric / maxMetric)) inside a
+                 fixed outline hex (HEX_R = 20). Area — never opacity — encodes
+                 magnitude (see the multivariate-encoding rule in the spec).
+
+   CRITICAL — Leaflet sets `pointer-events: none` on its overlay pane, which
+   kills hover on SVG children. Interactive overlay elements MUST force it back
+   on (`pointer-events: all !important`); keep non-interactive layers (fills,
+   the lattice, pin labels) at `none` or hover/click silently never fires.
+   ======================================================================= */
+
+/* Full background lattice — every cell, faint, non-interactive */
+.g-hex-grid {
+  fill: none;
+  stroke: rgba(16, 24, 40, 0.06);
+  stroke-width: 1;
+  pointer-events: none;
+}
+
+/* Per-bin outline hex — the INTERACTIVE element (hover target) */
+.g-hex-outline {
+  fill: none;
+  stroke: rgba(16, 24, 40, 0.14);
+  stroke-width: 1;
+  pointer-events: all !important;     /* beat Leaflet's overlay-pane none */
+  cursor: pointer;
+  transition: stroke 120ms ease-out, stroke-width 120ms ease-out;
+}
+.g-hex-cell:hover .g-hex-outline,
+.g-hex-outline:hover {
+  stroke: var(--p-ink);
+  stroke-width: 1.5;
+}
+
+/* Colored inner hex — area encodes magnitude; color set inline (condition) */
+.g-hex-fill {
+  pointer-events: none;
+  stroke: rgba(255, 255, 255, 0.65);
+  stroke-width: 0.5;
+}
+
+/* Stores mode — one pin per store; fill = that store's condition (inline) */
+.g-cov-pin {
+  stroke: #fff;
+  stroke-width: 1.5;
+  pointer-events: all !important;
+  cursor: pointer;
+}
+.g-cov-pin.is-pending {                /* pending / typed state */
+  stroke-dasharray: 2 2;
+}
+
+/* Custom hex tooltip — dark, sits above the cursor, above the cards (600) */
+.g-hex-tooltip {
+  position: absolute;
+  z-index: 600;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  background: var(--p-ink);
+  color: #fff;
+  font: 500 11px/1.4 var(--font-sans);
+  padding: 7px 10px;
+  border-radius: 6px;
+  box-shadow: var(--shadow-float);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 100ms ease-out;
+}
+.g-hex-tooltip.is-on { opacity: 1; }
+.g-hex-tooltip .num { font: 600 11px/1.4 'Geist Mono', monospace; }
+
+/* Floating overlay cards — base. Title TL (.g-map-title above), controls TR,
+   legend BL. Compose with the position classes:  class="g-map-card g-map-legend" */
+.g-map-card {
+  position: absolute;
+  z-index: 500;
+  background: var(--p-surface);
+  border: var(--map-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-float);
+  padding: 12px 14px;
+}
+.g-map-controls { top: 16px;    right: 16px; }
+.g-map-legend   { bottom: 16px; left: 16px;  min-width: 200px; }
+
+/* Legend rows — color swatch + label; click to spotlight a single condition */
+.g-legend-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+.g-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+  font: 500 12px/1.4 var(--font-sans);
+  color: var(--p-text);
+  cursor: pointer;
+}
+.g-legend-row.is-dimmed { opacity: 0.35; }   /* spotlight: non-selected rows */
+
+/* "Only" → "Showing" affordance + "Show all" reset link */
+.cov-only-link {
+  font: 500 11px/1 var(--font-sans);
+  color: var(--p-muted);
+  cursor: pointer;
+}
+.cov-only-link:hover { color: var(--p-ink); }
+
+/* Legend note — "Fill size = avg demand (cs/wk)" */
+.g-legend-note {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--p-border);
+  font: 400 11px/1.4 var(--font-sans);
+  color: var(--p-muted);
 }

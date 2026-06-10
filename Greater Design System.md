@@ -38,6 +38,7 @@
    - **New in 1.1:** [Wizard (multi-step flow)](#wizard-multi-step-flow) · [Audit Log, Change Row & Restore](#audit-log-change-row--restore) · [Echo Pulse](#echo-pulse-brand-moment) · [Expandable Rows](#expandable-rows) · [Batch Actions](#batch-actions-header-dropdown)
    - **New in Phase 3 (Store Layouts):** [Chip](#chip-micro-status) · [Tooltip](#tooltip) · [MenuButton](#menubutton-off-table-disclosure) · [Arrangement Board](#arrangement-board-drag-and-drop) · [Meta Row](#meta-row-progressive-disclosure) · [General Stock Area](#general-stock-area-arrangement-board-sub-pattern) · [Inline Quantity Control](#inline-quantity-control) · [Add-items Picker](#add-items-picker-grouped-multi-select) · [CSV Import](#csv-import)
    - **New in 1.3 (shell + motion):** [Deep-linking (URL facets)](#deep-linking-url-facets) · StatCard count-up + informational variant (§9 Stat Cards) · `--p-shell` / `--shadow-surface` (§3 / §7) · pending-delta count cell (§9 Tables) · App Shell collapse motion (§9 App Shell)
+   - **New in 1.4 (Coverage Map + unified filters):** [Inventory Conditions](#inventory-conditions-data-viz--domain-palette) · Coverage Map (§9 Maps) · [Account Type](#account-type-icon) primitives · `atrisk` Chip tone (§9 Chip) · Filter Menu `daterange` + related-record facet (§9 Filter Menu) · conditional/write-only-secret & async-uniqueness forms (§9 Inputs) · **Sharp icons** (§8) & **portal Tooltip** (§9) *supersede* prior specs
 10. [Motion](#motion)
 11. [Voice & Copy](#voice--copy)
 12. [Layout](#layout)
@@ -371,20 +372,22 @@ Cards in-table have **no shadow**.
 
 ## 8. Iconography
 
-Greater uses **Material Symbols (Rounded)** for all in-product iconography.
+Greater uses **Material Symbols (Sharp)** for all in-product iconography.
 
-> **One icon system.** Material Symbols Rounded is the *only* icon set, delivered as the variable **font** and addressed by ligature name (e.g. `search`, `expand_more`, `unfold_more`). Lucide and Iconify have been fully removed from the kit. In React, use the shared `Icon` component (`<Icon name="expand_more" size={16} />`); in plain HTML, a `<span class="material-symbols-rounded">expand_more</span>`. The only non-glyph exceptions are CSS background marks (e.g. the native `<select>` chevron data-URI) and map illustration.
+> **One icon system.** Material Symbols Sharp is the *only* icon set, delivered as the variable **font** and addressed by ligature name (e.g. `search`, `expand_more`, `unfold_more`). Lucide and Iconify have been fully removed from the kit. In React, use the shared `Icon` component (`<Icon name="expand_more" size={16} />`); in plain HTML, a `<span class="material-symbols-sharp">expand_more</span>`. The only non-glyph exceptions are CSS background marks (e.g. the native `<select>` chevron data-URI) and map illustration.
+
+> **One optical style — Sharp.** *(Changed in 1.4: the portal moved from Material Symbols **Rounded** to **Sharp** for a crisper, more precise "operational tooling" feel that matches the data-dense tables, mono numerals, and squared cards.)* **Never load Outlined or Rounded alongside Sharp** — mixing optical styles reads as inconsistent. Glyph names are **identical** across optical styles, so every existing icon reference (`more_horiz`, `draft`, `delete`, `curtains`, `hexagon`, …) keeps working; only the rendered style changes. Because the whole app flows through one `Icon` primitive, the family is set in exactly three places: the font `@import`/`<link>`, the `.material-symbols-sharp` class, and `Icon`'s wrapping `<span>`. (All prior icon rules still hold — see §9: `more_horiz` for overflow, `more_vert` banned; `delete` for destructive, not `delete_sweep`.)
 
 ### Loading
 
 ```html
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,400,0,0&display=block">
 ```
 
 ### Usage
 
 ```html
-<span class="material-symbols-rounded">search</span>
+<span class="material-symbols-sharp">search</span>
 ```
 
 ### Defaults
@@ -569,10 +572,13 @@ Example (`StoreLayoutEditor` action bar): `Publish ▾` → `[Publish Now · Sch
 
 ### Tooltip
 
-A dark popover (`--p-ink` bg, white text) anchored to its trigger; hover-only, `pointer-events: none`, `z-index: 200`. Pairs naturally with a 14px `info` glyph (`cursor: help`). Default is a single nowrap line (`font: 500 11px/1.3 Inter; padding: 4px 8px; border-radius: 6px; box-shadow: var(--shadow-float)`). Reference: `preview/components-tooltip.html`.
+A dark popover (`--p-ink` bg, white text) anchored to its trigger; hover-only, `pointer-events: none`. Pairs naturally with a 14px `info` glyph (`cursor: help`). Default is a single nowrap line (`font: 500 11px/1.3 Inter; padding: 4px 8px; border-radius: 6px; box-shadow: var(--shadow-float)`). Reference: `preview/components-tooltip.html`.
 
-- **`maxWidth` (px)** — for multi-line / educational copy. Switches to `white-space: normal`, sets `width: {maxWidth}`, `max-width: calc(100vw - 32px)`, `line-height: 1.5`, `padding: 7px 10px`, left-aligned. **Required** whenever the body runs longer than ~6 words — otherwise it shrink-wraps to one nowrap line that runs off-screen.
-- **`side`** — `"top"` (default) or `"bottom"`. Use `"bottom"` for any trigger near the top edge of the viewport (e.g. an in-card control) so the tooltip can't be clipped above the fold.
+> **Portal-rendered (changed in 1.4).** The `Tooltip` now renders into `document.body` via `ReactDOM.createPortal` with **`position: fixed`** and **`z-index: 4000`** — it is **not** an absolutely-positioned child of its anchor anymore. On hover it measures the anchor with `getBoundingClientRect()` and **clamps its horizontal center to the viewport** (`[90, innerWidth − 90]` px). The upshot: it never clips inside `overflow:hidden` / transformed / stacking-context containers — scrolling tables, transformed cards, **map overlays (Leaflet panes)** — and it floats above modals, popovers, and the map overlay (which sit at lower z-indexes; see the map z-index ladder in §Maps). *(This supersedes the 1.2 absolutely-positioned, `z-index: 200` implementation; the `maxWidth` wrapping behavior is preserved, just re-homed.)*
+
+- **`maxWidth` (px)** — for multi-line / educational copy. Switches to `white-space: normal`, sets `width: {maxWidth}`, caps at `min({maxWidth}px, calc(100vw − 24px))`, `line-height: 1.5`, `padding: 7px 10px`, left-aligned. **Required** whenever the body runs longer than ~6 words — otherwise it shrink-wraps to one nowrap line.
+- **`side`** — `"top"` (default) or `"bottom"`. Controls vertical placement (the horizontal center-clamp handles left/right overflow on its own, so `"bottom"` is now only about which way the bubble opens, not an anti-clipping workaround).
+- **Re-measures on each open.** Positions from `getBoundingClientRect` at hover time; for an anchor that moves *while* the tooltip is shown, re-open to re-measure.
 
 ---
 
@@ -626,6 +632,16 @@ Disabled fields keep a **white background** (never gray) and dim the whole contr
 - **Monospace field** — same shell, `font-family: 'Geist Mono', monospace` — used for PIN, Route ID, codes
 - **Select / Dropdown** — same 44px shell, `padding-right: 36px`, custom chevron SVG at right 12px, `appearance: none`
 
+#### Field props (`FloatingField` / `Input`)
+
+| Prop | Effect |
+|---|---|
+| `mono` | Switches the value to `'Geist Mono'` (PIN, Route ID, codes). |
+| `required` | Appends ` *` after the label string. |
+| `error` | Boolean → red border only; string → red border **+** a `.g-error` message below (`500 12px/1.4`, `--p-danger`). |
+| **`onBlur(value)`** *(§1.4)* | Fires the field's **value** (not the DOM event) on blur — used by the async field-level uniqueness check (§Forms / Patterns). |
+| **`helper`** *(§1.4)* | Muted sub-label text rendered **under** the field (`400 13px/1.4 Inter`, `--p-muted`); **suppressed while an `error` shows** (error wins). For "leave blank to keep current PIN", format hints, etc. |
+
 #### Search Bar (list pages)
 
 Taller search input used at the top of list views (Users, Products).
@@ -640,6 +656,37 @@ font: 400 15px Inter;
 ```
 
 Floating "Search" label sits at `top: -7px; left: 12px`.
+
+#### Conditional (dependent) fields & write-only secrets (§1.4)
+
+Some fields exist only in a particular state, and some hold credentials that must never come back from the server. Reference: the Users form's **Mobile PIN** (gated by "Allow PIN Login for Mobile App").
+
+**Conditional (dependent) required field.**
+- **Visibility is bound to a controlling input** (a `Toggle`). Render the field only when the controller is on; on toggling **off**, also clear that field's error.
+- **Conditional requirement** — required *only while shown*. Validate in the **submit handler**: if the controller is on and the value is missing/invalid, set a field error and keep focus on that tab.
+- **Mask at the boundary.** `FloatingField` forwards no native `inputMode`/`maxLength`, so sanitize in `onChange` — e.g. a numeric PIN: `onChange={(v) => patch({ pin: v.replace(/\D/g, "").slice(0, 5) })}`.
+- **Validation copy is specific:** `"PIN must be exactly 5 digits"` (format) vs `"Enter a 5-digit PIN"` (required-but-empty).
+
+**Write-only secret with an "isSet" flag (the credential rule).**
+- The server **never returns** the secret; it returns a **boolean** (`pinSet`, mirroring how passwords already work). Strip the hash from list/detail/create/update responses.
+- **On create / first set:** the field is **required** (when the controller is on).
+- **On edit of a record that already has it** (`pinSet === true`): the field renders **empty** with `helper` *"A PIN is set. Leave blank to keep the current PIN."* and is **not** required — a blank submit preserves the value; a non-blank submit replaces it.
+- Persist by hashing with the existing password-hash utility; expose only the boolean.
+
+> **Rule.** **Conditional fields** appear only when their controlling input enables them, are **required only while shown**, and validate in the submit handler (clear their error when hidden). **Mask** input at the boundary (`onChange` sanitize). **Secrets are write-only:** the API returns a `*Set` boolean, never the value; when set, the field is optional and shows "leave blank to keep current," and a blank submit preserves it.
+
+#### Async field-level uniqueness check (§1.4)
+
+On the New/Edit User form, the email must be unique. Rather than only failing on submit, check on **blur** and branch the UI on the *state* of any existing match — turning a dead-end error into a recovery path.
+
+- **On blur** (`FloatingField`'s `onBlur(value)`, §Field props), POST the value to a lightweight check endpoint.
+- **Branch on the match:**
+  - **No match** → clear any inline notice; proceed.
+  - **Match is a *deactivated* user** → an **amber** inline callout offering **"Reactivate"** (recover the record instead of blocking).
+  - **Match is an *active* user** → a **red** field error ("This email is already in use") with a **"View profile"** deep-link to that user.
+- **On submit**, the server still enforces uniqueness and returns a **structured `409`** (status + the conflicting record's id/state) so the client renders the same branch even without the blur check.
+
+> **Rule.** Validate unique fields **on blur** against a check endpoint and **branch the UI on the match's state** — **Reactivate** for a deactivated match (amber), **View profile** for an active one (red) — rather than a generic "already exists." Back it with a **structured `409`** on submit so the recovery branch also appears for race conditions.
 
 ---
 
@@ -743,6 +790,25 @@ The canonical pattern for filtering tables. **One** "Filters" button opens a two
 |---|---|
 | Small enumerable (Category, Coverage, Status) | Plain checkbox list of all options. |
 | Large (Account, Brand, Product — hundreds–thousands) | `type: 'search'` — a search `Input` at the top of the pane filters the list live (placeholder names the count, e.g. "Search 3,600 accounts…"). A **Select all N matches** row sits at the very top of the results (primary blue) — it selects/deselects the *entire* current match set, not just the rendered rows, so a search-then-select-all flow works even past the render cap. Currently-selected items pin to the top under a **`SELECTED · N`** group; results render under an **`N matches`** group, **capped at 50** with a "keep typing to narrow" note. Each row may show a secondary value (e.g. account type) right-aligned in `--p-muted`. |
+| Date range (`type: 'daterange'`) | Embedded **`DateRangeCalendar`** (preset rail + calendar) — see below. The pane widens to **640px** (vs 540) because the calendar is wider than a facet list. |
+
+**Date-range attribute (`daterange`) — §1.4.** A date range is a **first-class Filter Menu attribute**, not a separate toolbar button. Declare it as `{ id: "GoLive", label: "Go-Live Date", icon: "date_range", type: "daterange" }`. Its **value is an object `{ from, to }`** (ISO date strings) — *not* a `Set` like checkbox/search facets — so the component handles it specially without breaking existing attrs:
+
+- **Count helper.** Generalize the per-attr active count so Sets and date ranges both work, and route **every** count read (total "N filters" badge, rail-item badge, applied-token visibility) through it:
+  ```js
+  function attrCount(a) {
+    const v = value[a.id];
+    if (!v) return 0;
+    if (a.type === "daterange") return (v.from || v.to) ? 1 : 0;
+    return v.size || 0;          // Set-valued facets unchanged
+  }
+  ```
+- **Right pane** renders the `DateRangeCalendar` (preset rail + grid) instead of the checkbox/search list; selecting days or a preset writes `{ from, to }`.
+- **Applied token** summarizes the range (`"Jun 10 – Jun 16"`, `…` for an open end) instead of "N selected".
+- **Clear** a date-range token resets to `{ from: "", to: "" }` (not an empty `Set`); "Clear all" (`onChange({})`) clears it with everything else.
+- **Host integration:** the host stores the range *inside* its filter value object (`filters.GoLive = { from, to }`); helpers that iterate Set-valued facets must skip the date-range key. The old standalone "Date" toolbar button is removed.
+
+> **Rule.** The Filter Menu supports a **`daterange`** attribute type alongside checkbox and `search` facets. A date range is a first-class facet: it shows in the rail, contributes to the "N filters" count, and appears as a removable applied token summarizing the range. **Don't ship one-off "Date" toolbar buttons** beside the Filter Menu — add a `daterange` attribute instead, so all filtering is unified in one control with one applied-token row.
 
 **Applied-filter tokens**
 
@@ -770,6 +836,8 @@ Token summary text: list the values when ≤2 are selected (`Category: Wine`), o
 - **Per-attribute icons.** Each left-rail attribute row carries an icon matching its column — e.g. Chain → `account_tree`, Account → `storefront`, plus Brand / Category / Size / Supplier.
 - **Leading scope chip.** A filter step may begin with a **scope** chip that changes the *candidate set* rather than filtering it — e.g. Store Promotions' product step toggles "All Products" vs "Carried at Selected Accounts" (defaults to carried). It sits to the left of the attribute filters.
 - **Searchable single-chip (`ChipFilter`).** When exactly one high-cardinality attribute is filtered standalone (e.g. a Chain with hundreds of values), a single searchable chip is acceptable instead of opening the full menu — the bridge between "one Filter Chip" and "the consolidated menu".
+- **Related-record facet (§1.4).** A facet may filter on an attribute of a *related* record, not the row itself — e.g. In-the-Market's **Warehouse** filters the *product* list by the `market` (warehouse) of the *accounts* that carry each product (there's no "warehouse" field on a product; the **Chain** facet works the same way). Resolve the option list from the related collection (distinct `market`s across accounts, surfaced via the page's filter-meta endpoint), then filter rows by **set intersection**: compute the set of related-record IDs matching the selected values (accounts in those warehouses) and keep a product iff its `accountIds` intersect that set.
+  > **Rule.** Implement a related-record facet as a set-intersection against the related IDs, and apply the **same** guard across the list, the (filter-responsive) stat cards, and any map/aggregate view, so every surface reflects the identical filtered population.
 
 ---
 
@@ -916,12 +984,15 @@ font: 600 10.5px/1 Inter; white-space: nowrap; flex-shrink: 0;
 | `neutral` | `--p-surface-tint` | `--p-text-2` | Generic / count tags |
 | `info` | `--p-primary-tint` | `--p-primary-ink` | Plan add ("Adds Aug 1"), presence ("1 Display") |
 | `amber` | `--g-gold-10` | `--p-warning` | Soft warning ("New to store", "Draft exists", "Suggested") |
+| `atrisk` | `--g-orange-10` (`#FFF7ED`) | `--p-atrisk-strong` (`#C2410C`) | **"At Risk", "~N draining"** — a soft orange between `amber` and `danger` (§1.4) |
 | `danger` | `--g-red-10` | `--p-danger-strong` | Removal / discontinue ("Disc. Sep 1") |
 | `success` | `#ECFDF5` | `#047857` | Positive confirmation |
 
+> **`atrisk` vs the Condition palette.** `atrisk` is the **chip tint** for the At-Risk *condition* (tinted pill on white rows). The **map/legend** swatch for At Risk uses the Inventory Condition palette's saturated `#F59E0B` (`--cond-at`; see §Maps / Inventory Conditions). These are intentionally different surfaces (tinted chip vs. saturated fill on a gray basemap) — keep both.
+
 **Rules**
 
-- **Tone = meaning.** Map to the nearest tone; never mint a per-feature color.
+- **Tone = meaning.** Map to the nearest tone; never mint a per-feature color. (Six tones now: neutral · info · amber · **atrisk** · danger · success.)
 - **Chip vs Status Badge vs Pill:** Chip = micro flag / marker (icon, **no dot**, 10.5px). Status Badge = lifecycle state (**dot**, no icon, 12px). Pill = category / role tag (12px, no dot / icon).
 - **Copy:** one to three words; an icon is optional and only when it adds clarity.
 
@@ -952,6 +1023,8 @@ gap: 10px;
 align-items: center;
 box-shadow: var(--shadow-card);
 ```
+
+> **Numeric summary values are Geist Mono (§1.4).** *Every* headline / summary numeric value renders in **Geist Mono** — the tabular feel keeps the digits a stable width while a count-up ticks. The exact weight/size is **contextual**: `StatCard` = `700 20px`, the map's `SummaryStat` = `600 22px`. Label + unit copy follows the §Voice conventions: spell out **"Average"** (not "Avg."), **unit-suffix the value** (`12.5 cs/wk`, `45 days`, `471 cs`) while the label names the metric, and let the **headline metric follow the viz encoding** (surface the magnitude a map's fill encodes; "Accounts" not "Stores" when the dot is an account; "In Market" for total cases).
 
 **Value:** `font: 700 20px/1 'Geist Mono', monospace` — color varies by semantic meaning:
 
@@ -1204,7 +1277,7 @@ Sizes: `md` (default, 12px) and `sm` (11px, 1px vertical padding). To expand the
 
 ### Account Type Icon
 
-White circle with a thin dark ring and a dark **outline** Material Symbols Rounded icon inside. Used wherever an Account is represented — tables, detail headers, search results.
+White circle with a thin **neutral** ring and a dark **outline** Material Symbols Sharp glyph inside. The canonical mark for an Account anywhere it's represented compactly — table leading cell, detail-header avatar slot, map callouts, search results. Shipped as the **`AccountTypeIcon`** primitive (with a sibling **`AccountTypePill`** and the **`ACCOUNT_TYPE_ICONS`** name→glyph map).
 
 ```css
 /* Shell */
@@ -1213,12 +1286,15 @@ align-items: center;
 justify-content: center;
 border-radius: 50%;
 background: #fff;
-border: 1.5px solid #1C1C1E;
+border: 1.5px solid #DDE1E6;   /* thin neutral ring (ring={false} to omit) */
 color: #1C1C1E;
 
 /* Icon size = container × 0.5  (e.g. 52px container → 26px icon) */
-/* Material Symbols Rounded, outline (FILL 0) */
+/* Material Symbols Sharp, outline (FILL 0) — glyph color #1C1C1E */
 ```
+
+- **`AccountTypeIcon({ type, icon, size = 32, ring = true })`** — resolves the glyph from `ACCOUNT_TYPE_ICONS[type]` (default `storefront`). Pass an explicit `icon` to override the map; `ring={false}` inside a container that already provides one.
+- **Tokenization:** the shipped literals are ring `#DDE1E6` and glyph `#1C1C1E`. Map to the nearest existing token (`--p-border` / `--p-ink`) only after confirming against the live app — the shipped values are these exact hexes.
 
 #### Account types & icons
 
@@ -1244,12 +1320,17 @@ Shares the same 4-step scale as User Avatars:
 
 #### Account Type Pill
 
-In page headers, pair the icon with an Account Type Pill. Uses the same pill shell as Role Pill but with a neutral background (no role color):
+In page headers and prose/rows, pair the icon with an **`AccountTypePill`** — a **neutral** category pill that names the type (text only; the glyph lives in the sibling `AccountTypeIcon`). Distinct from the colorful category `Pill` and from the dotted lifecycle `StatusBadge` — use it specifically to label an account's *type*.
 
 ```css
-background: #F3F4F6;
+display: inline-flex; align-items: center;
+padding: 2px 10px;
+border-radius: 999px;
+background: #F3F4F6;          /* neutral — no role/category color */
 color: #4A5565;
-/* Contains: 13px icon + label text */
+font: 500 12px/1.5 Inter;
+letter-spacing: .02em;
+white-space: nowrap;
 ```
 
 #### In the Page Detail Header
@@ -1440,6 +1521,32 @@ function LegacyProductsRedirect() {
 
 ---
 
+### Inventory Conditions (data-viz / domain palette)
+
+**Condition** is Greater's SKU-level health verdict for on-hand stock at a store (from a depletion simulation). It appears as a **column** in the In-the-Market coverage panel and as the **color dimension** of the Coverage Map (§Maps). To keep those surfaces identical, the scale — its ordinal **severity** (`level`) and its **palette** — is defined **once** in `lib/conditions` and imported everywhere; never hand-pick condition colors at a call site.
+
+**Single source of truth:** the JS table in `lib/conditions` is canonical; the `--cond-*` CSS tokens in `colors_and_type.css` mirror the same hexes for CSS surfaces.
+
+| `level` | `key` | Label | Short | Color | Token |
+|---|---|---|---|---|---|
+| 0 | `out_of_stock` | Out of Stock | Out of Stock | `#B42318` (deep red) | `--cond-out` |
+| 1 | `high_risk` | High Risk of OOS | High Risk | `#E5484D` (red) | `--cond-high` |
+| 2 | `at_risk` | At Risk of OOS | At Risk | `#F59E0B` (amber) | `--cond-at` |
+| 3 | `optimal` | Optimal | Optimal | `#00BC57` (green) | `--cond-optimal` |
+| 4 | `slight_overstock` | Slight Overstock | Slight Over | `#2D9CDB` (blue) | `--cond-slight` |
+| 5 | `heavy_overstock` | Heavy Overstock | Heavy Over | `#7B68EE` (violet) | `--cond-heavy` |
+
+- **`level` is the ordinal severity** (0 = worst stockout → 5 = worst overstock; 3 = healthy middle). Averaging a set of stores' `level`s and rounding to the nearest index yields the bin's representative condition — that's how the map hexbin reduces many SKUs/stores to one color.
+- **Diverging palette, centered on green (Optimal):** reds/orange below, blues/violet above. This is a **semantic** palette — do **not** re-skin it per theme; a viewer must read "red = bad, green = good, blue/violet = too much."
+- **Helpers shipped in `lib/conditions`:** `COND_BY_KEY`, `COND_BY_LEVEL` (index === level), `conditionColor(key)` (fallback `#C9CDD2` for unknown).
+
+> **Canonical education copy** (reused verbatim in the In-the-Market "What are Conditions?" info tooltip and on the map):
+> *"Greater's algorithm understands SKU-level demand and its variance for every product in every store. We take the current inventory-on-hand for a SKU and run it through a simulation of projected depletion to determine whether the product is at risk of out-of-stock, overstocked in excess, or at the optimal level."*
+
+> **Rule.** Inventory Condition is a **fixed 6-level diverging scale** with a locked palette and an ordinal severity. Define it once and import it; the same palette drives the table's Condition cell, the coverage-panel legend, and the map's hexbin color + legend swatches. (See also the soft-orange Chip `atrisk` tone, §Chip — the *chip-tint* sibling of `--cond-at`.)
+
+---
+
 ### Maps
 
 Maps use **Leaflet 1.9.x** with **CARTO "Light All" @2x retina tiles** (muted neutral — never satellite).
@@ -1513,6 +1620,33 @@ font: 600 11px/1 Inter; color: #282838;
 ```
 
 Example: `"Thursday, Apr 23 · Kenny D'Amica · 5 stops"`
+
+#### Coverage Map — D3 multivariate hexbin overlay (§1.4)
+
+A full-bleed geographic view of store coverage, in two scopes: **single product** (`/in-the-market/:productId/map`) and **all products / aggregate** (`/in-the-market/coverage-map`). Built on a **Leaflet basemap** + a **D3 `d3-hexbin` SVG overlay** (the analytic layer). Ships as `maps.css`; screen specifics in `ui_kits/portal/SCREENS-1.4.md`.
+
+**The analytic layer encodes two dimensions at once:**
+- **Color = average Condition** of the stores in the bin (the §Inventory Conditions palette, via averaged `level`).
+- **Fill *area* = a magnitude** — currently average **Demand velocity** (cs/wk). The colored inner hex is scaled `prop = max(0.34, sqrt(avgMetric / maxMetric))` inside a fixed outline hex (`HEX_R = 20`). **Area, not opacity, encodes magnitude** (see the encoding rule below).
+- A **full hex lattice** (`.g-hex-grid`) is laid across the whole viewport, so empty cells read as "no coverage here," not "missing map." Each bin adds a faint **outline hex** (`.g-hex-outline`) + the scaled **fill hex** (`.g-hex-fill`).
+- **Hover** raises the outline (`--p-ink`, 1.5px) and shows a custom **`.g-hex-tooltip`** (store count, avg condition, magnitude).
+
+> **⚠ Leaflet overlay pointer-events.** Leaflet sets `pointer-events: none` on its overlay pane, which kills hover on SVG children. Interactive overlay elements **must force it back on** — `.g-hex-outline { pointer-events: all !important; }` (and keep non-interactive layers — `.g-hex-fill`, `.g-hex-grid`, pin labels — at `none`). Without the `!important`, the rich hex tooltip silently never fires.
+
+**Pins mode.** A `Stores` mode swaps hexbins for individual **store pins** (`.g-cov-pin`: circle, white 1.5px stroke, color = that store's condition; `.is-pending` uses `stroke-dasharray`). A segmented **`ModeBtn`** (Hexbin ⇄ Stores) toggles modes; the overlay re-renders on toggle **and on any filter/spotlight change**.
+
+**Floating overlay cards (the reusable map UI language).** All map UI sits in floating white cards over the basemap (`.g-map-card`: `--p-surface`, `--p-border`, `--radius-xl`, `--shadow-float`, absolutely positioned, `z-index: 500`):
+- **Title card** (`.g-map-title`, top-left, `max-width: 340`): screen title + a subtitle that states scope and **explicitly tells the user the page filters apply here** — e.g. *"Average inventory health across N products at M stores. Filters set on In the Market will apply here."*
+- **Controls card** (`.g-map-controls`, top-right): the Hexbin/Stores `ModeBtn`.
+- **Legend card** (`.g-map-legend`, bottom-left): the Condition palette as `.g-legend-swatch` rows + a `.g-legend-note` that **fill size = the magnitude metric** ("Fill size = avg demand (cs/wk)").
+
+**Legend spotlight (single-category focus).** Clicking a condition row in the legend **spotlights** just that condition (dims the rest via `.is-dimmed`); the row label toggles **"Only" → "Showing"** and a **"Show all"** link (`.cov-only-link`) clears it (`condFilter` state). This is the map analogue of a facet filter — a fast "where are my out-of-stocks?".
+
+**Summary stats above the map (`SummaryStat`).** A row of headline metrics: **values are Geist Mono** (`600 22px`), labels Inter, values **unit-suffixed** (§Stats/Voice). Aggregate: `Accounts` · `Products` · `Average Demand` (`12.5 cs/wk`) · `Average On Hand` (`45 days`). Single product: `Accounts` · `In Market` (`471 cs`) · `Average Demand` · `Average On Hand`. The page also renders the active In-the-Market facets as **removable chips** (carried via the deep-link query, §Deep-linking), so the map's scope is explicit and adjustable.
+
+> **Maps pattern (publish).** Maps are a **Leaflet basemap (CARTO Light @2x) + a D3 SVG analytic overlay**, wrapped in a rounded `.g-map` card. All map UI lives in floating `.g-map-card` panels (title top-left, controls top-right, legend bottom-left). Leaflet's own chrome (zoom, attribution) is restyled to the DS. Interactive overlay SVG must set `pointer-events: all !important` to beat Leaflet's `none` on the overlay pane. Re-render the overlay on every mode/filter/spotlight change and on map `move`/`zoom`/`resize`. **Deps:** `leaflet` 1.9.x, `d3-hexbin`, `d3-scale`, `d3-array`; basemap tiles **CARTO "Light All" @2x** with the required OpenStreetMap + CARTO attribution.
+
+> **Multivariate choropleth encoding rule (publish).** When a map/visualization shows **two** variables per cell, encode the **categorical / health** variable as **color** (from a fixed semantic palette) and a **magnitude** variable as **fill *area*** (scale the inner shape by `sqrt(value/max)` so area ≈ value) — **not** as opacity (opacity reads as uncertainty and muddies the color). The legend must explain **both** channels. Allow **spotlighting a single category** (click-to-isolate) as a lightweight filter, with a "Show all" reset. The **headline metric follows the encoding** — surface the same magnitude the fill encodes as a top `SummaryStat`.
 
 ---
 
@@ -2028,7 +2162,9 @@ These named keyframes ship in `colors_and_type.css` and back every entrance / lo
 - **Plainspoken, operational, slightly wry.** Product copy is literal and straightforward.
 - **Second-person, sparingly.** "Sign in to your account." Never cutesy ("Hey! Let's get you signed in 👋"). No first-person.
 - **Sentence case** for prose; **Title Case** for actions & overlay headers. Sentence case everywhere except column headers, overlines, tab/chip labels, and — per §4 — every button / link-button / SplitButton label and Modal·Drawer·Dialog header (see Typography → Sentence Case Rules).
-- **Numbers carry weight.** Stat cards lead with large bold numbers. Use abbreviations: `21.1k`, `$482.7k`, `1,258`.
+- **Numbers carry weight.** Stat cards lead with large bold numbers, always in **Geist Mono** (§9 Stat Cards). Use abbreviations: `21.1k`, `$482.7k`, `1,258`.
+- **Spell out "Average" in metric labels (§1.4).** "Average Demand", "Average On Hand" — *not* "Avg." The extra characters read as more deliberate / credible in a sparse metric row.
+- **Unit-suffix the value, not the label (§1.4).** The label names the metric ("Average Demand"); the **value** carries the unit: `12.5 cs/wk`, `45 days`, `471 cs` (`cs` = cases). And the **headline metric follows the viz encoding** — when a map encodes a magnitude as hex-fill area, surface that same magnitude as a top metric, and rename stale labels to match ("Accounts," not "Stores," when the dot is an account; "In Market" for total cases).
 - **Verb-first** for actions, in Title Case: "Save Changes", "Finalize for Simulation", "Go Back".
 - **No emoji in product.** Emoji-free.
 - **Inline status words are colored** — not bolded, not badged. The color conveys the meaning.
@@ -2284,7 +2420,7 @@ Import `colors_and_type.css`, copy the logo assets, load Material Symbols from G
 ### Substitution notes
 
 - **Fonts:** Inter + Geist Mono from Google Fonts. Some references to "Helvetica Neue" in map attribution are acceptable as system-font fallback.
-- **Icon set:** Material Symbols (Rounded), one system everywhere — the variable font, addressed by ligature name. Lucide and Iconify have been fully removed.
+- **Icon set:** Material Symbols (Sharp), one system everywhere — the variable font, addressed by ligature name. Lucide and Iconify have been fully removed.
 - **Portal chrome (global nav, user menu):** designed from first principles and shipped as the **App Shell + Navigation Sidebar** (see §9).
 - **Map tiles:** CARTO Light All `https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png`
 

@@ -3,12 +3,12 @@
 
 const { useState, useEffect, useRef, useMemo } = React;
 
-/* ---------------- Icon (Material Symbols Rounded font) ---------------- */
+/* ---------------- Icon (Material Symbols Sharp font) ---------------- */
 // `name` is a Material Symbols glyph name (e.g. "search", "expand_more"). Outline by default.
 function Icon({ name, size = 16, color, fill = 0, style }) {
   return (
-    <span className="material-symbols-rounded" style={{
-      fontFamily: "'Material Symbols Rounded'", fontSize: size, lineHeight: 1,
+    <span className="material-symbols-sharp" style={{
+      fontFamily: "'Material Symbols Sharp'", fontSize: size, lineHeight: 1,
       fontVariationSettings: `'FILL' ${fill}`, color,
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
       userSelect: 'none', flexShrink: 0, ...style,
@@ -77,26 +77,38 @@ function Button({ variant = 'primary', size = 'md', icon, iconRight, children, o
   );
 }
 
-/* ---------------- Input ---------------- */
-function Input({ icon, value, onChange, placeholder, type = 'text', error, style, onFocus, onBlur }) {
+/* ---------------- Input ----------------
+   `onBlur(value)` — fires the field's value (not the event) on blur; used by
+   the async field-level uniqueness check (§J). `helper` — muted sub-label text
+   rendered UNDER the field; SUPPRESSED while an `error` shows (error wins).
+   `error` may be a boolean (red border only) or a string (red border + message). */
+function Input({ icon, value, onChange, placeholder, type = 'text', error, style, onFocus, onBlur, helper }) {
   const [focus, setFocus] = useState(false);
   return (
     <div style={{ position: 'relative', display: 'inline-block', ...style }}>
       {icon && (
-        <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--p-placeholder)', pointerEvents: 'none', display: 'flex' }}>
+        <span style={{ position: 'absolute', left: 10, top: 18, transform: 'translateY(-50%)', color: 'var(--p-placeholder)', pointerEvents: 'none', display: 'flex' }}>
           <Icon name={icon} size={14} />
         </span>
       )}
       <input type={type} value={value} onChange={onChange} placeholder={placeholder}
         onFocus={(e) => { setFocus(true); onFocus?.(e); }}
-        onBlur={(e) => { setFocus(false); onBlur?.(e); }}
+        onBlur={(e) => { setFocus(false); onBlur?.(e.target.value); }}
         style={{
           width: '100%', height: 36, padding: icon ? '0 12px 0 32px' : '0 12px',
           border: `1px solid ${error ? 'var(--p-danger)' : focus ? 'var(--p-primary)' : 'var(--p-border-strong)'}`,
           borderRadius: 4, font: '400 14px Inter, sans-serif', color: 'var(--p-ink)', background: '#fff',
           outline: 'none', boxShadow: focus ? '0 0 0 3px rgba(21,93,252,.15)' : 'none',
           transition: 'border-color .12s, box-shadow .12s',
+          boxSizing: 'border-box',
         }} />
+      {error
+        ? (typeof error === 'string'
+            ? <div className="g-error" style={{ font: '500 12px/1.4 Inter, sans-serif', color: 'var(--p-danger)', marginTop: 4 }}>{error}</div>
+            : null)
+        : (helper
+            ? <div style={{ font: '400 13px/1.4 Inter, sans-serif', color: 'var(--p-muted)', marginTop: 4 }}>{helper}</div>
+            : null)}
     </div>
   );
 }
@@ -146,6 +158,7 @@ const CHIP_TONES = {
   neutral: { bg: 'var(--p-surface-tint)', fg: 'var(--p-text-2)' },
   info:    { bg: 'var(--p-primary-tint)', fg: 'var(--p-primary-ink)' },
   amber:   { bg: 'var(--g-gold-10)',      fg: 'var(--p-warning)' },
+  atrisk:  { bg: 'var(--g-orange-10)',    fg: 'var(--p-atrisk-strong)' },  // soft orange between amber & danger — "At Risk" / "~N draining" (§C)
   danger:  { bg: 'var(--g-red-10)',       fg: 'var(--p-danger-strong)' },
   success: { bg: '#ECFDF5',               fg: '#047857' },
 };
@@ -167,6 +180,41 @@ function ChipToggle({ on, onClick, icon, label }) {
         color: on ? 'var(--p-primary-ink)' : 'var(--p-muted)', font: '500 12px/1 Inter, sans-serif' }}>
       <Icon name={icon} size={13} color={on ? 'var(--p-primary)' : 'var(--p-placeholder)'} /> {label}
     </button>
+  );
+}
+
+/* ---------------- Account Type Icon + Pill (§D) ----------------
+   The canonical mark + label for an Account's type (Retail Store, Restaurant,
+   Grocery, C-Store, Bar, Discount Store). AccountTypeIcon: white disc, thin
+   neutral ring, dark outline glyph (glyph = container × 0.5). AccountTypePill:
+   neutral gray category pill that names the type. Pass an explicit `icon` to
+   override the type→glyph map; `ring={false}` inside a container that already
+   provides one. Extend ACCOUNT_TYPE_ICONS as new types appear (default storefront). */
+const ACCOUNT_TYPE_ICONS = {
+  'Retail Store': 'storefront',
+  'Restaurant': 'fastfood',
+  'Grocery': 'shopping_cart',
+  'C-Store': 'local_convenience_store',
+  'Bar': 'local_bar',
+  'Discount Store': 'attach_money',
+};
+function AccountTypeIcon({ type, icon, size = 32, ring = true }) {
+  const name = icon || ACCOUNT_TYPE_ICONS[type] || 'storefront';
+  return (
+    <span style={{ width: size, height: size, borderRadius: '50%', background: '#fff',
+      border: ring ? '1.5px solid #DDE1E6' : 'none', color: '#1C1C1E',
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <Icon name={name} size={Math.round(size * 0.5)} color="#1C1C1E" />
+    </span>
+  );
+}
+function AccountTypePill({ type }) {
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', padding: '2px 10px',
+      borderRadius: 999, background: '#F3F4F6', color: '#4A5565',
+      font: '500 12px/1.5 Inter', letterSpacing: '.02em', whiteSpace: 'nowrap' }}>
+      {type}
+    </span>
   );
 }
 
@@ -286,19 +334,48 @@ function StatCard({ value, label, color = 'ink', action, active, onClick }) {
   );
 }
 
-/* ---------------- Tooltip ----------------
-   Dark hover popover. `maxWidth` (px) switches to multi-line wrap (required for
-   copy longer than ~6 words); `side="bottom"` opens downward near the top edge. */
+/* ---------------- Tooltip (portal-rendered) ----------------
+   Dark hover popover rendered into document.body via ReactDOM.createPortal
+   (position:fixed, z-index 4000). It tracks the anchor with getBoundingClientRect
+   on hover and clamps its center to the viewport [90, innerWidth−90], so it never
+   clips inside scrolling tables, transformed cards, or map overlays — and floats
+   above modals/popovers/the map overlay. `maxWidth` (px) switches to multi-line
+   wrap (required for copy longer than ~6 words); `side="bottom"` opens downward.
+   Re-measures on each open (hover) — for anchors that move while shown, re-open.
+   (1.4: replaces the 1.2 absolutely-positioned implementation; maxWidth preserved.) */
 function Tooltip({ text, children, side = 'top', maxWidth }) {
   const [show, setShow] = useState(false);
-  const pos = side === 'top'
-    ? { bottom: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)' }
-    : { top: 'calc(100% + 6px)', left: '50%', transform: 'translateX(-50%)' };
+  const ref = useRef(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
+
+  const update = () => {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    // Clamp the horizontal center so the translateX(-50%) bubble stays on-screen.
+    const cx = Math.min(Math.max(r.left + r.width / 2, 90), window.innerWidth - 90);
+    setCoords({ top: side === 'top' ? r.top - 6 : r.bottom + 6, left: cx });
+  };
+  const open = () => { update(); setShow(true); };
+
   return (
-    <span style={{ position: 'relative', display: 'inline-flex' }} onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}>
+    <span ref={ref} style={{ position: 'relative', display: 'inline-flex' }}
+      onMouseEnter={open} onMouseLeave={() => setShow(false)}>
       {children}
-      {show && text && (
-        <span role="tooltip" style={{ position: 'absolute', ...pos, whiteSpace: maxWidth ? 'normal' : 'nowrap', width: maxWidth, maxWidth: maxWidth ? 'calc(100vw - 32px)' : undefined, background: 'var(--p-ink)', color: '#fff', font: `500 11px/${maxWidth ? '1.5' : '1.3'} Inter, sans-serif`, padding: maxWidth ? '7px 10px' : '4px 8px', borderRadius: 6, boxShadow: 'var(--shadow-float)', zIndex: 200, pointerEvents: 'none', textAlign: 'left' }}>{text}</span>
+      {show && text && ReactDOM.createPortal(
+        <span role="tooltip" style={{
+          position: 'fixed', top: coords.top, left: coords.left,
+          transform: side === 'top' ? 'translate(-50%, -100%)' : 'translate(-50%, 0)',
+          whiteSpace: maxWidth ? 'normal' : 'nowrap',
+          width: maxWidth,
+          maxWidth: maxWidth ? `min(${maxWidth}px, calc(100vw - 24px))` : 'calc(100vw - 24px)',
+          background: 'var(--p-ink)', color: '#fff',
+          font: `500 11px/${maxWidth ? '1.5' : '1.3'} Inter, sans-serif`,
+          padding: maxWidth ? '7px 10px' : '4px 8px',
+          borderRadius: 6, boxShadow: 'var(--shadow-float)',
+          zIndex: 4000, pointerEvents: 'none', textAlign: 'left',
+        }}>{text}</span>,
+        document.body
       )}
     </span>
   );
@@ -360,4 +437,4 @@ function StatsToggle({ visible, onToggle }) {
   );
 }
 
-Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, Chip, ChipToggle, FilterChip, SegmentedTabs, StatCard, CountDeltaCell, InfoBanner, Tooltip, StatsToggle, useStatsVisible });
+Object.assign(window, { Icon, Logo, Crow, Button, Input, Toggle, Checkbox, Pill, Chip, ChipToggle, AccountTypeIcon, AccountTypePill, ACCOUNT_TYPE_ICONS, FilterChip, SegmentedTabs, StatCard, CountDeltaCell, InfoBanner, Tooltip, StatsToggle, useStatsVisible });

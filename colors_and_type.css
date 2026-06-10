@@ -46,6 +46,7 @@
   --g-green-10:  rgba(0,188,87,.12);
   --g-gold-10:   rgba(219,158,3,.12);
   --g-purple-10: rgba(123,104,238,.12);
+  --g-orange-10: #FFF7ED;   /* 10% orange tint over white — Chip "atrisk" bg (§C) */
 
   /* ---------- Portal: neutral ramp (cool, slightly warmer than iOS) ---------- */
   --p-ink:          #101828;   /* headings                            */
@@ -79,6 +80,19 @@
   --p-warning:       #DB9E03;
   --p-danger:        #E5484D;
   --p-danger-strong: #DC2626;
+  --p-atrisk-strong: #C2410C;  /* readable orange text on --g-orange-10 — Chip "atrisk" / "draining" (§C) */
+
+  /* ---------- Inventory Condition palette (diverging, centered on Optimal = green) ----------
+     Greater's fixed 6-level SKU-health scale (Out of Stock → Heavy Overstock). Ordinal severity
+     0–5; reds/orange below Optimal, blues/violet above. SEMANTIC — never re-skin per theme.
+     Single source of truth is lib/conditions (JS); these tokens mirror the same hexes for CSS
+     surfaces (the table Condition cell, the coverage-panel legend, the map hexbin + legend). */
+  --cond-out:      #B42318;   /* Out of Stock      (level 0) — deep red */
+  --cond-high:     #E5484D;   /* High Risk of OOS  (level 1) — red      */
+  --cond-at:       #F59E0B;   /* At Risk of OOS    (level 2) — amber     */
+  --cond-optimal:  #00BC57;   /* Optimal           (level 3) — green     */
+  --cond-slight:   #2D9CDB;   /* Slight Overstock  (level 4) — blue      */
+  --cond-heavy:    #7B68EE;   /* Heavy Overstock   (level 5) — violet    */
 
   /* ---------- Restore / audit action accents ---------- */
   --p-restore:        #0D9488;             /* teal — restore / revert action + `restored` audit state */
