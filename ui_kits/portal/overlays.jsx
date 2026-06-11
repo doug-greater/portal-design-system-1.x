@@ -80,7 +80,20 @@ function Scrim({ children, onClose, justify = 'center' }) {
   );
 }
 
-/* ---------------- Modal (default + confirm) ---------------- */
+/* ---------------- Modal (default + confirm) ----------------
+   Unsaved-changes "Discard" guard (1.5): use the danger `confirm` variant when
+   a dirty edit surface intercepts a Back/exit. Pair with a window `beforeunload`
+   guard while dirty; re-baseline the snapshot after a successful save.
+     <Modal open={leaving} variant="confirm" tone="danger" title="Discard Unsaved Changes?"
+       onClose={() => setLeaving(false)}
+       footer={<>
+         <Button variant="ghost" data-testid="x-keep-editing" onClick={() => setLeaving(false)}>Keep Editing</Button>
+         <Button variant="danger" data-testid="x-confirm-leave" onClick={confirmLeave}>Discard &amp; Leave</Button>
+       </>}>
+       You have unsaved changes that haven't been saved yet. Leave this page anyway?
+     </Modal>
+   Caveat: declarative BrowserRouter has no useBlocker — covers the back link +
+   hard unloads, not in-app sidebar nav (adopt a data router for full coverage). */
 function Modal({ open, onClose, title, subtitle, children, footer, size = 'md', width, variant = 'default', tone = 'danger', icon = 'warning', warning }) {
   useDismiss(open, onClose);
   if (!open) return null;

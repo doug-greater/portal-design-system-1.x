@@ -9,6 +9,24 @@ function AppShell({ currentRoute = 'route-assignments', onNavigate, userName = '
   const [collapsed, setCollapsed] = React.useState(() => localStorage.getItem('gr-nav-collapsed') === '1');
   React.useEffect(() => { localStorage.setItem('gr-nav-collapsed', collapsed ? '1' : '0'); }, [collapsed]);
 
+  // Theme toggle (§A). Production reads ui_kits/portal/theme.js (useSyncExternalStore
+  // store); this kit inlines an equivalent so the demo flips live. Cycles
+  // light → dark → system; sets data-theme on <html>, persisted in gr-theme.
+  const [themePref, setThemePref] = React.useState(() => {
+    try { const v = localStorage.getItem('gr-theme'); return v === 'light' || v === 'dark' || v === 'system' ? v : 'system'; } catch { return 'system'; }
+  });
+  const resolveTheme = (p) => p === 'dark' ? 'dark' : p === 'light' ? 'light' : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-theme', resolveTheme(themePref));
+    try { localStorage.setItem('gr-theme', themePref); } catch {}
+  }, [themePref]);
+  const THEME_META = { light: { icon: 'light_mode', label: 'Light' }, dark: { icon: 'dark_mode', label: 'Dark' }, system: { icon: 'contrast', label: 'System' } };
+  const themeMeta = THEME_META[themePref];
+  const cycleTheme = () => setThemePref((p) => (p === 'light' ? 'dark' : p === 'dark' ? 'system' : 'light'));
+  const isDark = resolveTheme(themePref) === 'dark';   // brand marks swap to KO in dark (§A)
+  const logotypeSrc = isDark ? '../../assets/greater-logotype-ko.png' : '../../assets/greater-logotype.png';
+  const crowSrc = isDark ? '../../assets/greater-crow-ko.png' : '../../assets/greater-crow.png';
+
   const toggle = (id) => setExpanded((s) => ({ ...s, [id]: !s[id] }));
 
   // ── Collapsed flyout: hover a collapsed icon → floating panel (sub-items, or just a label for leaves) ──
@@ -157,11 +175,11 @@ function AppShell({ currentRoute = 'route-assignments', onNavigate, userName = '
     );
   };
 
-  const BottomRow = ({ icon, label, external, onClick, trailing }) => {
+  const BottomRow = ({ icon, label, external, onClick, trailing, testid }) => {
     if (collapsed) {
       return (
         <li style={{ listStyle: 'none' }}>
-          <button onClick={onClick}
+          <button onClick={onClick} data-testid={testid}
             onMouseEnter={(e) => openFlyout({ label, children: null }, e)}
             onMouseLeave={scheduleClose}
             style={{
@@ -180,7 +198,7 @@ function AppShell({ currentRoute = 'route-assignments', onNavigate, userName = '
     }
     return (
       <li style={{ listStyle: 'none' }}>
-        <button onClick={onClick} style={{
+        <button onClick={onClick} data-testid={testid} style={{
           width: '100%', border: 'none', background: 'transparent', padding: 0, cursor: 'pointer',
         }}>
           <div className="gr-util" style={{
@@ -306,9 +324,9 @@ function AppShell({ currentRoute = 'route-assignments', onNavigate, userName = '
             {/* Logo crossfade — wordmark ↔ crow dissolve (no instant src swap) */}
             <a href="#" onClick={(e)=>e.preventDefault()} style={{ display: 'inline-flex' }}>
               <div style={{ position: 'relative', height: 30, width: collapsed ? 34 : 132, transition: 'width 180ms ease', flexShrink: 0 }}>
-                <img src="../../assets/greater-logotype.png" alt="Greater"
+                <img src={logotypeSrc} alt="Greater"
                   style={{ position: 'absolute', top: 0, left: 0, height: 30, width: 'auto', maxWidth: 132, objectFit: 'contain', opacity: collapsed ? 0 : 1, transition: 'opacity 160ms ease', pointerEvents: 'none' }} />
-                <img src="../../assets/greater-crow.png" alt="" aria-hidden="true"
+                <img src={crowSrc} alt="" aria-hidden="true"
                   style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', height: 30, width: 'auto', objectFit: 'contain', opacity: collapsed ? 1 : 0, transition: 'opacity 160ms ease', pointerEvents: 'none' }} />
               </div>
             </a>
@@ -354,6 +372,7 @@ function AppShell({ currentRoute = 'route-assignments', onNavigate, userName = '
         }}>
           <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 0 }}>
             {!collapsed && <BottomRow icon="engineering" label="Ops Tools" trailing={<Toggle checked={opsTools} onChange={setOpsTools} />} />}
+            <BottomRow icon={themeMeta.icon} label={themeMeta.label} onClick={cycleTheme} testid="theme-toggle" />
             <BottomRow icon="public" label="Help Center" external onClick={() => window.open('https://help.greater.co', '_blank')} />
             <BottomRow icon="person" label={userName} />
             <BottomRow icon="logout" label="Sign Out" />

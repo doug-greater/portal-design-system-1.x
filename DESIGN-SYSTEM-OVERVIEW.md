@@ -318,6 +318,21 @@ coverage:
   and the conventions (mono summary values, "Average", unit-suffixed values, magnitude-as-area).
   **Deps:** `leaflet` 1.9.x, `d3-hexbin`, `d3-scale`, `d3-array`; CARTO "Light All" tiles.
   *(Two items **supersede** earlier specs: Sharp icons and the portal Tooltip.)*
+- **New in Portal 1.5 (Dark Mode + governed UI)** — **Global Dark Mode**: a live
+  light/dark/system theme (`data-theme` on `<html>`, a `useSyncExternalStore` store in
+  `theme.js`, no-flash bootstrap), a full inverted-neutral dark token block (elevation via
+  inset-highlight + deep shadow), the **flip-pairs** authoring rule, an App-Shell **theme
+  toggle**, KO brand marks, and `--ms-grad` optical correction; the Coverage Map swaps to
+  CARTO **dark_all**. **Conditions → "Palette A"** (colour-blind-safe, WCAG ≥3:1; *supersedes*
+  1.4 — same token names/severity; `conditions.js` returns `var(--cond-…)`). **Governed UI**:
+  the **hide-vs-disable** Permissions & Affordances pattern, first-class **`disabled`** states
+  for `Select` (lock glyph) / `Checkbox` / `Input`, and the amber **capability-lock banner**.
+  The **Unsaved-Changes "Discard" guard** (data-router caveat), the two-step **Login + dev
+  sign-in**, a tightened **write-only PIN** rule. Hardening: **4px control radii**, unified
+  **pending-change tint** language, mono bare-code table columns + em-dash empties +
+  filter↔column parity, granular **audit records**, a **Replace-in-place** placement action,
+  the **Route** facet, and **"Days on Hand"** (*supersedes* "Weeks on Hand"). New files:
+  `theme.js`, `conditions.js`, a `Select` primitive; Appendix A documents the RBAC vocabulary.
 
 **Terminology (1.1 canon).** "Store Promotions" (short "Store Promos", `/store-promotions`),
 "POD Planner" (`/pod-planner`), "Audit Log" (events Created / Updated / Restored / Deleted;

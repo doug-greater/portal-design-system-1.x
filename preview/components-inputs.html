@@ -257,7 +257,26 @@ body { margin: 0; padding: 20px 24px; background: #fff; font: 400 14px Inter; co
     <b style="color:var(--p-ink)">Field:</b> height <code>44px</code> · border-radius <code>6px</code> · font <code>400 15px Inter</code> · padding <code>0 14px</code> · focus ring <code>0 0 0 3px rgba(0,124,255,.15)</code><br><br>
     <b style="color:var(--p-ink)">Search bar:</b> height <code>48px</code> · border-radius <code>8px</code> · padding-left <code>44px</code> (18px icon + gutter) · otherwise identical<br><br>
     <b style="color:var(--p-ink)">Floating label:</b> <code>position: absolute; top: -7px; left: 10px; padding: 0 4px; background: #fff</code> · 12px 400 Inter · color <code>#6A7282</code> (error: <code>#E5484D</code>, focus: <code>#007CFF</code>)<br><br>
-    Required fields append <code> *</code> to the label string. Disabled fields keep a white background; the label, value text, border, and chevron all use a single gray <code>#99A1AF</code> (with <code>-webkit-text-fill-color</code> to override browser defaults) so input and select look identical.
+    Required fields append <code> *</code> to the label string.<br><br>
+    <b style="color:var(--p-ink)">Disabled / locked (1.5):</b> bg <code>--p-surface-tint</code>, text <code>--p-placeholder</code>, <code>cursor: not-allowed</code>, no focus ring. A disabled <code>Select</code> swaps its chevron for a <code>lock</code> glyph and won't open — the at-a-glance "capability-locked" signal. Pair a locked surface with the amber capability-lock banner (leading <code>lock</code> icon) explaining why.
+  </div>
+</div>
+
+<!-- ── DISABLED / LOCKED ── -->
+<div>
+  <div class="sec">Disabled / locked (1.5)</div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end">
+    <div style="width:220px">
+      <input value="Reps cannot edit" disabled readonly style="width:100%;height:36px;padding:0 12px;border:1px solid var(--p-border-strong);border-radius:4px;font:400 14px Inter;color:var(--p-placeholder);background:var(--p-surface-tint);cursor:not-allowed;box-sizing:border-box">
+      <div style="font:400 12px/1.2 'Geist Mono',monospace;color:var(--p-muted);margin-top:6px">Input · disabled</div>
+    </div>
+    <div style="width:220px">
+      <div style="position:relative">
+        <div style="width:100%;height:36px;padding:0 12px;border:1px solid var(--p-border-strong);border-radius:4px;font:400 14px Inter;color:var(--p-placeholder);background:var(--p-surface-tint);cursor:not-allowed;box-sizing:border-box;display:flex;align-items:center">Department Manager</div>
+        <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--p-placeholder);font-family:'Material Symbols Sharp';font-size:14px;line-height:1">lock</span>
+      </div>
+      <div style="font:400 12px/1.2 'Geist Mono',monospace;color:var(--p-muted);margin-top:6px">Select · disabled → lock glyph</div>
+    </div>
   </div>
 </div>
 

@@ -1,5 +1,5 @@
 # Greater Design System
-### Portal 1.0 · May 2026
+### Portal 1.5 · June 2026
 
 > Greater Industries builds AI that helps wholesalers and distributors make the smartest, most efficient, most profitable decisions across their entire business. From warehouse workers and truck drivers to sales reps and owners — Greater's portal is the cockpit that connects the people who power local economies.
 
@@ -39,6 +39,7 @@
    - **New in Phase 3 (Store Layouts):** [Chip](#chip-micro-status) · [Tooltip](#tooltip) · [MenuButton](#menubutton-off-table-disclosure) · [Arrangement Board](#arrangement-board-drag-and-drop) · [Meta Row](#meta-row-progressive-disclosure) · [General Stock Area](#general-stock-area-arrangement-board-sub-pattern) · [Inline Quantity Control](#inline-quantity-control) · [Add-items Picker](#add-items-picker-grouped-multi-select) · [CSV Import](#csv-import)
    - **New in 1.3 (shell + motion):** [Deep-linking (URL facets)](#deep-linking-url-facets) · StatCard count-up + informational variant (§9 Stat Cards) · `--p-shell` / `--shadow-surface` (§3 / §7) · pending-delta count cell (§9 Tables) · App Shell collapse motion (§9 App Shell)
    - **New in 1.4 (Coverage Map + unified filters):** [Inventory Conditions](#inventory-conditions-data-viz--domain-palette) · Coverage Map (§9 Maps) · [Account Type](#account-type-icon) primitives · `atrisk` Chip tone (§9 Chip) · Filter Menu `daterange` + related-record facet (§9 Filter Menu) · conditional/write-only-secret & async-uniqueness forms (§9 Inputs) · **Sharp icons** (§8) & **portal Tooltip** (§9) *supersede* prior specs
+   - **New in 1.5 (Dark Mode + governed UI):** **Theming — light/dark/system** (§3) · full dark token block + flip-pairs · **Conditions → Palette A** (§9, *supersedes*) · dark Coverage-Map basemap (§9 Maps) · disabled/locked control states + capability-lock banner (§9 Inputs/Info Banners) · **Permissions & Affordances** hide-vs-disable + **Unsaved-Changes guard** (§9) · two-step **Login** + dev sign-in (§9) · 4px control radii (§6) · pending-tint unification · **Days On Hand** (*supersedes* Weeks) · `ballot`=Sales (§8) · Appendix A (RBAC vocab)
 10. [Motion](#motion)
 11. [Voice & Copy](#voice--copy)
 12. [Layout](#layout)
@@ -200,6 +201,40 @@ The portal is information-dense — big data tables, filter chips, stat cards, c
 
 ---
 
+### Theming — light + dark (1.5)
+
+The portal ships a full **light + dark theme**, toggled live with no reload. This is the largest 1.5 change and the reason the dark token block, the dark Coverage-Map basemap, and the colour-blind-safe Conditions palette exist.
+
+**Theme model — three preferences, two resolved themes:**
+
+- **`pref`** — `"system" | "light" | "dark"`, persisted in `localStorage["gr-theme"]` (default `"system"`).
+- **`resolved`** — `"light" | "dark"`. `system` resolves via `window.matchMedia("(prefers-color-scheme: dark)")` and **follows OS changes live** while the pref is `system`.
+- Applied by setting **`document.documentElement.setAttribute("data-theme", resolved)`**. All dark tokens live under the **`html[data-theme="dark"]`** selector; light is the bare `:root`.
+
+> **Single-store rule (this caused a real bug — keep it).** Theme state **must live in one module-level store** read via **`useSyncExternalStore`**, not per-component `useState`. JS-driven views (the Leaflet Coverage Map) rebuild their tiles inside an effect keyed on `resolved`; if each `useTheme()` hook held its own copy, the map would **not** re-render on toggle. Reference module: `ui_kits/portal/theme.js`.
+
+> **No-flash bootstrap (required).** A tiny inline script in `index.html` must read `localStorage["gr-theme"]` and set `data-theme` **before React mounts**, so there is no white→dark flash on load.
+
+**Dark token model.** The dark theme is a complete inverted-neutral set using **deep tinted blacks** (Vercel/Linear lineage). **Elevation in dark is expressed by surface lightening + an inset highlight + a deep shadow** — *not* the light-mode soft drop shadows (see §7). The full block is in `colors_and_type.css` under `html[data-theme="dark"]`.
+
+> **Flip-pairs rule (the #1 authoring rule that makes dark "just work").** Any tinted **status / role / category** surface must be authored as a **bg/fg token pair** (`--p-*-bg` / `--p-*-fg`) so the dark block can flip both. Pattern: **light = pale tint bg + saturated fg; dark = low-alpha rgba tint of the same hue + luminous (light) fg.** Components must **never hardcode hex** for these surfaces — always reference the token, or dark mode silently breaks. Tokens that flip: the neutral ramp, primary set, 5 category-pill pairs, 4 feedback colors, the `--g-*-10` tints, the intel gradient, the 4 shadows, 3 status pairs (`--p-success/atrisk/neutral-bg/fg`), 5 role pairs, `--p-overlay-hover`, `--p-focus-ring`, `--p-backdrop`, 2 skeleton stops, `--g-gold-30`, 2 scrollbar stops, `--ms-grad`, and the 8 `--cond-*`.
+
+**Brand marks.** The wordmark + crow swap to **knock-out (KO) variants** in dark (`greater-logotype-ko.png` / `greater-crow-ko.png`), keyed on `resolved`.
+
+**Optical correction.** Material Symbols use a **negative grade in dark** (`--ms-grad: -25`, `0` in light) to counter the illusion that makes light glyphs on dark look bolder — wired through `font-variation-settings: 'FILL' …, 'GRAD' var(--ms-grad, 0)` in the `Icon` primitive.
+
+**Motion.** Limit the theme transition to large resting surfaces only — `body, aside { transition: background-color .2s ease, color .2s ease; }`. **Never** put `transition: all` on everything (it breaks transforms and janks the map).
+
+**Toggle.** A single App-Shell utility-nav control cycles **light → dark → system** (`data-testid="theme-toggle"`; tooltip/aria announce the next state). On **Login** the same control sits **flat, bottom-left**, no card chrome.
+
+| pref | icon | label |
+|------|------|-------|
+| `light` | `light_mode` | Light |
+| `dark` | `dark_mode` | Dark |
+| `system` | `contrast` | System |
+
+---
+
 ## 4. Typography
 
 ### Font Families
@@ -346,11 +381,13 @@ Base unit is **4px**. All spacing tokens are multiples of this base.
 | Token | Value | Usage |
 |---|---|---|
 | `--radius-xs` | 2px | — |
-| `--radius-sm` | 4px | Buttons, pill-with-text, inputs |
-| `--radius-md` | 6px | Filter chips, stat cards |
-| `--radius-lg` | 8px | Prompt callouts, large cards, info banners |
-| `--radius-xl` | 10px | Elevated floating cards (TableView) |
-| `--radius-pill` | 999px | Badges, tags, toggle track |
+| `--radius-sm` | 4px | **All interactive controls** — buttons, inputs, `Select`, filter chips & Filter Menu, pagination controls, secondary toolbar buttons |
+| `--radius-md` | 6px | Stat cards |
+| `--radius-lg` | 8px | Prompt callouts, info banners |
+| `--radius-xl` | 10px | Cards / large surfaces, map overlay cards, elevated floating cards (TableView) |
+| `--radius-pill` | 999px | Status Chips, role/category pills, count & "N selected" badges, toggle track |
+
+> **4px control-radius normalization (1.5, usage clarification).** Interactive **control** corners are squared to a single small radius for a crisper, more "operational" feel. **Form controls, filter chips/menus, `Select`, pagination, and secondary toolbar buttons → `--radius-sm` (4px), standard height 36px.** (Login inputs were 10px → now 4px / 56px tall on the auth screen specifically.) **Pills stay fully round (`--radius-pill`)** — status Chips, role/category pills, count badges, the "N selected" pill are *labels*, not controls. **Cards / surfaces keep `--radius-xl` (10px).** The scale itself is unchanged; this is which element maps to which step — don't use 8–10px on inputs/chips/pagination anymore.
 
 ---
 
@@ -367,6 +404,8 @@ Base unit is **4px**. All spacing tokens are multiples of this base.
 Cards in-table have **no shadow**.
 
 > **Two elevation tiers by size.** Small elements use the tight `--shadow-card`; large resting surfaces (tables, detail cards, ledgers) use the soft diffuse `--shadow-surface` (ink-tinted `rgba(16,24,40,…)`, softer against the warm shell). Keep the 1px `--p-border` on surfaces — **border + soft shadow together**; the shadow doesn't replace the border. Floating transient layers keep `--shadow-float`.
+
+> **Dark elevation is inverted in technique (1.5).** In dark mode the four shadow tokens flip to **inset highlight + deep shadow** rather than soft drop shadows — `inset 0 1px 1px rgba(255,255,255,.04–.08)` for a top-edge catch-light, a deep `rgba(0,0,0,.5–.6)` drop, and a `0 0 0 1px` border ring on floating layers. Depth in dark comes from **surface lightening** (`--p-surface` `#121214` lifts off `--p-shell` `#0A0A0B`) plus the inset highlight — not from a darker shadow alone. Reference the tokens; they swap automatically (see §3 Theming).
 
 ---
 
@@ -415,6 +454,8 @@ Use variable-font axes (`FILL`, `wght`, `GRAD`, `opsz`) sparingly — prefer out
 **Store Layouts (Phase 3):** `dashboard_customize` (Layout Editor / Edit Layout), `drag_indicator` (drag handle), `shuffle` (General Stock Area), `curtains` (Display placement), `move_down` (drag-here empty state), `fit_width` (Set Capacity For All), `sticky_note_2` (section note), `lightbulb` (Suggested), `draft` / `edit_note` (drafts), `event_upcoming` (scheduled reset), `event_busy` (cancel reset), `publish` (Publish), `history` (History), `download` (Export), `cloud_upload` / `upload_file` / `library_add` / `add_circle` (CSV import), `format_list_bulleted` (Product List tab), `remove_shopping_cart` / `add_business` (plan chips). All outline weight (`FILL 0`).
 
 **Account-type icons** (rendered inside the Account Type Icon avatar — see §9): `storefront` (Retail / Store), `fastfood` (Restaurant), `shopping_cart` (Grocery), `local_convenience_store` (C-Store), `local_bar` (Bar), `attach_money` (Discount Store). All outline weight (`FILL 0`).
+
+**New in 1.5:** `ballot` (**Sales** — the nav item **and** the permissions "Sales" section; **supersedes** any earlier Sales glyph — apply in both so they match), `lock` (locked / disabled control + capability-lock banner), `compare_arrows` (replace-in-place / swap product), `route` (Route facet / column), `bolt` (dev quick sign-in button), `light_mode` / `dark_mode` / `contrast` (theme toggle — light / dark / system).
 
 ### Special Characters
 
@@ -622,15 +663,23 @@ Label sits at `z-index: 2` so it clips cleanly over a styled `<select>` box.
 
 Required fields append ` *` to the label string.
 
-#### Disabled state
+#### Disabled / locked state (1.5)
 
-Disabled fields keep a **white background** (never gray) and dim the whole control to one consistent gray, `#99A1AF`, applied to label, value text, border, and select chevron. Both `color` and `-webkit-text-fill-color` are set (to override the browser's `-webkit-text-fill-color` default), and `opacity: 1` is forced — native `<select>` ships a default `opacity: 0.7` when disabled, which otherwise makes a select read lighter than an identically-colored input. Input and select are pixel-consistent as a result.
+Three form primitives — **`Select`**, **`Checkbox`**, **`FloatingField`/`Input`** — share one first-class **`disabled`** language, so read-only forms (RBAC, self-edit, view-only cards — see §Permissions & Affordances) render consistently:
+
+- **Shared:** background `--p-surface-tint`, text `--p-placeholder`, `cursor: not-allowed`, **no focus ring**, inner marks slightly muted.
+- **`Select`** swaps its trailing `expand_more` chevron for a **`lock` glyph** when disabled and is **non-interactive** (native `disabled` — does not open). This `lock`-chevron is the at-a-glance signal that a dropdown is capability-locked.
+- **`Checkbox`** renders muted (tinted box, placeholder-grey check) and ignores clicks.
+- **`FloatingField`/`Input`** set the native input to `readOnly + disabled`, tinted bg, `cursor: not-allowed`.
+- **`Toggle`** already supported `disabled` (1.2) — keep.
+
+(Pair a locked surface with the amber **capability-lock banner**, §Info Banners, to explain *why* it's read-only.)
 
 #### Variants
 
 - **Text field** — standard floating-label, `padding: 0 14px`
 - **Monospace field** — same shell, `font-family: 'Geist Mono', monospace` — used for PIN, Route ID, codes
-- **Select / Dropdown** — same 44px shell, `padding-right: 36px`, custom chevron SVG at right 12px, `appearance: none`
+- **Select / Dropdown** — same shell, `appearance: none`; trailing `expand_more` chevron — **or a `lock` glyph when `disabled`** (§1.5).
 
 #### Field props (`FloatingField` / `Input`)
 
@@ -641,6 +690,7 @@ Disabled fields keep a **white background** (never gray) and dim the whole contr
 | `error` | Boolean → red border only; string → red border **+** a `.g-error` message below (`500 12px/1.4`, `--p-danger`). |
 | **`onBlur(value)`** *(§1.4)* | Fires the field's **value** (not the DOM event) on blur — used by the async field-level uniqueness check (§Forms / Patterns). |
 | **`helper`** *(§1.4)* | Muted sub-label text rendered **under** the field (`400 13px/1.4 Inter`, `--p-muted`); **suppressed while an `error` shows** (error wins). For "leave blank to keep current PIN", format hints, etc. |
+| **`disabled`** *(§1.5)* | `readOnly + disabled`; tinted `--p-surface-tint` bg, `--p-placeholder` text, `not-allowed`, no focus ring. On `Select`, also swaps the chevron for a `lock` glyph. |
 
 #### Search Bar (list pages)
 
@@ -669,9 +719,11 @@ Some fields exist only in a particular state, and some hold credentials that mus
 
 **Write-only secret with an "isSet" flag (the credential rule).**
 - The server **never returns** the secret; it returns a **boolean** (`pinSet`, mirroring how passwords already work). Strip the hash from list/detail/create/update responses.
+- The field is **masked** (`type="password"`, dots). When a secret is already set (`pinSet === true`), it shows a **`•••••` placeholder** + `helper` *"A PIN is set. Leave blank to keep the current PIN."*
 - **On create / first set:** the field is **required** (when the controller is on).
-- **On edit of a record that already has it** (`pinSet === true`): the field renders **empty** with `helper` *"A PIN is set. Leave blank to keep the current PIN."* and is **not** required — a blank submit preserves the value; a non-blank submit replaces it.
+- **On edit of a record that already has it** (`pinSet === true`): the field is **not** required — a blank submit preserves the value; a non-blank submit replaces it.
 - Persist by hashing with the existing password-hash utility; expose only the boolean.
+- **Authoring caution (1.5):** if seed/demo data *enables* the login method but stores **no** secret hash, `pinSet` reads `false` and the field **forces re-entry on every edit** — confusing. Seed a real secret for accounts whose login method is enabled so the "leave blank to keep" path works as designed.
 
 > **Rule.** **Conditional fields** appear only when their controlling input enables them, are **required only while shown**, and validate in the submit handler (clear their error when hidden). **Mask** input at the boundary (`onChange` sanitize). **Secrets are write-only:** the API returns a `*Set` boolean, never the value; when set, the field is optional and shows "leave blank to keep current," and a blank submit preserves it.
 
@@ -710,6 +762,7 @@ Transition: left .15s, background .15s
 18×18px, border-radius 3px
 Off: border 1.5px solid #D1D5DC, bg #fff
 On:  border 1.5px solid #007CFF, bg #007CFF, white checkmark (12px, stroke-width 3)
+Disabled (1.5): bg --p-surface-tint, placeholder-grey check, cursor not-allowed, inert
 ```
 
 #### Radio
@@ -838,6 +891,7 @@ Token summary text: list the values when ≤2 are selected (`Category: Wine`), o
 - **Searchable single-chip (`ChipFilter`).** When exactly one high-cardinality attribute is filtered standalone (e.g. a Chain with hundreds of values), a single searchable chip is acceptable instead of opening the full menu — the bridge between "one Filter Chip" and "the consolidated menu".
 - **Related-record facet (§1.4).** A facet may filter on an attribute of a *related* record, not the row itself — e.g. In-the-Market's **Warehouse** filters the *product* list by the `market` (warehouse) of the *accounts* that carry each product (there's no "warehouse" field on a product; the **Chain** facet works the same way). Resolve the option list from the related collection (distinct `market`s across accounts, surfaced via the page's filter-meta endpoint), then filter rows by **set intersection**: compute the set of related-record IDs matching the selected values (accounts in those warehouses) and keep a product iff its `accountIds` intersect that set.
   > **Rule.** Implement a related-record facet as a set-intersection against the related IDs, and apply the **same** guard across the list, the (filter-responsive) stat cards, and any map/aggregate view, so every surface reflects the identical filtered population.
+- **Facet order mirrors column order (§1.5).** A column that is filterable gets a facet, and **the facet order in the rail mirrors the table's visible column order** (e.g. Users: *Role · Warehouse · Route · Reports To*) so the menu is predictable. **Consolidate** redundant one-off toolbar filter buttons into the unified Filter Menu (continuing the 1.4 retirement of standalone "Date" buttons). New facet this cycle: **Route** (`route` icon, options = distinct route **numbers**, **numeric** sort); the Warehouse related-record facet is now applied consistently across surfaces.
 
 ---
 
@@ -988,7 +1042,7 @@ font: 600 10.5px/1 Inter; white-space: nowrap; flex-shrink: 0;
 | `danger` | `--g-red-10` | `--p-danger-strong` | Removal / discontinue ("Disc. Sep 1") |
 | `success` | `#ECFDF5` | `#047857` | Positive confirmation |
 
-> **`atrisk` vs the Condition palette.** `atrisk` is the **chip tint** for the At-Risk *condition* (tinted pill on white rows). The **map/legend** swatch for At Risk uses the Inventory Condition palette's saturated `#F59E0B` (`--cond-at`; see §Maps / Inventory Conditions). These are intentionally different surfaces (tinted chip vs. saturated fill on a gray basemap) — keep both.
+> **`atrisk` vs the Condition palette.** `atrisk` is the **chip tint** for the At-Risk *condition* (tinted pill on white/dark rows). The **map/legend** swatch for At Risk uses the Inventory Condition palette's `--cond-at_risk` (Palette A — light `#AD7300`, dark `#FFC940`; see §Maps / Inventory Conditions). These are intentionally different surfaces (tinted chip vs. saturated fill on the basemap) — keep both.
 
 **Rules**
 
@@ -1119,6 +1173,12 @@ color: var(--p-text);
 font-weight: 500;
 ```
 
+**Column conventions (1.5).**
+1. **Identifier / code columns render in Geist Mono, value only.** A "Route" column shows the **bare number** (`83`), not a prefixed phrase ("Route 83"). Pull identifiers out of the name subtitle into their own mono column.
+2. **Empty cells use an em-dash `—`** in `--p-border-strong` (a consistent "no value" glyph) — never blank.
+3. **Filter↔column parity** (also §Filter Menu): a filterable column gets a Filter Menu facet, and the **facet order mirrors the visible column order**.
+4. **The name-cell subtitle is the most identifying *human* attribute** (e.g. job title) — codes get their own column, not the subtitle.
+
 **Grid-row tables (read-only feeds).** Ultra-dense, fixed-schema, read-only ledgers (e.g. the Audit Log) may be built from CSS-grid `div` rows instead of a real `<table>`, to control 7–8 fixed/elastic columns precisely. Allowed **only** for read-only data feeds, and only if it keeps the standard chrome: the `#F9FAFB` / `11px` caps / `.08em` header, 1px row borders, the hover tint, and the standard footer. Anything interactive or selectable (e.g. the wizard `SelectionTable`) stays a real `<table>`.
 
 Columns auto-size to content with a `max-width: 300px` cap. Headers support column-resize via a drag handle (6px, highlights `--p-primary` on hover).
@@ -1134,6 +1194,8 @@ A count of items at a record, followed by clickable **`+N` (green)** / **`−N` 
 - **Counts are never netted** — `+5` and `−2` show independently (never collapse to `+3`). Chips `stopPropagation` so the row's own click doesn't also fire.
 
 Distinct from **Chip** (status flags): this is a fixed green/red **signed-delta** with mono numerals.
+
+> **Pending-change tint language — unified (1.5).** All "pending change" cues share **one** visual language so the `CountDeltaCell`, the PlanBadge ("Adds Aug 1" / "Disc."), the "New to store" badge, and the map pending pin read the same: **Add = green, Remove/Discontinue = red, Soft-required/attention = amber** — always a **soft tint pill** with a `+`/`−` prefix and **Geist Mono** numerals, **never bold black strokes**. (The PlanBadge pills were redrawn to match the POD Planner action pills + the CountDeltaCell; "New to store" uses the same green soft-tint.) The **pending-add map pin** is a **hollow dashed ring + center dot** (`.g-cov-pin.is-pending`, `stroke-dasharray: 2 2`), colored `--cond-pending` — distinct from a solid placed pin.
 
 ---
 
@@ -1160,6 +1222,41 @@ color: var(--p-danger-strong);
 
 Example usage:
 > "Select one or more products below, then press 'Continue' to choose a desired action for each product. (Step 1 of 4)"
+
+#### Capability-lock banner (1.5)
+
+A reusable variant: an **amber `InfoBanner` with a leading `lock` icon** that explains *why* a surface is read-only. Place it at the top of any form section the user can **see but not edit** (pairs with the §Disabled/locked control states and the §Permissions & Affordances pattern).
+
+```jsx
+<InfoBanner tone="amber" style={{ display:'flex', alignItems:'center', gap:10 }}>
+  <Icon name="lock" size={18} />
+  <span>{reason}</span>
+</InfoBanner>
+```
+
+**Copy conventions** — sentence case, actionable, **role-neutral** (the viewer may not be an admin, so say *"Ask an administrator,"* **not** *"another administrator"*):
+
+| Situation | Copy |
+|---|---|
+| Editing your own privileged settings | "You can't change your own role, permissions, or warehouse access. Ask an administrator to update these for you." |
+| View-only on a record you can open but not edit | "You have view-only access to users, so these settings can't be changed." |
+| Partial permission | "You don't have permission to manage roles & permissions. You can still edit this user's other details." |
+
+---
+
+### Permissions & Affordances — hide vs disable (1.5)
+
+As the portal gained real role-based capabilities, a consistent rule emerged for *how the UI reflects what you can and can't do*. (The capability ids themselves are product logic — see Appendix A.)
+
+1. **HIDE** an affordance the user has **no capability to use at all**:
+   - **Nav destinations** — e.g. the **Users** nav item disappears without `users.view`; the **Accounts** group without `acct.view`.
+   - **Page-level create / destructive actions** — **New**, **Batch Actions**, **Save**, **Deactivate / Reactivate**.
+2. **DISABLE + lock-state** a control inside a surface the user *can* see but not change *in that dimension* (use the §Disabled/locked states + a §capability-lock banner explaining why). Example: a Department Manager can edit a user's profile, but the **Role** selector and **Permission** toggles are disabled.
+3. **"View only" surface label.** A whole card the user can read but not edit shows a muted **"View only"** label where its save/status indicator would be (e.g. the Account *App Requirements* card without `acct.edit`).
+4. **Self-guard.** Users can **never** edit their **own** role / permissions / warehouse access (anti privilege-escalation), even if they otherwise hold the capability; surface it with the self-variant capability-lock banner.
+5. **Backend is the source of truth.** Hiding / disabling is **UX only**; the API still enforces (403 / silently drops locked fields). **Never rely on the UI alone.**
+
+> **Rule of thumb.** *No capability at all → hide. Capability but not in this dimension (or self-guarded) → show it disabled + locked, and say why.* Mirror the disabled control with a §capability-lock banner so the read-only state never reads as a bug.
 
 ---
 
@@ -1525,31 +1622,47 @@ function LegacyProductsRedirect() {
 
 **Condition** is Greater's SKU-level health verdict for on-hand stock at a store (from a depletion simulation). It appears as a **column** in the In-the-Market coverage panel and as the **color dimension** of the Coverage Map (§Maps). To keep those surfaces identical, the scale — its ordinal **severity** (`level`) and its **palette** — is defined **once** in `lib/conditions` and imported everywhere; never hand-pick condition colors at a call site.
 
-**Single source of truth:** the JS table in `lib/conditions` is canonical; the `--cond-*` CSS tokens in `colors_and_type.css` mirror the same hexes for CSS surfaces.
+**Palette A (1.5) — supersedes the 1.4 scale.** The 1.4 Conditions colors were audited for **colour-blindness (deuteranopia / protanopia)** and **WCAG ≥3:1 contrast against both CARTO basemaps**, and replaced with **"Palette A" — a colour-blind-safe diverging ramp Orange → Gold → Teal → Blue → Purple.** The values were swapped **in place**; the **token names, the 6-level ordinal severity, and the `conditions.js` helper API are unchanged**, so call sites keep working.
 
-| `level` | `key` | Label | Short | Color | Token |
+**Single source of truth:** the JS table in `conditions.js` is canonical and returns **`var(--cond-…)` token strings** (never hex — so they stay theme-aware); the `--cond-*` CSS tokens in `colors_and_type.css` carry the actual values, defined in **both** the light `:root` and the `html[data-theme="dark"]` block.
+
+| `level` | `key` | Label | Token | Light (map-tuned) | Dark |
 |---|---|---|---|---|---|
-| 0 | `out_of_stock` | Out of Stock | Out of Stock | `#B42318` (deep red) | `--cond-out` |
-| 1 | `high_risk` | High Risk of OOS | High Risk | `#E5484D` (red) | `--cond-high` |
-| 2 | `at_risk` | At Risk of OOS | At Risk | `#F59E0B` (amber) | `--cond-at` |
-| 3 | `optimal` | Optimal | Optimal | `#00BC57` (green) | `--cond-optimal` |
-| 4 | `slight_overstock` | Slight Overstock | Slight Over | `#2D9CDB` (blue) | `--cond-slight` |
-| 5 | `heavy_overstock` | Heavy Overstock | Heavy Over | `#7B68EE` (violet) | `--cond-heavy` |
+| 0 | `out_of_stock` | Out of Stock | `--cond-out_of_stock` | `#C83214` | `#FF6B4A` |
+| 1 | `high_risk` | High Risk of OOS | `--cond-high_risk` | `#E65C00` | `#FF9933` |
+| 2 | `at_risk` | At Risk of OOS | `--cond-at_risk` | `#AD7300` | `#FFC940` |
+| 3 | `optimal` | Optimal | `--cond-optimal` | `#007A66` | `#2EE6C3` |
+| 4 | `slight_overstock` | Slight Overstock | `--cond-slight_overstock` | `#2D6BBA` | `#66A3FF` |
+| 5 | `heavy_overstock` | Heavy Overstock | `--cond-heavy_overstock` | `#6B3D99` | `#C299EB` |
+| — | (no data) | — | `--cond-empty` | `#C9CDD2` | `#2A2A30` |
+| — | (pending change) | — | `--cond-pending` | `#171717` | `#F5F5F5` |
 
-- **`level` is the ordinal severity** (0 = worst stockout → 5 = worst overstock; 3 = healthy middle). Averaging a set of stores' `level`s and rounding to the nearest index yields the bin's representative condition — that's how the map hexbin reduces many SKUs/stores to one color.
-- **Diverging palette, centered on green (Optimal):** reds/orange below, blues/violet above. This is a **semantic** palette — do **not** re-skin it per theme; a viewer must read "red = bad, green = good, blue/violet = too much."
-- **Helpers shipped in `lib/conditions`:** `COND_BY_KEY`, `COND_BY_LEVEL` (index === level), `conditionColor(key)` (fallback `#C9CDD2` for unknown).
+- **Diverging, not sequential:** the two "bad" ends (OOS orange-red / Heavy-overstock purple) are maximally distinct; **Optimal (teal) is the calm middle.** A viewer must read "orange/gold = under, teal = good, blue/purple = over."
+- **`level` is the ordinal severity** (0 = worst stockout → 5 = worst overstock; 3 = healthy middle). Averaging a set of stores' `level`s and rounding to the nearest index yields the bin's representative condition — how the map hexbin reduces many SKUs/stores to one color.
+- The same ordered scale drives **both** the In-the-Market Condition column and the map hexbin color; magnitude is encoded as **fill area** (not opacity) per the §Maps rule.
+- **Map-legibility values** (the hexes above) are *map-tuned* (light vs CARTO `light_all` ~#ededed; dark vs `dark_all` ~#262626); chip/table contexts may sit on `--p-surface` and are still legible.
+- **`--cond-empty`** = no-data; **`--cond-pending`** = pending-change (matches the map pending pin, §Maps / §pending-change tint).
+- **Helpers in `conditions.js`:** `COND_BY_KEY`, `COND_BY_LEVEL` (index === level), `conditionColor(key)` (fallback `--cond-empty`), `averageCondition(levels)` — all returning `var(--cond-…)`, **not** hex.
 
 > **Canonical education copy** (reused verbatim in the In-the-Market "What are Conditions?" info tooltip and on the map):
 > *"Greater's algorithm understands SKU-level demand and its variance for every product in every store. We take the current inventory-on-hand for a SKU and run it through a simulation of projected depletion to determine whether the product is at risk of out-of-stock, overstocked in excess, or at the optimal level."*
 
-> **Rule.** Inventory Condition is a **fixed 6-level diverging scale** with a locked palette and an ordinal severity. Define it once and import it; the same palette drives the table's Condition cell, the coverage-panel legend, and the map's hexbin color + legend swatches. (See also the soft-orange Chip `atrisk` tone, §Chip — the *chip-tint* sibling of `--cond-at`.)
+> **Rule.** Inventory Condition is a **fixed 6-level colour-blind-safe diverging scale (Palette A)** with theme-aware tokens and an ordinal severity. Define it once and import it (`var(--cond-…)`, never hex); the same palette drives the table's Condition cell, the coverage-panel legend, and the map's hexbin color + legend swatches.
 
 ---
 
 ### Maps
 
-Maps use **Leaflet 1.9.x** with **CARTO "Light All" @2x retina tiles** (muted neutral — never satellite).
+Maps use **Leaflet 1.9.x** with **CARTO @2x retina tiles** (muted neutral — never satellite): **`light_all`** in light, **`dark_all`** in dark.
+
+> **Dark basemap (1.5).** The tile layer swaps `light_all`↔`dark_all` on the **resolved theme** and is **rebuilt inside an effect keyed on `resolved`** — which is exactly why theme state must live in one shared `useSyncExternalStore` store (§3 Theming): a per-component copy wouldn't re-fire the map's effect, and the tiles would stay light after a toggle. The overlay cards/legend/tooltip already use DS tokens (they theme for free); only the basemap, the Leaflet chrome, and the raw SVG overlay layers (`.g-hex-*`, `.g-cov-pin`) need the dark overrides in `maps.css`.
+>
+> ```js
+> L.tileLayer(dark
+>   ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+>   : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+>   { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>' });
+> ```
 
 #### Map Tokens
 
@@ -1644,7 +1757,7 @@ A full-bleed geographic view of store coverage, in two scopes: **single product*
 
 **Summary stats above the map (`SummaryStat`).** A row of headline metrics: **values are Geist Mono** (`600 22px`), labels Inter, values **unit-suffixed** (§Stats/Voice). Aggregate: `Accounts` · `Products` · `Average Demand` (`12.5 cs/wk`) · `Average On Hand` (`45 days`). Single product: `Accounts` · `In Market` (`471 cs`) · `Average Demand` · `Average On Hand`. The page also renders the active In-the-Market facets as **removable chips** (carried via the deep-link query, §Deep-linking), so the map's scope is explicit and adjustable.
 
-> **Maps pattern (publish).** Maps are a **Leaflet basemap (CARTO Light @2x) + a D3 SVG analytic overlay**, wrapped in a rounded `.g-map` card. All map UI lives in floating `.g-map-card` panels (title top-left, controls top-right, legend bottom-left). Leaflet's own chrome (zoom, attribution) is restyled to the DS. Interactive overlay SVG must set `pointer-events: all !important` to beat Leaflet's `none` on the overlay pane. Re-render the overlay on every mode/filter/spotlight change and on map `move`/`zoom`/`resize`. **Deps:** `leaflet` 1.9.x, `d3-hexbin`, `d3-scale`, `d3-array`; basemap tiles **CARTO "Light All" @2x** with the required OpenStreetMap + CARTO attribution.
+> **Maps pattern (publish).** Maps are a **Leaflet basemap (CARTO Light @2x) + a D3 SVG analytic overlay**, wrapped in a rounded `.g-map` card. All map UI lives in floating `.g-map-card` panels (title top-left, controls top-right, legend bottom-left). Leaflet's own chrome (zoom, attribution) is restyled to the DS. Interactive overlay SVG must set `pointer-events: all !important` to beat Leaflet's `none` on the overlay pane. Re-render the overlay on every mode/filter/spotlight change and on map `move`/`zoom`/`resize`; **rebuild the tile layer on theme change** (`light_all`↔`dark_all`). **Deps:** `leaflet` 1.9.x, `d3-hexbin`, `d3-scale`, `d3-array`; basemap tiles **CARTO "Light All" / "Dark All" @2x** with the required OpenStreetMap + CARTO attribution.
 
 > **Multivariate choropleth encoding rule (publish).** When a map/visualization shows **two** variables per cell, encode the **categorical / health** variable as **color** (from a fixed semantic palette) and a **magnitude** variable as **fill *area*** (scale the inner shape by `sqrt(value/max)` so area ≈ value) — **not** as opacity (opacity reads as uncertainty and muddies the color). The legend must explain **both** channels. Allow **spotlighting a single category** (click-to-isolate) as a lightweight filter, with a "Show all" reset. The **headline metric follows the encoding** — surface the same magnitude the fill encodes as a top `SummaryStat`.
 
@@ -1752,6 +1865,24 @@ box-shadow: var(--shadow-float);
 - **Scrim:** `rgba(16,24,40,.45)`, no blur.
 - **Motion:** modal — 180ms ease-out, scale `0.98 → 1` + scrim fade. Drawer — 180ms ease-out `translateX(16px → 0)` (transform-only). Honor `prefers-reduced-motion`.
 - **Behavior:** trap focus while open; restore focus to the trigger on close. `default` and `Drawer` close on scrim-click, `✕`, and `Escape`. `confirm` closes on **Cancel** or `Escape` only — never scrim-click — to prevent accidental dismissal of a consequential choice.
+
+#### Unsaved-changes "Discard" guard (1.5)
+
+Any **edit surface** (detail editor, wizard step with local edits) guards navigation away when there are unsaved changes.
+
+**Pattern:**
+- Track **dirty** = a JSON snapshot of the editable fields differs from the loaded / last-saved snapshot.
+- Intercept the in-page **Back link / exit** affordance → open a **`confirm`** Modal (danger).
+- Add a `window` **`beforeunload`** guard while dirty (covers refresh / tab close / browser-back-out-of-app).
+- **Re-baseline** the snapshot after a successful save so it doesn't false-trigger.
+
+**Modal (danger `confirm`; Title-Case header, sentence-case body):**
+- **Title:** "Discard Unsaved Changes?"
+- **Body:** *"You have unsaved changes that haven't been saved yet. Leave this page anyway?"*
+- **Footer:** **Keep Editing** (ghost) · **Discard & Leave** (warning/danger).
+- testids: `…-leave-modal`, `…-keep-editing`, `…-confirm-leave`.
+
+> **Documented limitation (important for adopters).** With a **declarative** `<BrowserRouter>` + `<Routes>`, React Router's **`useBlocker` is unavailable** (it requires a *data router* via `createBrowserRouter`). So the guard covers the explicit back link + hard unloads, **not** in-app sidebar-link navigation. Apps that want full coverage of every in-app transition should adopt a **data router** so `useBlocker` can intercept all navigations — note this trade-off so the next implementer chooses deliberately.
 
 ---
 
@@ -1961,6 +2092,28 @@ The shared diff primitive used by the audit modal **and** the wizard Review step
 - **Membership:** `+ name` chips (green success text on `--g-green-10`) and `− name` chips (`--p-danger`, struck-through, on `--g-red-10`).
 - Label is an uppercase micro-caps tag (`600 11px`, `.04em`, `--p-text-2`, min-width 84).
 
+> **Granular, name-resolved change records (1.5).** Audit / Change-Row entries must be **human-legible and minimally scoped, using resolved real names** — never placeholder ids or whole-object diffs. Store-Layout edits, for example, emit **product + section scoped** rows:
+>
+> | Field | Value |
+> |---|---|
+> | **Record** | `"{Account} · {Product}"` — e.g. *"Harris Teeter · Barefoot Rosé"* |
+> | **Attribute** | the scoped dimension — e.g. *"Section"* |
+> | **Removed** | prior value by name — e.g. *"Section A"* |
+> | **Added** | new value by name — e.g. *"Section B"* |
+>
+> **Rule:** each change row resolves IDs → names, names the **smallest meaningful scope** (account · product · section), and reads as a sentence-fragment a human can audit at a glance.
+
+---
+
+### Login (two-step auth) (1.5)
+
+The authentication screen: the raven centered on `--p-shell` (the restraint *is* the brand — see §3 Color Rules).
+
+- **Two-step flow.** **Step 1** = email lookup → **Step 2** = greeting (*"Good evening, {First}."*) + masked password + an **Edit** link back to step 1. Directional step transitions (`gr-step-fwd` / `gr-step-back`); staggered entrance via `gr-rise` (`--i` index → ~80ms stagger; ease-out-quint `cubic-bezier(0.22,1,0.36,1)`).
+- **Auth inputs** are **56px tall, `--radius-sm` (4px)** (§H) — taller than in-app 36px controls.
+- **Dev quick sign-in (development only).** Below the form, render **one dashed secondary button per dev account**, labelled **"Sign in as {Role} ({email})"** with a leading **`bolt`** icon. Clicking it **prefills email + password and advances through the real two-step flow** — it must **not** one-shot-bypass auth (the point is to exercise the genuine flow). Contract: a public `GET /auth/config` returns `{ devLoginEnabled, devAccounts: [{ label, email, password }] }` (only when enabled); the screen renders the list dynamically, so adding a role is a **config/data** change, not a UI change. `data-testid="dev-login-<slug>"`. **Clearly dev-only** — never ship enabled to production.
+- **Theme toggle** sits **flat, bottom-left**, no card chrome (the same control as the App-Shell utility nav, §A / §3 Theming).
+
 ---
 
 ### Echo Pulse (brand moment)
@@ -2011,7 +2164,9 @@ border: 1px solid var(--p-border); border-radius: 8px; background: #fff;
 /* dragging: opacity .4 */
 ```
 
-Contents: drag handle (`drag_indicator` 18px) · **sequence chip** (mono `{n}` in a `--p-surface-alt` 6px box) · product name (500 14px) + category **Pill** + plan **Chip** + `brand · size` sub-line · **Inline Quantity Control** · **Chip Toggle "Display"** (`curtains`) · a `close` remove button (hover → `--g-red-10` / `--p-danger`).
+Contents: drag handle (`drag_indicator` 18px) · **sequence chip** (mono `{n}` in a `--p-surface-alt` 6px box) · product name (500 14px) + category **Pill** + plan **Chip** + `brand · size` sub-line · **Inline Quantity Control** · **Chip Toggle "Display"** (`curtains`) · a **Replace** button (`compare_arrows`) · a `close` remove button (hover → `--g-red-10` / `--p-danger`).
+
+> **Replace-in-place (1.5).** A placement gains a **"Replace with another product"** action (icon **`compare_arrows`**) that **swaps the product while preserving the placement's position and display settings** (sequence, capacity, capacity type, display flags). It is distinct from remove-then-add, which loses the position — reach for Replace when the *slot* should stay put and only the product changes.
 
 **Empty section drop-zone.** `1px dashed --p-border; radius 8; min-height 52px`, centered "Drag products here" with a `move_down` glyph.
 
@@ -2165,6 +2320,7 @@ These named keyframes ship in `colors_and_type.css` and back every entrance / lo
 - **Numbers carry weight.** Stat cards lead with large bold numbers, always in **Geist Mono** (§9 Stat Cards). Use abbreviations: `21.1k`, `$482.7k`, `1,258`.
 - **Spell out "Average" in metric labels (§1.4).** "Average Demand", "Average On Hand" — *not* "Avg." The extra characters read as more deliberate / credible in a sparse metric row.
 - **Unit-suffix the value, not the label (§1.4).** The label names the metric ("Average Demand"); the **value** carries the unit: `12.5 cs/wk`, `45 days`, `471 cs` (`cs` = cases). And the **headline metric follows the viz encoding** — when a map encodes a magnitude as hex-fill area, surface that same magnitude as a top metric, and rename stale labels to match ("Accounts," not "Stores," when the dot is an account; "In Market" for total cases).
+- **"Days On Hand," not "Weeks On Hand" (§1.5, supersedes).** The inventory on-hand metric is **"Days On Hand"** — unit `days`, formatted `45 days`. Rename every "Weeks On Hand" reference (the metric was re-based to days). On-hand **values are un-bolded** (regular weight, Geist Mono) in the Store Layouts product list — the number reads without competing with the row's primary text.
 - **Verb-first** for actions, in Title Case: "Save Changes", "Finalize for Simulation", "Go Back".
 - **No emoji in product.** Emoji-free.
 - **Inline status words are colored** — not bolded, not badged. The color conveys the meaning.
@@ -2422,8 +2578,33 @@ Import `colors_and_type.css`, copy the logo assets, load Material Symbols from G
 - **Fonts:** Inter + Geist Mono from Google Fonts. Some references to "Helvetica Neue" in map attribution are acceptable as system-font fallback.
 - **Icon set:** Material Symbols (Sharp), one system everywhere — the variable font, addressed by ligature name. Lucide and Iconify have been fully removed.
 - **Portal chrome (global nav, user menu):** designed from first principles and shipped as the **App Shell + Navigation Sidebar** (see §9).
-- **Map tiles:** CARTO Light All `https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png`
+- **Map tiles:** CARTO `light_all` (light) / `dark_all` (dark) — `https://{s}.basemaps.cartocdn.com/{light_all|dark_all}/{z}/{x}/{y}{r}.png` (§Maps).
 
 ---
 
-*Greater Design System · Portal 1.0 · Exported May 2026*
+## Appendix A — RBAC capability vocabulary (product logic, *not* design tokens)
+
+So the affordance rules in §Permissions & Affordances have a shared vocabulary, this appendix lists the capability ids the UI keys off and the role baseline. **This is application/product logic, not a design token** — designers/implementers need it only to know *which* affordances are gated. The canonical definition is the app's roles config.
+
+**Capabilities referenced by the UI:** `users.view`, `users.edit`, `users.roles`, `acct.view`, `acct.edit` (plus the existing `insights.*`, `sales.*`, billing/settings caps).
+
+**Role → capability baseline (seed):**
+
+| Role | Has (relevant to affordances) |
+|------|-------------------------------|
+| Executive / IT Admin | all (incl. `users.edit`, `users.roles`, `acct.edit`) |
+| Department Manager | `users.view`, `users.edit`, `acct.view`, `acct.edit` — **not** `users.roles` |
+| Supervisor | `users.view`, `acct.view` (view-only on Users) |
+| Sales Rep | `acct.view`, `sales.*` — **no** `users.*` (no Users nav) |
+
+**Mapping to §Permissions & Affordances:**
+- No `users.view` → Users nav **hidden** (Reps); own profile still reachable via the user menu.
+- `users.view` only → Users list visible, **no** New / Batch / Save / Deactivate.
+- `users.edit` w/o `users.roles` → can edit profile + warehouses; **Role + Permissions disabled** (+ capability-lock banner).
+- No `acct.edit` → Account *App Requirements* card is **"View only."**
+
+*(Informational only — it lives here to give the visual affordance rules a vocabulary.)*
+
+---
+
+*Greater Design System · Portal 1.5 · Exported June 2026*

@@ -23,8 +23,15 @@ Interactive hi-fi build of the Greater Portal — the maintained reference imple
 - `SCREENS-phase3.md` — notes on the Store Layouts list + in-shell editor flows.
 - `primitives.jsx` also gains **Chip**, **ChipToggle**, **Tooltip**; `overlays.jsx` gains **MenuButton**.
 
+**New in 1.5 (Dark Mode + governed UI)**
+- `theme.js` — the theme store (`pref`/`resolved`, `useSyncExternalStore`, `data-theme` on `<html>`); reference ESM module.
+- `conditions.js` — Palette A Inventory-Conditions mirror returning `var(--cond-…)` (theme-aware, never hex).
+- `primitives.jsx` gains a **`Select`** primitive (lock glyph when disabled) + `disabled` on `Checkbox`/`Input`; `Icon` wires `--ms-grad`.
+- `AppShell.jsx` — theme toggle + KO logo swap; `LoginScreen.jsx` — two-step + dev quick sign-in + bottom-left toggle.
+- `SCREENS-1.5.md` — theming, governed Users/Accounts, Unsaved-Changes guard, Replace-in-place.
+
 **Screens**
-- `LoginScreen.jsx` — email sign-in with neo-brutalist Next button.
+- `LoginScreen.jsx` — two-step email → password sign-in (+ dev quick sign-in); neo-brutalist CTA.
 - `AppShell.jsx` — collapsible sidebar nav (+ flyout) + bottom utility nav (Help Center · Audit Log · Settings · Account · Sign Out).
 - `ProductsScreen.jsx` — "In the Market" — stat row, filters, segmented tabs, sortable table.
 - `UsersScreen.jsx` — users list + detail (Profile / Role & Permissions / Team).

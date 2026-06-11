@@ -1,35 +1,55 @@
 <!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><style>
 body{margin:0;padding:24px;background:var(--p-shell);color:var(--p-ink)}
 .section-label{font:500 11px/1.2 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--p-muted);margin:0 0 14px}
-.scale{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:24px}
+.scale{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-bottom:24px}
 .sw{}
-.chip{height:84px;border-radius:6px;border:1px solid rgba(0,0,0,.06)}
+.chip{height:78px;border-radius:6px;border:1px solid rgba(0,0,0,.06)}
 .lvl{font:600 11px/1.2 'Geist Mono',monospace;color:#fff;padding:6px 8px}
 .lbl{font:600 12px/1.3 Inter;color:var(--p-ink);margin-top:8px}
 .key{font:400 11px/1.3 'Geist Mono',monospace;color:var(--p-muted);margin-top:2px}
 .hex{font:400 11px/1.3 'Geist Mono',monospace;color:var(--p-muted);margin-top:1px}
 .tok{font:400 10px/1.3 'Geist Mono',monospace;color:var(--p-placeholder);margin-top:1px}
-.notes{font:400 13px/1.5 Inter;color:var(--p-text-2);max-width:820px;margin-top:8px}
+/* dark specimen — hardcoded dark hexes on a dark_all-like canvas (html[data-theme=dark] tokens can't target a div) */
+.darkpane{background:#15151A;border-radius:10px;padding:20px;margin-bottom:24px}
+.darkpane .section-label{color:#8A8A93}
+.darkpane .lbl{color:#E4E4E7}.darkpane .hex,.darkpane .tok,.darkpane .key{color:#71717A}
+.notes{font:400 13px/1.5 Inter;color:var(--p-text-2);max-width:840px;margin-top:8px}
 .notes p{margin:0 0 8px}.notes code{font:500 12px 'Geist Mono',monospace;color:var(--p-text);background:var(--p-surface-tint);padding:1px 5px;border-radius:4px}
 .divider{border:none;border-top:1px solid var(--p-border);margin:8px 0 22px}
 </style></head><body>
 
-<div class="section-label">Inventory Conditions — fixed 6-level diverging scale (worst stockout → worst overstock)</div>
+<div class="section-label">Inventory Conditions — "Palette A" · colour-blind-safe diverging scale (light, map-tuned)</div>
 <div class="scale">
-  <div class="sw"><div class="chip" style="background:var(--cond-out)"><span class="lvl">level 0</span></div><div class="lbl">Out of Stock</div><div class="key">out_of_stock</div><div class="hex">#B42318</div><div class="tok">--cond-out</div></div>
-  <div class="sw"><div class="chip" style="background:var(--cond-high)"><span class="lvl">level 1</span></div><div class="lbl">High Risk of OOS</div><div class="key">high_risk</div><div class="hex">#E5484D</div><div class="tok">--cond-high</div></div>
-  <div class="sw"><div class="chip" style="background:var(--cond-at)"><span class="lvl">level 2</span></div><div class="lbl">At Risk of OOS</div><div class="key">at_risk</div><div class="hex">#F59E0B</div><div class="tok">--cond-at</div></div>
-  <div class="sw"><div class="chip" style="background:var(--cond-optimal)"><span class="lvl">level 3</span></div><div class="lbl">Optimal</div><div class="key">optimal</div><div class="hex">#00BC57</div><div class="tok">--cond-optimal</div></div>
-  <div class="sw"><div class="chip" style="background:var(--cond-slight)"><span class="lvl">level 4</span></div><div class="lbl">Slight Overstock</div><div class="key">slight_overstock</div><div class="hex">#2D9CDB</div><div class="tok">--cond-slight</div></div>
-  <div class="sw"><div class="chip" style="background:var(--cond-heavy)"><span class="lvl">level 5</span></div><div class="lbl">Heavy Overstock</div><div class="key">heavy_overstock</div><div class="hex">#7B68EE</div><div class="tok">--cond-heavy</div></div>
+  <div class="sw"><div class="chip" style="background:var(--cond-out_of_stock)"><span class="lvl">L0</span></div><div class="lbl">Out of Stock</div><div class="key">out_of_stock</div><div class="hex">#C83214</div><div class="tok">--cond-out_of_stock</div></div>
+  <div class="sw"><div class="chip" style="background:var(--cond-high_risk)"><span class="lvl">L1</span></div><div class="lbl">High Risk</div><div class="key">high_risk</div><div class="hex">#E65C00</div><div class="tok">--cond-high_risk</div></div>
+  <div class="sw"><div class="chip" style="background:var(--cond-at_risk)"><span class="lvl">L2</span></div><div class="lbl">At Risk</div><div class="key">at_risk</div><div class="hex">#AD7300</div><div class="tok">--cond-at_risk</div></div>
+  <div class="sw"><div class="chip" style="background:var(--cond-optimal)"><span class="lvl">L3</span></div><div class="lbl">Optimal</div><div class="key">optimal</div><div class="hex">#007A66</div><div class="tok">--cond-optimal</div></div>
+  <div class="sw"><div class="chip" style="background:var(--cond-slight_overstock)"><span class="lvl">L4</span></div><div class="lbl">Slight Over</div><div class="key">slight_overstock</div><div class="hex">#2D6BBA</div><div class="tok">--cond-slight_overstock</div></div>
+  <div class="sw"><div class="chip" style="background:var(--cond-heavy_overstock)"><span class="lvl">L5</span></div><div class="lbl">Heavy Over</div><div class="key">heavy_overstock</div><div class="hex">#6B3D99</div><div class="tok">--cond-heavy_overstock</div></div>
+  <div class="sw"><div class="chip" style="background:var(--cond-empty)"><span class="lvl" style="color:#444">—</span></div><div class="lbl">No data</div><div class="key">empty</div><div class="hex">#C9CDD2</div><div class="tok">--cond-empty</div></div>
+  <div class="sw"><div class="chip" style="background:var(--cond-pending)"><span class="lvl">~</span></div><div class="lbl">Pending</div><div class="key">pending</div><div class="hex">#171717</div><div class="tok">--cond-pending</div></div>
+</div>
+
+<div class="darkpane">
+  <div class="section-label">Dark — brightened to clear ≥3:1 against CARTO dark_all (~#262626)</div>
+  <div class="scale" style="margin-bottom:0">
+    <div class="sw"><div class="chip" style="background:#FF6B4A"><span class="lvl" style="color:#111">L0</span></div><div class="lbl">Out of Stock</div><div class="hex">#FF6B4A</div></div>
+    <div class="sw"><div class="chip" style="background:#FF9933"><span class="lvl" style="color:#111">L1</span></div><div class="lbl">High Risk</div><div class="hex">#FF9933</div></div>
+    <div class="sw"><div class="chip" style="background:#FFC940"><span class="lvl" style="color:#111">L2</span></div><div class="lbl">At Risk</div><div class="hex">#FFC940</div></div>
+    <div class="sw"><div class="chip" style="background:#2EE6C3"><span class="lvl" style="color:#111">L3</span></div><div class="lbl">Optimal</div><div class="hex">#2EE6C3</div></div>
+    <div class="sw"><div class="chip" style="background:#66A3FF"><span class="lvl" style="color:#111">L4</span></div><div class="lbl">Slight Over</div><div class="hex">#66A3FF</div></div>
+    <div class="sw"><div class="chip" style="background:#C299EB"><span class="lvl" style="color:#111">L5</span></div><div class="lbl">Heavy Over</div><div class="hex">#C299EB</div></div>
+    <div class="sw"><div class="chip" style="background:#2A2A30"><span class="lvl">—</span></div><div class="lbl">No data</div><div class="hex">#2A2A30</div></div>
+    <div class="sw"><div class="chip" style="background:#F5F5F5"><span class="lvl" style="color:#111">~</span></div><div class="lbl">Pending</div><div class="hex">#F5F5F5</div></div>
+  </div>
 </div>
 
 <hr class="divider">
 
 <div class="notes">
-  <p><b>Diverging, centered on green (Optimal = level 3).</b> Reds/orange below, blues/violet above. A <b>semantic</b> palette — never re-skin per theme; a viewer must read "red = bad, green = good, blue/violet = too much."</p>
-  <p><b><code>level</code> is the ordinal severity.</b> Averaging a set of stores' levels and rounding to the nearest index yields a bin's representative condition — how the Coverage-Map hexbin reduces many SKUs/stores to one color.</p>
-  <p><b>Defined once</b> in <code>lib/conditions</code> (JS, canonical) and mirrored as <code>--cond-*</code> tokens for CSS surfaces. Shared by the In-the-Market table's Condition cell, the coverage-panel legend, and the map hexbin + legend. The chip-tint sibling for At Risk is <code>--g-orange-10</code> / <code>--p-atrisk-strong</code> (Chip <code>atrisk</code> tone).</p>
+  <p><b>"Palette A" (1.5) supersedes the 1.4 scale.</b> Audited for <b>colour-blindness</b> (deuteranopia/protanopia) and <b>WCAG ≥3:1</b> against both CARTO basemaps. Diverging, <b>not</b> sequential: the two "bad" ends (OOS orange-red / Heavy-overstock purple) are maximally distinct; <b>Optimal (teal)</b> is the calm middle.</p>
+  <p><b>Theme-aware tokens.</b> <code>conditions.js</code> returns <code>var(--cond-…)</code> strings (never hex), so the same scale flips between the light <code>:root</code> and <code>html[data-theme="dark"]</code> values. <code>level</code> is the ordinal severity; <code>averageCondition()</code> rounds a bin's mean level to one color (the map hexbin).</p>
+  <p>Token names, severity, and helper API are <b>unchanged</b> from 1.4 — only the values swapped. The chip-tint sibling for At Risk is <code>--g-orange-10</code> / <code>--p-atrisk-strong</code> (Chip <code>atrisk</code> tone).</p>
 </div>
 
 </body></html>

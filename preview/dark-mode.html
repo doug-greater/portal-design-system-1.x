@@ -1,0 +1,70 @@
+<!doctype html><html data-theme="dark"><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="../fonts/fonts.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,400,0,0&display=block"><style>
+body{margin:0;padding:28px;background:var(--p-shell);color:var(--p-text);display:flex;flex-direction:column;gap:26px}
+.mi{font-family:'Material Symbols Sharp';line-height:1;font-variation-settings:'GRAD' var(--ms-grad,0)}
+.sec{font:500 11px/1.2 'Geist Mono',monospace;color:var(--p-muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px}
+.ramp{display:grid;grid-template-columns:repeat(11,1fr);gap:8px}
+.rsw{height:54px;border-radius:6px;border:1px solid var(--p-border)}
+.rlbl{font:400 9px/1.3 'Geist Mono',monospace;color:var(--p-muted);margin-top:4px;text-align:center}
+.card{background:var(--p-surface);border:1px solid var(--p-border);border-radius:10px;box-shadow:var(--shadow-surface);padding:18px;max-width:520px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:3px;height:19px;padding:0 7px;border-radius:999px;font:600 10.5px/1 Inter;white-space:nowrap}
+.c-neutral{background:var(--p-surface-tint);color:var(--p-text-2)}
+.c-info{background:var(--p-primary-tint);color:var(--p-primary-ink)}
+.c-amber{background:var(--g-gold-10);color:var(--p-warning)}
+.c-atrisk{background:var(--g-orange-10);color:var(--p-atrisk-strong)}
+.c-danger{background:var(--g-red-10);color:var(--p-danger-strong)}
+.c-success{background:var(--p-success-bg);color:var(--p-success-fg)}
+.banner{display:flex;align-items:center;gap:10px;background:var(--g-gold-10);color:var(--p-ink);border-radius:8px;padding:10px 12px;font:400 14px/1.4 Inter;max-width:520px}
+.btn{height:36px;padding:0 16px;border-radius:4px;font:500 14px Inter;cursor:pointer;border:1px solid transparent}
+.btn-primary{background:var(--p-primary);color:#0A0A0B;border-color:var(--p-primary)}
+.btn-secondary{background:var(--p-surface);color:var(--p-text);border-color:var(--p-border-strong)}
+.field{width:240px;height:36px;padding:0 12px;border:1px solid var(--p-border-strong);border-radius:4px;font:400 14px Inter;color:var(--p-ink);background:var(--p-surface);box-sizing:border-box}
+.field.dis{background:var(--p-surface-tint);color:var(--p-placeholder);cursor:not-allowed;position:relative}
+.note{font:400 13px/1.5 Inter;color:var(--p-text-2);max-width:640px}
+.note code{font:500 12px 'Geist Mono',monospace;color:var(--p-text);background:var(--p-surface-tint);padding:1px 5px;border-radius:4px}
+</style></head><body>
+
+<div class="note">Live <code>html[data-theme="dark"]</code> — every element below is token-driven (no hardcoded hex), so it renders from the dark block in <code>colors_and_type.css</code>. The light specimens elsewhere use the same markup against <code>:root</code>.</div>
+
+<div>
+  <p class="sec">Neutral ramp (inverted) + surfaces</p>
+  <div class="ramp">
+    <div><div class="rsw" style="background:var(--p-shell)"></div><div class="rlbl">shell</div></div>
+    <div><div class="rsw" style="background:var(--p-surface)"></div><div class="rlbl">surface</div></div>
+    <div><div class="rsw" style="background:var(--p-surface-alt)"></div><div class="rlbl">surf-alt</div></div>
+    <div><div class="rsw" style="background:var(--p-surface-tint)"></div><div class="rlbl">surf-tint</div></div>
+    <div><div class="rsw" style="background:var(--p-border)"></div><div class="rlbl">border</div></div>
+    <div><div class="rsw" style="background:var(--p-border-strong)"></div><div class="rlbl">border-str</div></div>
+    <div><div class="rsw" style="background:var(--p-placeholder)"></div><div class="rlbl">placeholder</div></div>
+    <div><div class="rsw" style="background:var(--p-muted)"></div><div class="rlbl">muted</div></div>
+    <div><div class="rsw" style="background:var(--p-text-2)"></div><div class="rlbl">text-2</div></div>
+    <div><div class="rsw" style="background:var(--p-text)"></div><div class="rlbl">text</div></div>
+    <div><div class="rsw" style="background:var(--p-primary)"></div><div class="rlbl">primary</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <p class="sec">Surface card (--shadow-surface = inset highlight + deep shadow)</p>
+  <div class="row" style="margin-bottom:14px">
+    <span class="chip c-neutral">12 items</span>
+    <span class="chip c-info"><span class="mi" style="font-size:12px">schedule</span>Adds Aug 1</span>
+    <span class="chip c-amber">Draft exists</span>
+    <span class="chip c-atrisk"><span class="mi" style="font-size:12px">trending_down</span>At Risk</span>
+    <span class="chip c-danger">Disc. Sep 1</span>
+    <span class="chip c-success"><span class="mi" style="font-size:12px">check</span>Confirmed</span>
+  </div>
+  <div class="banner" style="margin-bottom:14px"><span class="mi" style="font-size:18px;color:var(--p-warning)">lock</span><span>You have view-only access to users, so these settings can't be changed.</span></div>
+  <div class="row">
+    <button class="btn btn-primary">Save Changes</button>
+    <button class="btn btn-secondary">Cancel</button>
+    <input class="field" value="Editable field">
+    <span style="position:relative;display:inline-block">
+      <div class="field dis" style="display:flex;align-items:center;width:200px">Department Manager</div>
+      <span class="mi" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--p-placeholder)">lock</span>
+    </span>
+  </div>
+</div>
+
+<div class="note">Condition Palette A (dark, map-tuned) is shown in <code>colors-conditions.html</code>; the dark Coverage-Map basemap + overlay overrides are in <code>maps.css</code> / <code>brand-maps.html</code>.</div>
+
+</body></html>

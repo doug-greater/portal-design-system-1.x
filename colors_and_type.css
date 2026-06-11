@@ -82,17 +82,22 @@
   --p-danger-strong: #DC2626;
   --p-atrisk-strong: #C2410C;  /* readable orange text on --g-orange-10 — Chip "atrisk" / "draining" (§C) */
 
-  /* ---------- Inventory Condition palette (diverging, centered on Optimal = green) ----------
-     Greater's fixed 6-level SKU-health scale (Out of Stock → Heavy Overstock). Ordinal severity
-     0–5; reds/orange below Optimal, blues/violet above. SEMANTIC — never re-skin per theme.
-     Single source of truth is lib/conditions (JS); these tokens mirror the same hexes for CSS
-     surfaces (the table Condition cell, the coverage-panel legend, the map hexbin + legend). */
-  --cond-out:      #B42318;   /* Out of Stock      (level 0) — deep red */
-  --cond-high:     #E5484D;   /* High Risk of OOS  (level 1) — red      */
-  --cond-at:       #F59E0B;   /* At Risk of OOS    (level 2) — amber     */
-  --cond-optimal:  #00BC57;   /* Optimal           (level 3) — green     */
-  --cond-slight:   #2D9CDB;   /* Slight Overstock  (level 4) — blue      */
-  --cond-heavy:    #7B68EE;   /* Heavy Overstock   (level 5) — violet    */
+  /* ---------- Inventory Condition palette — "Palette A" (1.5) ----------
+     Colour-blind-safe (deuteranopia/protanopia) diverging ramp Orange → Gold → Teal →
+     Blue → Purple, WCAG ≥3:1 against BOTH CARTO basemaps. Supersedes the 1.4 scale.
+     Fixed 6-level ordinal severity (L0 Out of Stock → L5 Heavy Overstock); the two
+     "bad" ends are maximally distinct, Optimal (teal) is the calm middle. SEMANTIC —
+     never re-skin per theme; values here are map-tuned (CARTO light_all ~#ededed) and
+     are also legible on --p-surface. Dark variants live in the dark block. Token names,
+     ordinal severity, and the conditions.js helper API are unchanged from 1.4. */
+  --cond-out_of_stock:     #C83214;   /* L0 Out of Stock      */
+  --cond-high_risk:        #E65C00;   /* L1 High Risk of OOS  */
+  --cond-at_risk:          #AD7300;   /* L2 At Risk of OOS    */
+  --cond-optimal:          #007A66;   /* L3 Optimal           */
+  --cond-slight_overstock: #2D6BBA;   /* L4 Slight Overstock  */
+  --cond-heavy_overstock:  #6B3D99;   /* L5 Heavy Overstock   */
+  --cond-empty:            #C9CDD2;   /* no data              */
+  --cond-pending:          #171717;   /* pending-change pin    */
 
   /* ---------- Restore / audit action accents ---------- */
   --p-restore:        #0D9488;             /* teal — restore / revert action + `restored` audit state */
@@ -178,6 +183,107 @@
   --border-1: var(--p-border);
   --border-2: var(--p-border-strong);
   --border-focus: var(--p-primary);
+
+  /* ---------- 1.5 — Dark-mode flip-pairs (LIGHT values) ----------
+     FLIP-PAIRS RULE: any tinted status/role/category surface is authored as a
+     bg/fg token PAIR so the html[data-theme="dark"] block can flip both. Light =
+     pale tint bg + saturated fg; dark = low-alpha rgba tint of the same hue +
+     luminous fg. Components must NEVER hardcode hex for these surfaces — always
+     reference the token, or dark mode silently breaks. */
+  /* Status tint pairs */
+  --p-success-bg: #ECFDF5;              --p-success-fg: #047857;
+  --p-atrisk-bg:  var(--g-orange-10);   --p-atrisk-fg:  var(--p-atrisk-strong);
+  --p-neutral-bg: var(--p-surface-tint);--p-neutral-fg: var(--p-text-2);
+  /* Role tone pairs (role pills + avatars) */
+  --p-role-exec-bg: #F5F3FF;            --p-role-exec-fg: #6B21A8;   /* purple */
+  --p-role-deptmgr-bg: #EFF6FF;         --p-role-deptmgr-fg: #1447E6;/* blue   */
+  --p-role-itadmin-bg: #ECFDF5;         --p-role-itadmin-fg: #047857;/* green  */
+  --p-role-supervisor-bg: #FFF7ED;      --p-role-supervisor-fg: #C2410C;/* orange */
+  --p-role-rep-bg: var(--p-surface-tint);--p-role-rep-fg: var(--p-text-2);/* neutral */
+  /* Interaction helpers */
+  --p-overlay-hover: rgba(0,0,0,.04);
+  --p-focus-ring:    rgba(0,124,255,.15);
+  --p-backdrop:      rgba(16,24,40,.45);
+  --p-skeleton-1:    #F1F3F5;           --p-skeleton-2: #E5E7EB;
+  --g-gold-30:       rgba(219,158,3,.30);
+  --p-scroll-thumb:  #D1D5DC;           --p-scroll-thumb-hover: #B9BBBF;
+  --ms-grad:         0;   /* Material Symbols grade — 0 in light, negative in dark */
+}
+
+/* =======================================================================
+   DARK THEME (1.5) — html[data-theme="dark"]
+   =======================================================================
+   A complete inverted-neutral set using deep tinted blacks (Vercel/Linear
+   lineage). Elevation is expressed by surface lightening + inset highlight +
+   deep shadow — NOT the light-mode soft drop shadows. Every tinted
+   status/role/category surface flips via its bg/fg pair (see the flip-pairs
+   rule in :root). Light :root is unchanged from 1.4 except the Conditions
+   palette (§D). Applied by setting data-theme="dark" on <html>; a no-flash
+   inline bootstrap in index.html sets it before React mounts. */
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Neutral ramp (inverted) */
+  --p-ink: #FFFFFF; --p-text: #E4E4E7; --p-text-2: #A1A1AA; --p-muted: #71717A;
+  --p-placeholder: #52525B; --p-border: #27272A; --p-border-strong: #3F3F46;
+  --p-surface: #121214; --p-surface-alt: #18181B; --p-surface-tint: #27272A; --p-shell: #0A0A0B;
+
+  /* Primary blue (brighter for dark contrast) */
+  --p-primary: #3B82F6; --p-primary-hover: #60A5FA; --p-primary-soft: rgba(59,130,246,.18);
+  --p-primary-tint: rgba(59,130,246,.08); --p-primary-ink: #93C5FD;
+
+  /* Category pills → subtle dark tints + luminous fg */
+  --p-pill-beer-bg: rgba(217,119,6,.15);  --p-pill-beer-fg: #FCD34D;
+  --p-pill-wine-bg: rgba(147,51,234,.15); --p-pill-wine-fg: #D8B4FE;
+  --p-pill-spirits-bg: rgba(234,88,12,.15); --p-pill-spirits-fg: #FDBA74;
+  --p-pill-rtd-bg: rgba(59,130,246,.15);  --p-pill-rtd-fg: #93C5FD;
+  --p-pill-nonalc-bg: rgba(16,185,129,.15); --p-pill-nonalc-fg: #6EE7B7;
+
+  /* Feedback */
+  --p-success: #10B981; --p-warning: #F59E0B; --p-danger: #EF4444; --p-danger-strong: #F87171;
+  --p-atrisk-strong: #FDBA74;
+
+  /* Foundation rgba tints (Chip / InfoBanner) */
+  --g-red-10: rgba(239,68,68,.16); --g-green-10: rgba(16,185,129,.16);
+  --g-gold-10: rgba(245,158,11,.16); --g-purple-10: rgba(147,51,234,.16);
+  --g-orange-10: rgba(234,88,12,.15); --g-blue-10: rgba(59,130,246,.16);
+  --g-off-white: #27272A;
+
+  /* Intelligence gradient (shifted for dark) */
+  --g-intel-gradient: linear-gradient(90deg, #3B82F6 0%, #6366F1 50%, #EC4899 100%);
+
+  /* Elevation — inset highlight + deep shadow (NOT light drop shadows) */
+  --shadow-tooltip: inset 0 1px 1px rgba(255,255,255,.08), 0 4px 8px rgba(0,0,0,.6), 0 0 0 1px var(--p-border);
+  --shadow-card:    inset 0 1px 1px rgba(255,255,255,.04), 0 1px 2px rgba(0,0,0,.5);
+  --shadow-surface: inset 0 1px 1px rgba(255,255,255,.04), 0 4px 10px rgba(0,0,0,.5);
+  --shadow-float:   inset 0 1px 1px rgba(255,255,255,.07), 0 12px 24px rgba(0,0,0,.6), 0 0 0 1px var(--p-border-strong);
+
+  /* Status tint pairs */
+  --p-success-bg: rgba(16,185,129,.15); --p-success-fg: #6EE7B7;
+  --p-atrisk-bg:  rgba(234,88,12,.15);  --p-atrisk-fg:  #FDBA74;
+  --p-neutral-bg: #27272A;              --p-neutral-fg: #A1A1AA;
+
+  /* Role tone pairs (role pills + avatars) */
+  --p-role-exec-bg: rgba(147,51,234,.15);   --p-role-exec-fg: #D8B4FE;
+  --p-role-deptmgr-bg: rgba(59,130,246,.15); --p-role-deptmgr-fg: #93C5FD;
+  --p-role-itadmin-bg: rgba(16,185,129,.15); --p-role-itadmin-fg: #6EE7B7;
+  --p-role-supervisor-bg: rgba(234,88,12,.15); --p-role-supervisor-fg: #FDBA74;
+  --p-role-rep-bg: #27272A;                  --p-role-rep-fg: #A1A1AA;
+
+  /* Interaction helpers */
+  --p-overlay-hover: rgba(255,255,255,.06);
+  --p-focus-ring: rgba(59,130,246,.32);
+  --p-backdrop: rgba(0,0,0,.62);
+  --p-skeleton-1: #18181B; --p-skeleton-2: #27272A;
+  --g-gold-30: rgba(245,158,11,.35);
+  --p-scroll-thumb: #3F3F46; --p-scroll-thumb-hover: #52525B;
+  --ms-grad: -25;
+
+  /* Condition scale — Palette A dark variants, brightened to clear ≥3:1 against
+     CARTO dark_all (~#262626). Same token names / severity as light (§D). */
+  --cond-out_of_stock: #FF6B4A; --cond-high_risk: #FF9933; --cond-at_risk: #FFC940;
+  --cond-optimal: #2EE6C3; --cond-slight_overstock: #66A3FF; --cond-heavy_overstock: #C299EB;
+  --cond-empty: #2A2A30; --cond-pending: #F5F5F5;
 }
 
 /* =======================================================================
@@ -342,6 +448,10 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
+
+/* Theme transition — limited to large resting surfaces only (1.5). Never
+   `transition: all` on everything: it breaks transforms and janks the map. */
+body, aside { transition: background-color .2s ease, color .2s ease; }
 
 /* Selection uses primary blue */
 ::selection { background: var(--p-primary-soft); color: var(--p-ink); }

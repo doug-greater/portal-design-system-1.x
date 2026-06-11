@@ -61,4 +61,15 @@ This repository is our **shared design system** — the single source of truth f
 - **Related-record facet** — filter a list by an attribute of a related record (e.g. Warehouse filters products by the carrying accounts' market).
 - **Form patterns** — conditional (toggle-gated) required fields with input masking; **write-only secrets** (`*Set` boolean, "leave blank to keep current"); **async field-level uniqueness** checks with Reactivate / View-profile branches; `FloatingField`/`Input` gain `onBlur(value)` + `helper`.
 - **Conventions** — numeric summary values are Geist Mono; spell out "Average"; unit-suffix the value (`12.5 cs/wk`, `45 days`, `471 cs`); encode magnitude as fill **area**, not opacity.
-- **Deps** — `leaflet` 1.9.x, `d3-hexbin`, `d3-scale`, `d3-array`; basemap tiles **CARTO "Light All" @2x** (with the required OpenStreetMap + CARTO attribution).
+- **Deps** — `leaflet` 1.9.x, `d3-hexbin`, `d3-scale`, `d3-array`; basemap tiles **CARTO "Light All" / "Dark All" @2x** (with the required OpenStreetMap + CARTO attribution).
+
+## What's new in Portal 1.5
+
+> *the "Dark Mode + governed UI" pass on top of 1.4. Two items **supersede** earlier specs: the Conditions palette and "Days on Hand."*
+
+- **Global Dark Mode.** A live, no-reload **light / dark / system** theme (`data-theme` on `<html>`, a `useSyncExternalStore` store, no-flash bootstrap), a full inverted-neutral dark token set (elevation via inset highlight + deep shadow), an App-Shell **theme toggle** (cycles light→dark→system), KO brand marks, and a negative Material-Symbols grade in dark. The Coverage Map swaps to CARTO **dark_all** tiles and themes its overlays. Authoring rule: tinted status/role/category surfaces are **bg/fg token pairs** (`theme.js` is the reference store).
+- **Conditions palette → "Palette A"** *(supersedes 1.4)*. A colour-blind-safe diverging Orange→Teal→Purple ramp, WCAG ≥3:1 against both basemaps; same token names, severity, and helpers (`conditions.js` returns `var(--cond-…)`, never hex).
+- **Governed UI.** A **hide-vs-disable** affordance model for role capabilities, first-class **disabled** states for `Select` / `Checkbox` / `Input` (lock glyph), and an amber **capability-lock banner**.
+- **Forms & flows.** An **Unsaved-Changes "Discard" guard** (with a data-router caveat), a fully specified **two-step Login + dev quick sign-in**, and a tightened **write-only secret** (Mobile PIN) rule.
+- **Hardening.** 4px control radii, unified **pending-change** tint language, mono bare-code table columns with em-dash empties + filter↔column parity, granular **audit-record** format, a **Replace-in-place** placement action, the **Route** facet, and **"Days on Hand"** (supersedes "Weeks on Hand").
+- **Deps** — adds the CARTO **dark_all** basemap (no new packages).

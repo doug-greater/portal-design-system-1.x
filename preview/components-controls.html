@@ -16,6 +16,8 @@ body{margin:0;padding:20px;background:var(--p-shell);display:flex;gap:30px;align
 .cb{width:18px;height:18px;border:1.5px solid var(--p-border-strong);border-radius:3px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:#fff}
 .cb.on{background:#007CFF;border-color:#007CFF}
 .cb.on span{color:#fff}
+.cb.dis{background:var(--p-surface-tint);border-color:var(--p-border-strong);cursor:not-allowed}
+.cb.dis span{color:var(--p-placeholder)}
 
 /* Radio */
 .rd{width:18px;height:18px;border:1.5px solid var(--p-border-strong);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:#fff}
@@ -33,6 +35,7 @@ body{margin:0;padding:20px;background:var(--p-shell);display:flex;gap:30px;align
   <span class="lbl">CHECKBOX</span>
   <div class="row"><span class="cb on"><span style="font-family:'Material Symbols Sharp';font-size:14px;line-height:1">check</span></span>Checked</div>
   <div class="row"><span class="cb"></span>Unchecked</div>
+  <div class="row"><span class="cb dis on"><span style="font-family:'Material Symbols Sharp';font-size:14px;line-height:1">check</span></span>Disabled (1.5)</div>
 </div>
 <div class="g">
   <span class="lbl">RADIO</span>
