@@ -1,5 +1,5 @@
 # Greater Design System
-### Portal 1.6 · June 2026
+### Portal 1.7 · June 2026
 
 > Greater Industries builds AI that helps wholesalers and distributors make the smartest, most efficient, most profitable decisions across their entire business. From warehouse workers and truck drivers to sales reps and owners — Greater's portal is the cockpit that connects the people who power local economies.
 
@@ -41,6 +41,7 @@
    - **New in 1.4 (Coverage Map + unified filters):** [Inventory Conditions](#inventory-conditions-data-viz--domain-palette) · Coverage Map (§9 Maps) · [Account Type](#account-type-icon) primitives · `atrisk` Chip tone (§9 Chip) · Filter Menu `daterange` + related-record facet (§9 Filter Menu) · conditional/write-only-secret & async-uniqueness forms (§9 Inputs) · **Sharp icons** (§8) & **portal Tooltip** (§9) *supersede* prior specs
    - **New in 1.5 (Dark Mode + governed UI):** **Theming — light/dark/system** (§3) · full dark token block + flip-pairs · **Conditions → Palette A** (§9, *supersedes*) · dark Coverage-Map basemap (§9 Maps) · disabled/locked control states + capability-lock banner (§9 Inputs/Info Banners) · **Permissions & Affordances** hide-vs-disable + **Unsaved-Changes guard** (§9) · two-step **Login** + dev sign-in (§9) · 4px control radii (§6) · pending-tint unification · **Days On Hand** (*supersedes* Weeks) · `ballot`=Sales (§8) · Appendix A (RBAC vocab)
    - **New in 1.6 (Ink-Forward):** primary actions & active navigation move **blue → ink** via the new `--p-action` family (§3) — primary buttons, active nav row / tab / wizard step / pagination page, view-mode toggles · **dark-mode action inversion** (white surface, near-black text) · **blue narrowed** to selection / state / focus inside content · adaptive `--shadow-brutal` + neo press (§7 / §9 Buttons) · single **ink wizard track** (green reserved for genuine success) · **ink spinner** (§9 Loading) · illustrated **EmptyArt** empty states with state-accent dot (§9 Empty States) · neutral **row-action icon button** (§9 Row Actions) · squared **crow icon** for square slots (§2 Brand)
+   - **New in 1.7 (Search · ⌘K · General Stock):** [Command Palette (⌘K)](#command-palette-k--17) + portal-wide [Search Query Grammar & Highlight](#search--highlight-17) (`AND` default · uppercase `OR` · `"phrase"` · accent-insensitive) · search-highlight token `--p-highlight` (the only sanctioned yellow) + **General Stock purple** concept tokens `--p-genstock*` (§3) · **Entity-icon canon** (§8 — POD Planner `blur_medium`, Store Promotions `award_star`) · `Input` clearable ✕ + `?` hint · `Toggle.color` · `Chip.iconRight` · `Tooltip.z` · `Modal tone="general"` (§9) · **Arrangement Board** tray kebab (Add to Section / Discontinue), `Adding` / `Discontinuing` badges, single-indicator purple General Stock, "Suggested →" + **Section Picker** (§9) · z-index ladder + the fixed-inside-`sticky`/`transform` rule (§7)
 10. [Motion](#motion)
 11. [Voice & Copy](#voice--copy)
 12. [Layout](#layout)
@@ -178,6 +179,25 @@ The **commitment & active-navigation** color (1.6): primary buttons, the active 
 | `--p-danger` | `#E5484D` | Danger / error |
 | `--p-danger-strong` | `#DC2626` | Strong danger |
 
+### Portal Search Highlight (1.7)
+
+The **only sanctioned use of yellow** in Portal. Reserved exclusively for highlighting the literal characters a search query matched (see §9 Highlight). Never use it for warnings, selection, or emphasis. Dimmed in dark.
+
+| Token | Light | Dark | Role |
+|---|---|---|---|
+| `--p-highlight` | `#FDE68A` | `rgba(250,204,21,.32)` | Match fill (`mark.gr-hl` background) |
+| `--p-highlight-fg` | `#4A3000` | `#FDE68A` | Match text |
+
+### Portal General Stock (purple concept accent · 1.7)
+
+Concept accent for the Store-Layout **"General Stock Area"** section type only. Establishes purple as that feature's identity color, parallel to how blue = action, green = add, red = remove. Reuses the foundation purple but is exposed as **semantic** tokens so it themes and can be reused.
+
+| Token | Light | Dark | Role |
+|---|---|---|---|
+| `--p-genstock` | `#7C3AED` | `#A78BFA` | Toggle fill / icon |
+| `--p-genstock-ink` | `#6B21A8` | `#D8B4FE` | Label text / strong fg |
+| `--p-genstock-tint` | `rgba(124,58,237,.12)` | `rgba(167,139,250,.18)` | Badge / modal icon-disc bg |
+
 ### Portal Category Pills
 
 | Category | Background Token | Foreground Token | Bg Hex | Fg Hex |
@@ -213,6 +233,8 @@ The **commitment & active-navigation** color (1.6): primary buttons, the active 
 ### Color Rules
 
 - **Ink-forward (the core rule, 1.6).** Brand **ink** (`--p-action`) is the color of **commitment & navigation** — primary buttons, the active nav row, the active tab, the active wizard step, the active pagination page, active view-mode toggles. **Blue** (`--p-primary`) is reserved for **selection, state & focus _inside content_** — links, focus rings, input/field focus, selected rows, applied filters, checkboxes/toggles, calendar selection, info. Two tests resolve edge cases: **chrome vs content** (control chrome → ink; something inside the data → blue) and **location vs target** (a "you are here" marker → ink; a thing you select to act upon → blue). In **dark mode the action inverts** to a white surface with near-black text.
+- **Concept-accent legend (1.7).** Each meaning owns a color: **blue = action / link / selection**, **green = add**, **red = remove / destructive**, **amber = warning / suggestion**, **yellow = search-highlight only**, **purple = General Stock**. When a feature needs a distinct identity, add it as **semantic tokens** (light + dark), never inline hex, and document what it means next to the token (see General Stock purple). Add concept colors sparingly.
+- **Search highlight = the only yellow.** `--p-highlight` / `--p-highlight-fg` are reserved exclusively for the literal characters a search query matched (§9 Highlight) — never for warnings, selection, or emphasis.
 - Tints are always 25% / 10% / 5% of the accent over white — never ad-hoc.
 - No gradients in product surfaces. No full-bleed imagery. No repeating patterns.
 - **Page canvas = `--p-shell` (#FDFCF9); surfaces = white.** The app content area, the wizard workflow area, the login screen, and the loading screens render on Shell. Cards, tables, panels, modals, popovers, the side nav, and wizard chrome stay white (`--p-surface`) so they lift off the warm canvas — never paint a full page white. (Login is the raven centered on Shell; the restraint is still the brand.)
@@ -425,6 +447,23 @@ Cards in-table have **no shadow**.
 
 > **Dark elevation is inverted in technique (1.5).** In dark mode the four shadow tokens flip to **inset highlight + deep shadow** rather than soft drop shadows — `inset 0 1px 1px rgba(255,255,255,.04–.08)` for a top-edge catch-light, a deep `rgba(0,0,0,.5–.6)` drop, and a `0 0 0 1px` border ring on floating layers. Depth in dark comes from **surface lightening** (`--p-surface` `#121214` lifts off `--p-shell` `#0A0A0B`) plus the inset highlight — not from a darker shadow alone. Reference the tokens; they swap automatically (see §3 Theming).
 
+### Z-index ladder (1.7)
+
+One ladder, low → high. The **Tooltip** default (`4000`) sits above page content but **below** modals (`10000`); a tooltip fired from inside a modal or the palette overrides it via the `z` prop.
+
+| Layer | z-index |
+|---|---|
+| Map overlay cards | `500` |
+| Map hex tooltip | `600` |
+| Sticky page / section headers | `20` (local) |
+| DS **Tooltip** | `4000` (overridable via `z`) |
+| **Wizard** (full-screen) | `9000` |
+| **Modal / Drawer** | `10000` |
+| **Command Palette (⌘K)** | `12000` |
+| Palette in-field tooltip | `12001` (`Tooltip z`) |
+
+> **`position:fixed` inside a `sticky` / `transform` ancestor is clipped (a real bug we hit, 1.7).** A `position:fixed` overlay (modal / backdrop) rendered **inside** an ancestor that establishes a containing block / stacking context — `position: sticky`, any `transform` (e.g. a dnd-kit sortable item), or `filter` — is **trapped** by that ancestor: the backdrop stops covering the viewport and sibling sticky headers bleed through. **Rules:** (1) render modals / popovers at a **non-transformed, non-sticky root** (lift state up to the board / page root) or **portal** them to `document.body` — never nest a fixed overlay inside a sticky tray or a transformed drag surface; (2) the shared `Modal` is `position:fixed` and assumes a clean ancestor — honor rule 1 when invoking it from inside boards / drag surfaces (see the Arrangement Board tray kebab, §9).
+
 ---
 
 ## 8. Iconography
@@ -467,13 +506,36 @@ Use variable-font axes (`FILL`, `wght`, `GRAD`, `opsz`) sparingly — prefer out
 
 ### Common Icons in Portal
 
-`search`, `filter_alt`, `expand_more`, `unfold_more`, `storefront` (Products in Market), `inventory_2` (All Products), `location_on`, `more_horiz`, `close`, `check`, `info`, `arrow_outward`, `fullscreen`, `account_circle`, `bar_chart`, `settings`, `home`, `apartment`, `route`, `schedule`, `notifications`, `help`, `edit`, `delete`
+`search`, `filter_alt`, `expand_more`, `unfold_more`, `category` (Products / In the Market — see Entity icons), `store` (Accounts), `inventory_2` (Unassigned tray), `location_on`, `more_horiz`, `close`, `check`, `info`, `arrow_outward`, `fullscreen`, `account_circle`, `bar_chart`, `settings`, `home`, `apartment`, `route`, `schedule`, `notifications`, `help`, `edit`, `delete`
 
 **Store Layouts (Phase 3):** `dashboard_customize` (Layout Editor / Edit Layout), `drag_indicator` (drag handle), `shuffle` (General Stock Area), `curtains` (Display placement), `move_down` (drag-here empty state), `fit_width` (Set Capacity For All), `sticky_note_2` (section note), `lightbulb` (Suggested), `draft` / `edit_note` (drafts), `event_upcoming` (scheduled reset), `event_busy` (cancel reset), `publish` (Publish), `history` (History), `download` (Export), `cloud_upload` / `upload_file` / `library_add` / `add_circle` (CSV import), `format_list_bulleted` (Product List tab), `remove_shopping_cart` / `add_business` (plan chips). All outline weight (`FILL 0`).
 
 **Account-type icons** (rendered inside the Account Type Icon avatar — see §9): `storefront` (Retail / Store), `fastfood` (Restaurant), `shopping_cart` (Grocery), `local_convenience_store` (C-Store), `local_bar` (Bar), `attach_money` (Discount Store). All outline weight (`FILL 0`).
 
 **New in 1.5:** `ballot` (**Sales** — the nav item **and** the permissions "Sales" section; **supersedes** any earlier Sales glyph — apply in both so they match), `lock` (locked / disabled control + capability-lock banner), `compare_arrows` (replace-in-place / swap product), `route` (Route facet / column), `bolt` (dev quick sign-in button), `light_mode` / `dark_mode` / `contrast` (theme toggle — light / dark / system).
+
+### Entity icons (the canon · 1.7)
+
+Each first-class Portal entity has exactly **one** canonical Material Symbol (Sharp). Use it everywhere the entity is *represented* — global search (⌘K) page-jumps and result rows, related-entity deep-link chips, nav, and empty-state badges. Authoritative source: the shipped `CommandPalette` `PAGES` table + the App Shell nav.
+
+| Entity / screen | Glyph | Notes & relationships |
+|---|---|---|
+| Products group / **In the Market** | `category` | Product catalog. |
+| **POD Planner** | `blur_medium` | Product-plan scheduling (Add / Discontinue). Relates to **Accounts** (where a plan applies) + **Products** (what is planned). ⌘K Account/Product results expose a **POD Plans** chip with this glyph. |
+| **Store Promotions** | `award_star` | Promotion spanning many Accounts × many Products. ⌘K results expose a **Store Promos** chip with this glyph. |
+| **Store Layouts** | `dashboard` | Per-account physical placement. |
+| Accounts group / **Accounts List** | `store` | Point of distribution. |
+| **Orchestration / View Plans** | `graph_7` | Routing plans. |
+| **Users** | `person` | People / roles. |
+| **Audit Log** | `history` | Immutable ledger. |
+| Settings | `settings` | — |
+| **General Stock Area** | `shuffle` | The variable / unmerchandised section type — used **consistently** for the meta-row toggle, the confirm-modal icon badge, *and* the body empty-state (a prior bug used `inventory_2`; corrected to `shuffle`). See §9 Arrangement Board. |
+
+**Dual-emitter rule.** Changing an entity glyph means updating **both** emitters — the frontend `CommandPalette.js` `PAGES` table *and* the backend `search_router.py` `related` / group `icon` fields — or the deep-link chips and the page-jumps diverge.
+
+> **History:** POD Planner moved `inventory_2 → blur_medium`; Store Promotions moved `sell → award_star`.
+
+(Row / overflow menus still use horizontal `more_horiz`, never `more_vert` — the new tray kebab follows it.)
 
 ### Special Characters
 
@@ -636,11 +698,12 @@ Example (`StoreLayoutEditor` action bar): `Publish ▾` → `[Publish Now · Sch
 
 A dark popover (`--p-ink` bg, white text) anchored to its trigger; hover-only, `pointer-events: none`. Pairs naturally with a 14px `info` glyph (`cursor: help`). Default is a single nowrap line (`font: 500 11px/1.3 Inter; padding: 4px 8px; border-radius: 6px; box-shadow: var(--shadow-float)`). Reference: `preview/components-tooltip.html`.
 
-> **Portal-rendered (changed in 1.4).** The `Tooltip` now renders into `document.body` via `ReactDOM.createPortal` with **`position: fixed`** and **`z-index: 4000`** — it is **not** an absolutely-positioned child of its anchor anymore. On hover it measures the anchor with `getBoundingClientRect()` and **clamps its horizontal center to the viewport** (`[90, innerWidth − 90]` px). The upshot: it never clips inside `overflow:hidden` / transformed / stacking-context containers — scrolling tables, transformed cards, **map overlays (Leaflet panes)** — and it floats above modals, popovers, and the map overlay (which sit at lower z-indexes; see the map z-index ladder in §Maps). *(This supersedes the 1.2 absolutely-positioned, `z-index: 200` implementation; the `maxWidth` wrapping behavior is preserved, just re-homed.)*
+> **Portal-rendered (changed in 1.4).** The `Tooltip` now renders into `document.body` via `ReactDOM.createPortal` with **`position: fixed`** and **`z-index: 4000`** — it is **not** an absolutely-positioned child of its anchor anymore. On hover it measures the anchor with `getBoundingClientRect()` and **clamps its horizontal center to the viewport** (`[90, innerWidth − 90]` px). The upshot: it never clips inside `overflow:hidden` / transformed / stacking-context containers — scrolling tables, transformed cards, **map overlays (Leaflet panes)** — and it floats above page content and the map overlay. *(1.7 ladder, §7: the default `4000` sits below modals (`10000`) and the ⌘K palette (`12000`) — a tooltip fired from inside one of those passes a higher `z` to clear it.)* *(Supersedes the 1.2 absolutely-positioned, `z-index: 200` implementation; the `maxWidth` wrapping behavior is preserved, just re-homed.)*
 
 - **`maxWidth` (px)** — for multi-line / educational copy. Switches to `white-space: normal`, sets `width: {maxWidth}`, caps at `min({maxWidth}px, calc(100vw − 24px))`, `line-height: 1.5`, `padding: 7px 10px`, left-aligned. **Required** whenever the body runs longer than ~6 words — otherwise it shrink-wraps to one nowrap line.
 - **`side`** — `"top"` (default) or `"bottom"`. Controls vertical placement (the horizontal center-clamp handles left/right overflow on its own, so `"bottom"` is now only about which way the bubble opens, not an anti-clipping workaround).
 - **Re-measures on each open.** Positions from `getBoundingClientRect` at hover time; for an anchor that moves *while* the tooltip is shown, re-open to re-measure.
+- **`z` (1.7)** — z-index override, default `4000`. Raise it when a tooltip is triggered from inside a higher-z overlay (e.g. the ⌘K palette backdrop is `12000`, so its in-field `?` hint passes `z={12001}`). See the z-index ladder in §7. Signature: `Tooltip({ text, children, side = "top", maxWidth, z = 4000 })`.
 
 ---
 
@@ -658,6 +721,16 @@ font: 400 15px Inter;
 border: 1px solid #D1D5DC;   /* --p-border-strong */
 background: #fff;
 ```
+
+#### Clearable ✕ + search-syntax hint (1.7)
+
+Two additive props on the shared `Input`, sharing the field's right slot:
+
+- **`clearable` / `onClear`** — a one-click clear **✕** (`close` @15px, right-aligned). **Auto-enabled whenever `icon === "search"`** (every search field gets it free); otherwise opt-in via `clearable`. Renders only when the field has a value. Click calls `onClear`, else synthesizes `onChange({ target: { value: "" } })`. `data-testid="input-clear"`.
+- **`hint`** — a subtle `?` (`help` glyph) shown when the field is **empty**; on hover, a bottom `Tooltip` lists the query grammar (§9 Search). `hint={true}` uses the exported **`SEARCH_HINT`** node. Once the user types, the ✕ replaces it. Wire `hint` onto every primary list/search field and the ⌘K palette. `data-testid="input-hint"`.
+- The input's right padding bumps to **32px** when either is showing.
+
+Full signature: `Input({ icon, value, onChange, placeholder, type, error, style, inputStyle, onKeyDown, autoFocus, name, clearable, onClear, hint, ...rest })`.
 
 #### States
 
@@ -763,6 +836,41 @@ On the New/Edit User form, the email must be unique. Rather than only failing on
 
 ---
 
+### Search & Highlight (1.7)
+
+Portal-wide search is **one grammar + one matcher + one highlight**, used identically in every list's search field, in each list endpoint, and in the ⌘K palette (§ Command Palette).
+
+#### Query grammar (`searchQuery`)
+
+Implemented once on the frontend (`lib/searchQuery.js`) and **mirrored** on the backend (`search_utils.py`) — the two must stay in sync.
+
+1. **Whitespace splits tokens; default is AND** — every token must appear in the record's searchable text.
+2. **A bare, exactly-uppercase `OR`** flips the whole query to OR (any token may match). Lowercase `or` is a literal token; `OR` inside quotes is literal.
+3. **`"double quotes"`** = one token matched as an exact substring (phrase) — spaces and `OR` inside stay literal.
+4. Matching is **case- and accent/diacritic-insensitive** (NFKD + strip combining marks), so `pina` matches `Piña`.
+
+API: `parseQuery(q) → { mode, tokens }` · `matchesQuery(q, text) → bool` · `matchRanges(text, q) → [[start,end), …]` (merged ranges in **original-string** coords, via a per-char fold + index map). Surface the grammar only through the subtle `?` hint on search fields (§ Inputs) — never as chrome.
+
+#### `<Highlight text query />`
+
+Wraps the substrings of `text` that satisfy `query` in `<mark class="gr-hl">` (token `--p-highlight` / `--p-highlight-fg` — the only sanctioned yellow). Diacritic-folds per character with an index map back to the original string, so highlights land on the **un-normalized** characters (`pina` highlights `Piña`); mirrors the backend matcher. Returns the plain string when nothing matches.
+
+**Usage:** wrap the *searched* fields of every result row/card (names, ids, and any field the backend matches on) and the ⌘K result titles/subtitles. Pass the same **debounced** query that drove the fetch, so highlights stay consistent with the visible rows. Reference: `preview/components-search-highlight.html`.
+
+---
+
+### Command Palette (⌘K · 1.7)
+
+Global launcher opened with **⌘K / Ctrl-K** (or the sidebar "Search" button) — grouped, deep-linked results across Accounts, Products, Promotions, Plans, Users, plus page-jumps. Reference: `preview/components-command-palette.html`.
+
+- **Backdrop z-index `12000`** — top of the ladder (§7), above modals (`10000`).
+- Runs on the **Search Query Grammar** (§ Search & Highlight) and renders **`<Highlight>`** on result titles / subtitles and page-jump labels.
+- Each result row carries the **entity icon** (§8 canon); Account / Product rows expose related **POD Plans** (`blur_medium`) and **Store Promos** (`award_star`) deep-link chips. The active row (keyboard ↑↓ / hover) is the **ink** cursor (`--p-action`).
+- In-field **clear ✕** (`data-testid="command-palette-clear"`) mirrors the `Input` clear; the in-field **`?` hint** (`SEARCH_HINT`) renders its `Tooltip` at `z={12001}` so it floats above the backdrop.
+- Test ids: `command-palette` / `command-palette-input`.
+
+---
+
 ### Controls (Toggle, Checkbox, Radio)
 
 #### Toggle
@@ -774,6 +882,8 @@ Knob: 20×20px circle, white, box-shadow: 0 1px 2px rgba(0,0,0,.25)
 Off: track bg #DADADA, knob left 0
 On:  track bg rgba(0,124,255,.25), knob left 17px, border .5px solid #007CFF
      knob bg #007CFF
+color (1.7): optional "on"-fill override (default --p-primary). The General Stock toggle
+             passes color="var(--p-genstock)" for a purple switch; track uses a 30% tint.
 Transition: left .15s, background .15s
 ```
 
@@ -1053,8 +1163,10 @@ The smallest inline indicator: a **soft tinted pill (~19px tall) with an optiona
 display: inline-flex; align-items: center; gap: 3px;
 height: 19px; padding: 0 7px; border-radius: 999px;
 font: 600 10.5px/1 Inter; white-space: nowrap; flex-shrink: 0;
-/* optional leading icon: 12px, color = currentColor */
+/* optional leading icon (`icon`) and/or trailing icon (`iconRight`, 1.7): 12px, currentColor */
 ```
+
+`iconRight` (1.7) renders a Material Symbol **after** the label (mirrors the leading `icon`) — used for the directional "Suggested →" nudge (`iconRight="arrow_forward"`), where the arrow points at the control it recommends. Signature: `Chip({ tone, icon, iconRight, children, title, testid, style })`.
 
 | Tone | Background | Text | Typical use |
 |---|---|---|---|
@@ -1082,7 +1194,7 @@ font: 600 10.5px/1 Inter; white-space: nowrap; flex-shrink: 0;
 | Not yet at store | `amber` | `add_business` | `New to store` |
 | Display presence (count) | `info` | `curtains` | `{n} Display` |
 | Existing draft warning | `amber` | *(none)* | `Draft exists` |
-| Suggested setting | `amber` | `lightbulb` | `Suggested` |
+| Suggested setting | `amber` | (trailing) `arrow_forward` | `Suggested →` (1.7 — dropped the leading `lightbulb`; the arrow points at the control it nudges) |
 
 **Clickable status pills.** A row may carry a Chip that is *interactive* — e.g. amber "Reset {Mon D, YYYY}" (`event_upcoming`) or gray "Draft" (`edit_note`) that deep-links into a version's editor. It uses the Chip visual but is a `<button>`: it must `stopPropagation` from the row's own click and expose a `title` / aria-label.
 
@@ -1830,6 +1942,8 @@ Overlay              ← scrim · focus-trap · Esc · return-focus · a11y
 
 > Naming: the surface is called **Modal** (ARIA role `dialog`). The old "Confirmation Dialog" is now `Modal variant="confirm"`.
 
+> **`tone` (confirm icon-badge, 1.7 adds `general`).** The confirm variant's icon-disc tone maps to a semantic color pair: `danger` (red) · `warning` (gold) · `success` (green) · **`general`** (purple — `--p-genstock` on `--p-genstock-tint`) · default `primary` (blue). The "Mark as General Stock Area" confirm uses `tone="general"` + `icon="shuffle"`.
+
 #### Modal — default
 
 Short, self-contained tasks (invite a user, rename).
@@ -2203,6 +2317,17 @@ background: var(--p-surface-alt); padding: 10px; min-height: 120px;
 
 Tray chips are compact (name 13px + `category · size` + plan Chip). Helper: *"Products at this store that aren't placed in any section appear here. Drag one into a section to place it."* Empty: *"Every authorized product is placed."*
 
+**Tray product kebab (1.7).** Every tray chip carries a `more_horiz` kebab (`g-kebab`):
+- **Add to Section…** → opens the multi-select **Section Picker** (below); adds the product as an instance into each chosen real shelf section at once (General Stock sections are excluded as targets). Placing a product **clears** any discontinue flag.
+- **Discontinue from Store** (danger; only for products currently carried — `carried && pendingAction !== "add"`) → flags the product; toggles to **Keep at Store** to undo. It stages a pending **Discontinue** product-plan that resolves on publish — the exact inverse of how placing a not-yet-carried product stages a pending **Add**.
+- **Implementation rule (see §7 ladder):** render the Add-to-Section modal at the **board root**, never inside the tray chip — the tray is `position: sticky` (a stacking context) and a nested `position:fixed` modal gets clipped.
+- Test ids: `lb-tray-menu-{iid}`, `lb-tray-addsection-{iid}`, `lb-tray-discontinue-{iid}`, `lb-tray-keep-{iid}`.
+
+**Pending-action badges (standardized gerund pair, 1.7).** The two "happens on publish, no date yet" markers are a symmetric pair — identical pill styling, color-coded, full context in the tooltip:
+- **Adding** — `add` icon, green (`--g-green-10` / `--p-success-fg`), tooltip *"Will be added when the layout is published"* (staged add: an out-of-store product placed).
+- **Discontinuing** — `remove` icon, red (`--g-red-10` / `--p-danger-strong`), tooltip *"Will be discontinued when the layout is published"* (tray-flagged).
+- Dated/scheduled badges are **unchanged**: **`Adds {M/D}`** / **`Disc. {M/D}`** (these carry a real go-live date). Rationale: "Adding/Discontinuing" is compact and the +/− icon already signals direction; "When Published" is redundant in the editor and moves to the tooltip. (Prior copy "Adds When Published" → **"Adding"**.)
+
 **Drag overlay.** Use `@dnd-kit` `DragOverlay` (no drop animation): a product ghost (white card, 1px `--p-primary` border, `--shadow-float`) or a section-name ghost — keeps the dragged item legible above sticky headers.
 
 **Drag / drop rules (real product rules — document them):**
@@ -2226,7 +2351,7 @@ Condenses a section's secondary config into one ~28px row: a rep **Note** (left,
   - *click* → inline input (28px, `1px --p-primary`, `box-shadow 0 0 0 3px rgba(0,124,255,.12)`, autofocus); commit on Enter / blur, cancel on Esc.
   - *filled* → the ghost button showing the truncated note (`--p-text-2`).
   - **Rule:** for optional, rarely-set free text on a dense row, prefer this **ghost → inline → text** disclosure over an always-present empty input.
-- **General Stock control (right):** optional amber **Chip "Suggested"** (only when off *and* the section name implies variable stock) · a `shuffle` 14px glyph + "General Stock Area" label (turns `--p-primary-ink` when on) · an `info` glyph carrying the educational **Tooltip** (`side="bottom" maxWidth={340}`) · a `Toggle`.
+- **General Stock control (right · purple concept · 1.7):** optional amber **Chip "Suggested →"** (trailing `arrow_forward` pointing at the toggle; only when off *and* the section name implies variable stock) · a `shuffle` 14px glyph + "General Stock Area" label (turns **`--p-genstock-ink`** when on) · an `info` glyph carrying the educational **Tooltip** (`side="bottom" maxWidth={340}`) · a `Toggle` with **`color="var(--p-genstock)"`** (purple switch).
 
 ---
 
@@ -2234,9 +2359,11 @@ Condenses a section's secondary config into one ~28px row: a rep **Note** (left,
 
 A section that holds **variable inventory with no fixed list / sequence** (back stock, cold storage). Marking it "General Stock" means **no product list, no sequence, no drops** — just a tracked container.
 
-- Toggling **on while placements exist** opens a **confirm** first (placements return to Unassigned): title **"Mark As General Stock Area?"**, body *"General stock areas do not have a stable and defined list of products within them. Any products that are currently listed in this section will be removed."* + *"{n} product placement(s) will be removed from this section."*; action **"Mark As General Stock Area"** (`shuffle`, `--p-warning`).
-- When **on**: Add Product / Set Capacity hidden, drops blocked, the header shows a neutral **"General Stock"** badge (`shuffle` 13px), and the body becomes a centered **info empty-state** (`1px dashed --p-border` on `--p-surface-alt`, `inventory_2` 24px): "General Stock Area" + *"Products can't be placed here. Use this section to track variable inventory."*
-- **Nudge, don't force:** the amber "Suggested" Chip only *hints* for back-stock-like section names; never auto-enable.
+- Toggling **on while placements exist** opens a **confirm** first (placements return to Unassigned): title **"Mark As General Stock Area?"**, body *"General stock areas do not have a stable and defined list of products within them. Any products that are currently listed in this section will be removed."* + *"{n} product placement(s) will be removed from this section."*; action **"Mark As General Stock Area"** (`Modal tone="general"` + `icon="shuffle"` — the purple concept accent).
+- When **on**: Add Product / Set Capacity hidden, drops blocked, and the body becomes a centered **info empty-state** (`1px dashed --p-border` on `--p-surface-alt`, **`shuffle`** 24px): "General Stock Area" + *"Products can't be placed here. Use this section to track variable inventory."*
+- **Single-indicator rule (1.7):** don't over-signal the state. The redundant purple **"General Stock" header pill was removed** — a General Stock section is communicated by exactly **two** cues: the purple **toggle** (meta row) + the gray **empty-state** in the body. Non-general sections still show the `{n} items` count in the header; general sections show nothing there.
+- **Accent (1.7):** the toggle label + icon, the toggle fill, and the confirm-modal icon badge all use the **General Stock purple** tokens (`--p-genstock*`), never primary blue.
+- **Nudge, don't force:** the amber "Suggested →" Chip only *hints* for back-stock-like section names; never auto-enable.
 
 ---
 
@@ -2270,6 +2397,14 @@ A centered overlay (480px, max-height 82vh) for adding several items to a destin
 - **Rule:** selection **survives search-filtering** — resolve picks against a full-source `byId` map, not the rendered subset. Group labels: `600 11px Inter; letter-spacing: .06em; uppercase; --p-muted`.
 
 This mirrors the **Filter Menu** search pattern (SELECTED-on-top, capped results) but for *adding* rather than *filtering* — see Filter Menu.
+
+#### Section Picker (multi-select variant · 1.7)
+
+A focused variant of the Add-items Picker for the **inverse** job — *"add this one product into N sections at once"* (from the Unassigned-tray kebab, above):
+- Built on the shared **`Modal`** (title + subtitle + footer), **not** a bespoke overlay — so it inherits the backdrop, portal/stacking behavior, and theming.
+- Lists **real shelf sections only** (excludes General Stock) as checkbox rows; confirm reads **"Add to {n} section{s}"**, disabled at 0.
+- Empty state: *"No shelf sections yet. Add a section first."*
+- Test ids: `lb-tray-sectionpicker`, `…-opt-{sid}`, `…-confirm`, `…-cancel`.
 
 ---
 
@@ -2346,6 +2481,13 @@ These named keyframes ship in `colors_and_type.css` and back every entrance / lo
 - **Verb-first** for actions, in Title Case: "Save Changes", "Finalize for Simulation", "Go Back".
 - **No emoji in product.** Emoji-free.
 - **Inline status words are colored** — not bolded, not badged. The color conveys the meaning.
+
+### Search & staged-action copy (1.7)
+
+- **Search operators:** `OR` is the only operator word and must be **uppercase**; `"…"` denotes an exact phrase. Surface the grammar only via the subtle `?` hint (§9 Inputs / Search & Highlight), never as chrome.
+- **Staged layout actions:** prefer compact gerunds — **"Adding" / "Discontinuing"** — with the "when the layout is published" detail in the **tooltip**, not the pill. Dated actions keep **"Adds {M/D}" / "Disc. {M/D}"**.
+- **Section Picker confirm:** "Add to {n} section{s}".
+- **General Stock empty-state / tray helper:** keep the existing plain-spoken voice — *"Products at this store that aren't placed in any section appear here…"*
 
 ### Error & Feedback Copy
 
@@ -2468,6 +2610,15 @@ All tokens are defined in `colors_and_type.css`. Load it first, then optionally 
   --p-action-disabled-bg: #C7CBD3;
   --p-action-disabled-fg: #FFFFFF;
 
+  /* Portal search-highlight (the only sanctioned yellow) — dark: rgba(250,204,21,.32) / #FDE68A */
+  --p-highlight: #FDE68A;
+  --p-highlight-fg: #4A3000;
+
+  /* Portal General Stock (purple concept accent) — dark: #A78BFA / #D8B4FE / rgba(167,139,250,.18) */
+  --p-genstock: #7C3AED;
+  --p-genstock-ink: #6B21A8;
+  --p-genstock-tint: rgba(124,58,237,.12);
+
   /* Portal category pills */
   --p-pill-beer-bg: #FFFBEB;    --p-pill-beer-fg: #BB4D00;
   --p-pill-wine-bg: #F5F3FF;    --p-pill-wine-fg: #6B21A8;
@@ -2584,6 +2735,7 @@ Or directly in HTML:
 - Use `--p-border` / `--p-primary` / `--p-ink` for borders, accents, and text.
 - Prefer `14px Inter Medium` for interactive labels.
 - Use `Geist Mono` for any numeric / tabular / ID data.
+- **Concept-accent principle (1.7).** When a feature needs a distinct identity (like General Stock purple), introduce it as **semantic tokens** (light + dark), never inline hex — so it themes and can be reused. Keep the palette legible: **blue = action / link / selection**, **green = add**, **red = remove / destructive**, **amber = warning / suggestion**, **yellow = search-highlight only**, **purple = General Stock**. Add concept colors **sparingly**, and document what each means next to the token (§3).
 
 ### For production code
 
