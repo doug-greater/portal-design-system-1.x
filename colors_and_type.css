@@ -68,6 +68,17 @@
   --p-primary-tint:  #EFF6FF;  /* row hover / info backgrounds        */
   --p-primary-ink:   #155DFC;  /* link text                           */
 
+  /* ---------- Portal: action (INK‑FORWARD) ----------
+     The primary‑action & active‑navigation color. Ink‑forward: the brand's near‑black is the
+     commitment color; --p-primary (blue, above) is reserved for links/focus/selection/info.
+     Inverts to a white surface in dark mode (see the dark block). Components must reference these
+     tokens — never hardcode #000/#fff for primary actions or active nav, or dark mode breaks. */
+  --p-action:             var(--p-ink);   /* #101828 — near‑black primary in light */
+  --p-action-hover:       #000000;        /* press deeper to pure black            */
+  --p-action-fg:          #FFFFFF;        /* label/icon on the action surface      */
+  --p-action-disabled-bg: #C7CBD3;        /* clearly‑disabled ink‑family gray      */
+  --p-action-disabled-fg: #FFFFFF;        /* label on disabled action surface      */
+
   /* ---------- Portal: semantic category pills ---------- */
   --p-pill-beer-bg:    #FFFBEB;  --p-pill-beer-fg:    #BB4D00;  /* amber   */
   --p-pill-wine-bg:    #F5F3FF;  --p-pill-wine-fg:    #6B21A8;  /* purple  */
@@ -127,7 +138,7 @@
   --shadow-card:    0 1px 2px -1px rgba(0,0,0,.10), 0 1px 3px 0 rgba(0,0,0,.10);
   --shadow-surface: 0 1px 2px 0 rgba(16,24,40,.04), 0 6px 16px -8px rgba(16,24,40,.10);  /* large resting surfaces (cards/tables) on shell */
   --shadow-float:   0 4px 6px -4px rgba(0,0,0,.10), 0 10px 15px -3px rgba(0,0,0,.10);
-  --shadow-brutal:  2px 2px 0 0 rgb(0,0,0);  /* for Greater-brand "neo" buttons */
+  --shadow-brutal:  2px 2px 0 0 var(--p-ink);  /* adaptive (black in light / white in dark) — Greater-brand "neo" buttons */
 
   /* ---------- Spacing (4px base) ---------- */
   --space-0-5: 2px;
@@ -172,7 +183,9 @@
   --fg-2: var(--p-text);
   --fg-3: var(--p-muted);
   --fg-4: var(--p-placeholder);
-  --fg-link: var(--p-primary);
+  --fg-link: var(--p-primary);    /* links/focus/selection stay blue */
+  --action: var(--p-action);       /* commitment & active‑nav (ink‑forward) */
+  --action-fg: var(--p-action-fg);
   --fg-invert: var(--g-white);
 
   --bg-1: var(--p-surface);
@@ -231,6 +244,10 @@ html[data-theme="dark"] {
   /* Primary blue (brighter for dark contrast) */
   --p-primary: #3B82F6; --p-primary-hover: #60A5FA; --p-primary-soft: rgba(59,130,246,.18);
   --p-primary-tint: rgba(59,130,246,.08); --p-primary-ink: #93C5FD;
+
+  /* Action (ink‑forward) — INVERTS to a white surface on dark (Linear/macOS treatment) */
+  --p-action: #FFFFFF; --p-action-hover: #E4E4E7; --p-action-fg: #0A0A0B;
+  --p-action-disabled-bg: #3F3F46; --p-action-disabled-fg: #71717A;
 
   /* Category pills → subtle dark tints + luminous fg */
   --p-pill-beer-bg: rgba(217,119,6,.15);  --p-pill-beer-fg: #FCD34D;
@@ -421,9 +438,11 @@ html[data-theme="dark"] {
 .g-split { display: inline-flex; height: 28px; border-radius: var(--radius-md); overflow: hidden; font: 500 13px/1 var(--font-sans); vertical-align: middle; box-sizing: border-box; }
 .g-split .g-split-main  { display: inline-flex; align-items: center; gap: 6px; padding: 0 11px; cursor: pointer; border: none; background: transparent; font: inherit; color: inherit; }
 .g-split .g-split-caret { display: inline-flex; align-items: center; justify-content: center; width: 26px; cursor: pointer; border: none; background: transparent; color: inherit; }
-.g-split.primary { background: var(--p-primary); color: #fff; }
-.g-split.primary .g-split-caret { border-left: 1px solid rgba(255,255,255,.28); }
-.g-split.primary .g-split-main:hover, .g-split.primary .g-split-caret:hover { background: rgba(255,255,255,.14); }
+/* Ink fill + a NEUTRAL caret divider that survives BOTH fills (a white divider would
+   vanish on the white dark‑mode action surface). .g-split.error stays red — see below. */
+.g-split.primary { background: var(--p-action); color: var(--p-action-fg); }
+.g-split.primary .g-split-caret { border-left: 1px solid rgba(127,127,127,.32); }
+.g-split.primary .g-split-main:hover, .g-split.primary .g-split-caret:hover { background: var(--p-action-hover); }
 .g-split.error { background: var(--p-danger); color: #fff; }
 .g-split.error .g-split-caret { border-left: 1px solid rgba(255,255,255,.32); }
 .g-split.error .g-split-main:hover, .g-split.error .g-split-caret:hover { background: rgba(255,255,255,.14); }
@@ -479,6 +498,7 @@ body, aside { transition: background-color .2s ease, color .2s ease; }
 @keyframes gr-bar-in     { from { opacity: 0; transform: translate(-50%, 16px); } to { opacity: 1; transform: translate(-50%, 0); } }
 @keyframes gr-label-swap { from { opacity: 0; transform: translateY(5px); filter: blur(1px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
 @keyframes gr-drawer-in  { from { opacity: .6; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes gr-emptyfloat { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-4px); } }
 
 /* Entrance utility classes */
 .gr-rise      { animation: gr-rise-in .62s cubic-bezier(0.22,1,0.36,1) both; animation-delay: calc(var(--i, 0) * 80ms); }
@@ -486,6 +506,7 @@ body, aside { transition: background-color .2s ease, color .2s ease; }
 .gr-step-back { animation: gr-slide-back .28s cubic-bezier(0.22,1,0.36,1) both; }
 .gr-tab-in    { animation: gr-tab-in .26s cubic-bezier(0.22,1,0.36,1) both; }
 .gr-bar-in    { animation: gr-bar-in .26s cubic-bezier(0.22,1,0.36,1) both; }
+.gr-emptybadge{ animation: gr-emptyfloat 3.6s ease-in-out infinite; will-change: transform; }  /* floating empty‑state badge (§ Empty States); auto‑off under prefers‑reduced‑motion */
 
 /* Echo Pulse — branded post-auth loading mark: raven + expanding intelligence-gradient rings. */
 .echo-pulse { --ep-size: 92px; --ep-ring: 150px; --ep-speed: 2.4s; position: relative; display: inline-flex; align-items: center; justify-content: center; }

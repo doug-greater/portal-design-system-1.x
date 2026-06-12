@@ -1,5 +1,5 @@
 # Greater Design System
-### Portal 1.5 · June 2026
+### Portal 1.6 · June 2026
 
 > Greater Industries builds AI that helps wholesalers and distributors make the smartest, most efficient, most profitable decisions across their entire business. From warehouse workers and truck drivers to sales reps and owners — Greater's portal is the cockpit that connects the people who power local economies.
 
@@ -40,6 +40,7 @@
    - **New in 1.3 (shell + motion):** [Deep-linking (URL facets)](#deep-linking-url-facets) · StatCard count-up + informational variant (§9 Stat Cards) · `--p-shell` / `--shadow-surface` (§3 / §7) · pending-delta count cell (§9 Tables) · App Shell collapse motion (§9 App Shell)
    - **New in 1.4 (Coverage Map + unified filters):** [Inventory Conditions](#inventory-conditions-data-viz--domain-palette) · Coverage Map (§9 Maps) · [Account Type](#account-type-icon) primitives · `atrisk` Chip tone (§9 Chip) · Filter Menu `daterange` + related-record facet (§9 Filter Menu) · conditional/write-only-secret & async-uniqueness forms (§9 Inputs) · **Sharp icons** (§8) & **portal Tooltip** (§9) *supersede* prior specs
    - **New in 1.5 (Dark Mode + governed UI):** **Theming — light/dark/system** (§3) · full dark token block + flip-pairs · **Conditions → Palette A** (§9, *supersedes*) · dark Coverage-Map basemap (§9 Maps) · disabled/locked control states + capability-lock banner (§9 Inputs/Info Banners) · **Permissions & Affordances** hide-vs-disable + **Unsaved-Changes guard** (§9) · two-step **Login** + dev sign-in (§9) · 4px control radii (§6) · pending-tint unification · **Days On Hand** (*supersedes* Weeks) · `ballot`=Sales (§8) · Appendix A (RBAC vocab)
+   - **New in 1.6 (Ink-Forward):** primary actions & active navigation move **blue → ink** via the new `--p-action` family (§3) — primary buttons, active nav row / tab / wizard step / pagination page, view-mode toggles · **dark-mode action inversion** (white surface, near-black text) · **blue narrowed** to selection / state / focus inside content · adaptive `--shadow-brutal` + neo press (§7 / §9 Buttons) · single **ink wizard track** (green reserved for genuine success) · **ink spinner** (§9 Loading) · illustrated **EmptyArt** empty states with state-accent dot (§9 Empty States) · neutral **row-action icon button** (§9 Row Actions) · squared **crow icon** for square slots (§2 Brand)
 10. [Motion](#motion)
 11. [Voice & Copy](#voice--copy)
 12. [Layout](#layout)
@@ -148,11 +149,25 @@ The portal is information-dense — big data tables, filter chips, stat cards, c
 
 | Token | Hex | Role |
 |---|---|---|
-| `--p-primary` | `#007CFF` | Primary actions |
+| `--p-primary` | `#007CFF` | Links, focus, selection (state inside content) |
 | `--p-primary-hover` | `#0066D6` | Hover state |
 | `--p-primary-soft` | `#DBEAFE` | Active count badge backgrounds |
 | `--p-primary-tint` | `#EFF6FF` | Row hover / info backgrounds |
 | `--p-primary-ink` | `#155DFC` | Link text |
+
+> **Blue's job narrowed in 1.6.** `--p-primary` is now reserved for **selection, state & focus _inside content_** — links, focus rings, input/field focus, selected rows, applied filters, checkboxes/toggles, calendar selection, info. The **commitment & navigation** color moved to `--p-action` (below).
+
+### Portal Action (Ink-Forward)
+
+The **commitment & active-navigation** color (1.6): primary buttons, the active nav row, the active tab, the active wizard step, the active pagination page, active view-mode toggles, and the `neo` button shadow. **Inverts to a white surface in dark mode** (the Linear/macOS treatment). Components must reference these tokens — never hardcode `#000`/`#fff` for primary actions or active nav, or dark mode breaks.
+
+| Token | Light | Dark | Role |
+|---|---|---|---|
+| `--p-action` | `#101828` (= `--p-ink`) | `#FFFFFF` | Primary-action / active-nav surface |
+| `--p-action-hover` | `#000000` | `#E4E4E7` | Hover / pressed |
+| `--p-action-fg` | `#FFFFFF` | `#0A0A0B` | Label / icon on the action surface |
+| `--p-action-disabled-bg` | `#C7CBD3` | `#3F3F46` | Disabled action surface |
+| `--p-action-disabled-fg` | `#FFFFFF` | `#71717A` | Label on disabled action |
 
 ### Portal Feedback
 
@@ -180,7 +195,9 @@ The portal is information-dense — big data tables, filter chips, stat cards, c
 --fg-2: var(--p-text)
 --fg-3: var(--p-muted)
 --fg-4: var(--p-placeholder)
---fg-link: var(--p-primary)
+--fg-link: var(--p-primary)   /* links / focus / selection stay blue */
+--action: var(--p-action)     /* commitment & active-nav (ink-forward) */
+--action-fg: var(--p-action-fg)
 --fg-invert: var(--g-white)
 
 --bg-1: var(--p-surface)
@@ -195,6 +212,7 @@ The portal is information-dense — big data tables, filter chips, stat cards, c
 
 ### Color Rules
 
+- **Ink-forward (the core rule, 1.6).** Brand **ink** (`--p-action`) is the color of **commitment & navigation** — primary buttons, the active nav row, the active tab, the active wizard step, the active pagination page, active view-mode toggles. **Blue** (`--p-primary`) is reserved for **selection, state & focus _inside content_** — links, focus rings, input/field focus, selected rows, applied filters, checkboxes/toggles, calendar selection, info. Two tests resolve edge cases: **chrome vs content** (control chrome → ink; something inside the data → blue) and **location vs target** (a "you are here" marker → ink; a thing you select to act upon → blue). In **dark mode the action inverts** to a white surface with near-black text.
 - Tints are always 25% / 10% / 5% of the accent over white — never ad-hoc.
 - No gradients in product surfaces. No full-bleed imagery. No repeating patterns.
 - **Page canvas = `--p-shell` (#FDFCF9); surfaces = white.** The app content area, the wizard workflow area, the login screen, and the loading screens render on Shell. Cards, tables, panels, modals, popovers, the side nav, and wizard chrome stay white (`--p-surface`) so they lift off the warm canvas — never paint a full page white. (Login is the raven centered on Shell; the restraint is still the brand.)
@@ -217,7 +235,7 @@ The portal ships a full **light + dark theme**, toggled live with no reload. Thi
 
 **Dark token model.** The dark theme is a complete inverted-neutral set using **deep tinted blacks** (Vercel/Linear lineage). **Elevation in dark is expressed by surface lightening + an inset highlight + a deep shadow** — *not* the light-mode soft drop shadows (see §7). The full block is in `colors_and_type.css` under `html[data-theme="dark"]`.
 
-> **Flip-pairs rule (the #1 authoring rule that makes dark "just work").** Any tinted **status / role / category** surface must be authored as a **bg/fg token pair** (`--p-*-bg` / `--p-*-fg`) so the dark block can flip both. Pattern: **light = pale tint bg + saturated fg; dark = low-alpha rgba tint of the same hue + luminous (light) fg.** Components must **never hardcode hex** for these surfaces — always reference the token, or dark mode silently breaks. Tokens that flip: the neutral ramp, primary set, 5 category-pill pairs, 4 feedback colors, the `--g-*-10` tints, the intel gradient, the 4 shadows, 3 status pairs (`--p-success/atrisk/neutral-bg/fg`), 5 role pairs, `--p-overlay-hover`, `--p-focus-ring`, `--p-backdrop`, 2 skeleton stops, `--g-gold-30`, 2 scrollbar stops, `--ms-grad`, and the 8 `--cond-*`.
+> **Flip-pairs rule (the #1 authoring rule that makes dark "just work").** Any tinted **status / role / category** surface must be authored as a **bg/fg token pair** (`--p-*-bg` / `--p-*-fg`) so the dark block can flip both. Pattern: **light = pale tint bg + saturated fg; dark = low-alpha rgba tint of the same hue + luminous (light) fg.** Components must **never hardcode hex** for these surfaces — always reference the token, or dark mode silently breaks. Tokens that flip: the neutral ramp, primary set, the **action set** (`--p-action*` — inverts to a white surface), 5 category-pill pairs, 4 feedback colors, the `--g-*-10` tints, the intel gradient, the 4 shadows, 3 status pairs (`--p-success/atrisk/neutral-bg/fg`), 5 role pairs, `--p-overlay-hover`, `--p-focus-ring`, `--p-backdrop`, 2 skeleton stops, `--g-gold-30`, 2 scrollbar stops, `--ms-grad`, and the 8 `--cond-*`.
 
 **Brand marks.** The wordmark + crow swap to **knock-out (KO) variants** in dark (`greater-logotype-ko.png` / `greater-crow-ko.png`), keyed on `resolved`.
 
@@ -399,7 +417,7 @@ Base unit is **4px**. All spacing tokens are multiples of this base.
 | `--shadow-card` | `0 1px 2px -1px rgba(0,0,0,.10), 0 1px 3px 0 rgba(0,0,0,.10)` | **Small** elements (stat cards, secondary buttons) |
 | `--shadow-surface` | `0 1px 2px 0 rgba(16,24,40,.04), 0 6px 16px -8px rgba(16,24,40,.10)` | **Large** resting surfaces (tables, detail cards, ledgers) lifting off the shell |
 | `--shadow-float` | `0 4px 6px -4px rgba(0,0,0,.10), 0 10px 15px -3px rgba(0,0,0,.10)` | Elevated floating / transient layers (menus, popovers, tooltips, toasts) |
-| `--shadow-brutal` | `2px 2px 0 0 rgb(0,0,0)` | Foundation brand-moment buttons only |
+| `--shadow-brutal` | `2px 2px 0 0 var(--p-ink)` | Adaptive (black in light / white in dark) — brand-moment "neo" buttons |
 
 Cards in-table have **no shadow**.
 
@@ -473,23 +491,25 @@ All buttons share a base: `height: 36px`, `border-radius: 4px`, `font: 500 14px/
 
 #### Variants
 
-**Primary** — blue fill, white text
+> **Ink-forward (1.6).** Primary, Secondary, Ghost, and Neo moved off blue: Primary is now **ink** (`--p-action`, inverting to a white surface in dark), Secondary is an **ink stroke**, and Ghost is **neutral text** (blue is reserved for true links). Warning/Danger stay **red**; Neutral stays **gray**. The **focus ring stays blue** and keyboard-only — `box-shadow: 0 0 0 2px var(--p-surface), 0 0 0 4px var(--p-primary)` — because focus is state _inside content_; only the resting/active chrome went ink.
+
+**Primary** — ink fill, white text (inverts to a white surface in dark via `--p-action`)
 
 ```css
-background: #007CFF;
-color: #fff;
-/* hover */ background: #0066D6;
-/* disabled */ background: rgba(0,124,255,.25); color: #fff;
+background: var(--p-action);
+color: var(--p-action-fg);
+/* hover */ background: var(--p-action-hover);
+/* disabled */ background: var(--p-action-disabled-bg); color: var(--p-action-disabled-fg);
 ```
 
-**Secondary** — white fill, blue stroke, blue text
+**Secondary** — white fill, ink stroke, ink text
 
 ```css
-background: #fff;
-color: #007CFF;
-border: 1px solid #007CFF;
-/* hover */ background: rgba(0,124,255,.05);
-/* disabled */ color: rgba(0,124,255,.25); border-color: rgba(0,124,255,.25);
+background: var(--p-surface);
+color: var(--p-ink);
+border: 1px solid var(--p-ink);
+/* hover */ background: var(--p-surface-tint);
+/* disabled */ color: var(--p-placeholder); border-color: var(--p-border);
 ```
 
 **Secondary · Warning** — white fill, red stroke, red text
@@ -521,15 +541,15 @@ border: 1px solid #D1D5DC;
 /* disabled */ color: #99A1AF; border-color: #E5E7EB;
 ```
 
-**Tertiary (Ghost)** — no fill, no stroke, blue text
+**Tertiary (Ghost)** — no fill, no stroke, neutral text (blue reserved for true links)
 
 ```css
 background: transparent;
-color: #007CFF;
+color: var(--p-text);
 padding: 0 12px;
 min-width: 0;          /* ghost hugs its label */
-/* hover */ background: rgba(0,124,255,.05);
-/* disabled */ color: rgba(0,124,255,.25);
+/* hover */ background: var(--p-surface-tint);
+/* disabled */ color: var(--p-placeholder);
 ```
 
 **Foundation Neo** — brand moments only (e.g. login Next button)
@@ -539,13 +559,14 @@ height: 39px;
 padding: 0 30px;
 min-width: 120px;
 border-radius: 4px;
-background: #fff;
-color: #000;
-border: 1px solid #000;
-box-shadow: 2px 2px 0 0 #000;   /* --shadow-brutal */
+background: var(--p-surface);
+color: var(--p-ink);
+border: 1px solid var(--p-ink);
+box-shadow: var(--shadow-brutal);          /* adaptive: black in light, white in dark */
 font: 500 16px/1 Inter;
 letter-spacing: .05em;
-/* hover */ background: #F0F7FF;
+/* hover */   background: var(--p-surface-tint);
+/* pressed */ transform: translate(2px,2px); box-shadow: 0 0 0 0 var(--p-ink);  /* collapses onto its shadow */
 ```
 
 #### Sizes
@@ -590,7 +611,7 @@ Actions attached to a table row. There is **one primitive and two triggers** —
 
 #### Specs
 
-- **Split button:** `height: 28px`, `border-radius: 6px`, `font: 500 13px Inter`. Main area `padding: 0 11px`; caret area `26px` wide with a `1px` divider (`rgba(255,255,255,.28)` on filled intents, the border color on outline). Intents: **primary** (`#007CFF` fill, white) and **error** (`#E5484D` fill, white). Optional leading icon (`report` for error, `check_circle` for confirm-style).
+- **Split button:** `height: 28px`, `border-radius: 6px`, `font: 500 13px Inter`. Main area `padding: 0 11px`; caret area `26px` wide with a `1px` **neutral** divider (`rgba(127,127,127,.32)` — survives both the ink fill and the white dark-mode action surface; a white divider would vanish on the latter). Intents: **primary** (`--p-action` fill / `--p-action-fg` text — ink, inverts in dark) and **error** (`#E5484D` fill, white — unchanged). Optional leading icon (`report` for error, `check_circle` for confirm-style).
 - **Kebab:** `28×28px`, `border-radius: 6px`, `more_horiz` at 20px, `--p-muted`; hover `rgba(0,0,0,.05)`.
 - **Menu popover:** `border-radius: 8px`, `--shadow-float`, 1px `--p-border`, `padding: 4px`, `min-width: ~208px`. Items `34px`, `padding: 0 10px`, `400 14px Inter`, optional 18px `--p-muted` leading icon. Group with an uppercase label + `1px --p-border` divider when there are more than ~5 items; destructive items go **last**, in `--p-danger`. Opens on click; closes on outside-click, `Escape`, or selection.
 
@@ -914,9 +935,9 @@ color: #4A5565;
 border-bottom: 2px solid transparent;
 margin-bottom: -1px;
 
-/* Active tab */
-color: #007CFF;
-border-bottom-color: #007CFF;
+/* Active tab — ink (wayfinding, same family as the active nav row) */
+color: var(--p-ink);
+border-bottom-color: var(--p-ink);
 ```
 
 #### Segmented Tabs (In-page)
@@ -935,18 +956,20 @@ border-radius: 4px;
 font: 500 14px/1 Inter;
 color: var(--p-text-2);
 
-/* Active segment */
-background: #fff;
+/* Active segment — text is ink (wayfinding); the lifted pill uses --p-surface so it adapts in dark */
+background: var(--p-surface);
 color: var(--p-ink);
 box-shadow: var(--shadow-card);
 
-/* Count badge (active) */
+/* Count badge (active) — NEUTRAL (filter badges stay blue) */
 font: 500 11px Geist Mono, monospace;
-color: #007CFF;
-background: rgba(0,124,255,.12);
+color: var(--p-text);
+background: var(--p-surface-tint);
 padding: 1px 6px;
 border-radius: 999px;
 ```
+
+> **Tabs are wayfinding → ink.** Both the page-level underline and the segmented active text use ink, the same family as the active nav row. The active count badge is **neutral** — don't confuse it with **filter** chips/badges, which are applied-filter _state_ and **stay blue**.
 
 ---
 
@@ -1552,8 +1575,8 @@ The sidebar must sit **outside** the scroll region (a sibling of `main`), never 
 | Collapse toggle | 26×26px circle, `right: -13px`, `top: 28px`, floats on the divider edge; chevron icon flips |
 
 - **Org header** — wordmark (collapsed: crow mark) + company name + city selector. City selector hidden when collapsed.
-- **Primary nav** — parent rows (40px, icon + 15px label + `expand_more` chevron when it has children) with expandable child lists. Active leaf / open group tints `rgba(0,124,255,.10)` with `--p-primary` icon; hover `rgba(0,124,255,.05)`. Active **child** row: solid `#007CFF` fill, white text, `30px` min-height.
-- **Bottom utility nav** — pinned to the bottom. Top → bottom: **Help Center** [external], **Audit Log**, **Settings**, **Account**, **Sign Out**. "Audit Log" (`/audit-log`) and "Settings" (`/settings`) are real routes and carry an **active/selected** state (`rgba(0,124,255,.10)` tint + `--p-primary` icon, like the primary nav); Help Center opens externally, Account and Sign Out are utilities. (The former "Ops Tools" toggle has been removed.)
+- **Primary nav** — parent rows (40px, icon + 15px label + `expand_more` chevron when it has children) with expandable child lists. **Active leaf** row: solid `--p-action` fill with `--p-action-fg` label + icon (ink — inverts to white-on-near-black in dark). **Open group** (parent of an active child): neutral `--p-surface-tint`. **Hover** (any row): neutral `--p-surface-tint` — never blue. Active **child** row: solid `--p-action`, `--p-action-fg`, `30px` min-height. Keyboard focus-visible outlines stay `--p-primary` (blue).
+- **Bottom utility nav** — pinned to the bottom. Top → bottom: **Help Center** (`help_center`) [external], **Audit Log** (`history`), **Settings** (`settings`), a **theme toggle** (cycles Light → Dark → System; icon `light_mode` / `dark_mode` / `contrast`, "Auto" hint on System), **Account** (`person_raised_hand`, the signed-in user's name), **Sign Out** (`logout`). "Audit Log" (`/audit-log`), "Settings" (`/settings`), and the Account row (own profile) are real routes and carry an **active/selected** state (solid `--p-action` fill + `--p-action-fg` icon, like the primary nav); Help Center opens externally, Sign Out is a utility. (The former "Ops Tools" toggle has been removed.)
 
 #### Collapse / expand motion
 
@@ -1578,7 +1601,7 @@ When collapsed (72px), hovering a nav icon opens a flyout so users navigate with
 | Close delay | **150ms grace period** (lets the cursor travel icon → panel without closing); cancels on panel `mouseenter` |
 | Entrance | slide `translateX(−7px) → 0`, 120ms ease-out |
 
-- **Parent icon** → panel with an uppercase group-label header (`500 11px`, `--p-muted`, `letter-spacing: .06em`) + a list of all sub-items. The active sub-item is a solid `#007CFF` row with white text and a small dot; others are `--p-ink`, hover `rgba(0,124,255,.06)`. Clicking a sub-item navigates and closes the flyout.
+- **Parent icon** → panel with an uppercase group-label header (`500 11px`, `--p-muted`, `letter-spacing: .06em`) + a list of all sub-items. The active sub-item is a solid `--p-action` row with `--p-action-fg` text and a small dot; others are `--p-ink`, hover neutral `--p-surface-tint`. Clicking a sub-item navigates and closes the flyout.
 - **Leaf icon** (no children, e.g. Accounts, Users) → same panel shell showing **only the label** (a tooltip); clicking the icon navigates directly.
 - The hovered icon tints blue (`--p-primary`) while its flyout is open. The flyout closes automatically when the rail is expanded.
 
@@ -1895,12 +1918,12 @@ Prefer **skeletons** over spinners for any layout whose shape is known (tables, 
 ```css
 border-radius: 50%;
 border: 2.5px solid var(--p-border);
-border-top-color: var(--p-primary);
+border-top-color: var(--p-ink);   /* ink head — near-black in light, white in dark, matching the ink primary */
 animation: rot .7s linear infinite;
 /* @keyframes rot { to { transform: rotate(360deg); } } */
 ```
 
-Sizes 16 / 20 / 24px. On a colored fill, use the **on-fill** variant: `border-color: rgba(255,255,255,.4); border-top-color: #fff`. Inside a busy button, swap the label for an on-fill spinner + verb ("Saving…") and dim the fill to `rgba(0,124,255,.85)`.
+Sizes 16 / 20 / 24px. Inside a filled button, use the **on-fill** variant — the head inherits the button's foreground via `currentColor` (`border-top-color: currentColor`), so it's `--p-action-fg` on the primary and white on danger, always contrasting the fill in both themes. A busy button swaps its label for an on-fill spinner + verb ("Saving…").
 
 #### Skeleton
 
@@ -1918,32 +1941,30 @@ border-radius: 4px;      /* mirror the real element's radius */
 
 ### Empty States
 
-One restrained pattern, three causes. Reference: `preview/components-empty-states.html`.
+The illustrated **`EmptyArt` badge** — one composition, several causes. Reference: `preview/components-empty-states.html`.
+
+**Anatomy.** A soft depth-stack of two faintly-rotated record cards (`±7°`) behind a front card with three faux content lines (`--p-surface-tint`); a floating **60px** circular badge (`--p-surface`, `1px --p-border`, `--shadow-float`) housing the surface's **contextual glyph** (28px, `--p-text-2`), gently floating via `gr-emptyfloat` (the `.gr-emptybadge` class; off under reduced-motion); and a small **accent dot** (+ a fainter echo) whose **color encodes state**. It's a pure HTML/CSS composition — no SVG asset.
 
 ```css
 /* container */
-border: 1px solid var(--p-border);
-border-radius: 10px;
-padding: 48px 28px;
 display: flex; flex-direction: column; align-items: center; text-align: center;
-
-/* icon badge */
-width: 56px; height: 56px; border-radius: 50%;
-background: var(--p-surface-tint);
-color: var(--p-muted);   /* 28px outline Material Symbol */
-
-/* title */ font: 600 16px/1.3 Inter; color: var(--p-ink);
-/* body */  font: 400 14px/1.5 Inter; color: var(--p-muted); max-width: 320px;
+padding: 64px 24px;          /* in-table: 48px 24px */
+/* title */ font: 600 15px/1.3 Inter; color: var(--p-ink);
+/* body */  font: 400 13px/1.5 Inter; color: var(--p-muted); max-width: 340px;
 ```
 
-| Cause | Icon | Action |
-|---|---|---|
-| **No results** (search / filter) | `search_off` / `filter_alt_off` | Ghost **Clear Filters** — never a create CTA |
-| **Empty set** (nothing exists yet) | the surface's nav icon (`inventory_2`, `group`, `route`) | Primary create CTA |
-| **First-run / import** | `upload_file` | Dashed dropzone (`1px dashed --p-border-strong`, `#FBFCFD`) + primary + helper (template) |
+**Accent = state** (auto-selected from the glyph — `error|warning|report|block|cancel` → red; `check|task_alt|done|verified|celebration` → green; otherwise blue — overridable via an `accent` prop): blue `--p-primary` (info, default) · red `--p-danger` (error) · green `--p-success` (success) · gold `--p-warning`. Blue still means state — the accent dot reuses the rule.
 
-- **In-table variant:** drop the border/background and render inside the existing table card, keeping the header row so the page doesn't collapse (`padding: 44px 24px`).
-- **Restraint:** no illustrations, no emoji — one outline glyph only. Copy is plain, second-person.
+| Cause | Glyph (in badge) | Accent | Action |
+|---|---|---|---|
+| **No results** (search / filter) | `search_off` / `filter_alt_off` | blue | Ghost **Clear filters** — never a create CTA |
+| **Empty set** (nothing yet) | surface nav icon (`inventory_2`, `group`, `route`) | blue | Primary create CTA |
+| **First-run / import** | `upload_file` | blue | Dashed dropzone (`1px dashed --p-border-strong`) + primary + helper |
+| **Error** | `error` / `warning` | red | Retry (Neutral) |
+| **Done / success** | `task_alt` / `check` | green | — |
+
+- **In-table variant:** compact (smaller cards + 50px badge); drop the border/background and render inside the existing table card, keeping the header row so the page doesn't collapse (`padding: 48px 24px`).
+- **Restraint:** one framed contextual glyph, plain second-person copy, and **no emoji**. (This **replaces** the old "no illustrations, one glyph only" rule — the contextual glyph now lives _inside_ the illustration.)
 
 ---
 
@@ -1962,7 +1983,8 @@ Attaches to the table's bottom edge (shares its border), `background: var(--p-su
 
 ```css
 /* cell */ min-width: 30px; height: 30px; border-radius: 6px; font: 500 13px/1 Inter;
-/* active */ background: var(--p-primary); color: #fff;
+/* active — ink: you navigate TO a page (wayfinding, like the active tab). The rows-per-page select keeps its blue focus. */
+background: var(--p-action); color: var(--p-action-fg);
 /* default */ background: transparent; color: var(--p-text);  /* hover: --p-surface-tint */
 /* prev/next */ border: 1px solid var(--p-border-strong); background: #fff; color: --p-muted;  /* disabled at ends */
 ```
@@ -2029,10 +2051,10 @@ A **full-screen, position-fixed** multi-step creation / editing flow that render
 
 1. **Top bar** — `height: 60px`, white, `1px --p-border` bottom. Greater logotype + `1px` divider + flow **title** (`600 16px Inter`, `-.01em`). Right side: a **Neutral** Button "Exit" with a `close` icon.
 2. **Step indicator** — white strip, `12px 32px` padding, centered to `max-width: 1320px`. Each step is a clickable chip: a `24px` circular badge + label.
-   - **Active:** badge `--p-ink` fill, white number (`600 12px Geist Mono`); label `600 14px --p-ink`.
-   - **Complete (not current):** badge `--p-success` fill, white `check`; label `500 14px --p-success`; **clickable to jump back**.
-   - **Upcoming:** badge `--p-surface-tint`, `--p-placeholder` number; label `500 14px --p-placeholder`; not clickable. Connector lines `1px --p-border` fill the gaps.
-   - **Completion rule:** a step counts as *complete* only when `n < current` **and** it is valid — never mark the current step green prematurely, and never show a "Saved" badge.
+   - **Active:** badge `--p-action` fill, `--p-action-fg` number (`600 12px Geist Mono`); label `600 14px --p-ink`. (Inverts to a white surface in dark.)
+   - **Complete (not current):** badge `--p-action` fill, `--p-action-fg` `check`; label `500 14px --p-text` (de-greened); **clickable to jump back**.
+   - **Upcoming:** badge `--p-surface-tint`, `--p-placeholder` number; label `500 14px --p-placeholder`; not clickable. Connector lines are `1px --p-border`, and **fill `--p-action`** once the preceding step is complete (`transition: background-color .2s ease`).
+   - **Completion rule:** a step counts as *complete* only when `n < current` **and** it is valid. The stepper is a **single ink track** (wayfinding) — completed steps are **ink, not green**; **green is reserved for genuine success** (toasts, the final success screen).
 3. **Body** — scroll-contained, centered `max-width: 1320px`, padding `20px 32px 24px`; per-step arrival animation `gr-tab-in` (`key={current}`).
 4. **Footer nav** — `height: 72px`, white, top border + soft top shadow `0 -2px 12px rgba(16,24,40,.05)`.
    - Left: **Neutral** Button "Back" (`arrow_back`, `size=lg`), disabled on step 1.
@@ -2439,6 +2461,13 @@ All tokens are defined in `colors_and_type.css`. Load it first, then optionally 
   --p-primary-tint: #EFF6FF;
   --p-primary-ink: #155DFC;
 
+  /* Portal action (ink-forward) — primary actions & active nav; inverts to a white surface in dark */
+  --p-action: var(--p-ink);
+  --p-action-hover: #000000;
+  --p-action-fg: #FFFFFF;
+  --p-action-disabled-bg: #C7CBD3;
+  --p-action-disabled-fg: #FFFFFF;
+
   /* Portal category pills */
   --p-pill-beer-bg: #FFFBEB;    --p-pill-beer-fg: #BB4D00;
   --p-pill-wine-bg: #F5F3FF;    --p-pill-wine-fg: #6B21A8;
@@ -2476,7 +2505,7 @@ All tokens are defined in `colors_and_type.css`. Load it first, then optionally 
   --shadow-card: 0 1px 2px -1px rgba(0,0,0,.10), 0 1px 3px 0 rgba(0,0,0,.10);
   --shadow-surface: 0 1px 2px 0 rgba(16,24,40,.04), 0 6px 16px -8px rgba(16,24,40,.10);
   --shadow-float: 0 4px 6px -4px rgba(0,0,0,.10), 0 10px 15px -3px rgba(0,0,0,.10);
-  --shadow-brutal: 2px 2px 0 0 rgb(0,0,0);
+  --shadow-brutal: 2px 2px 0 0 var(--p-ink);  /* adaptive: black in light, white in dark */
 
   /* Spacing (4px base) */
   --space-0-5: 2px;

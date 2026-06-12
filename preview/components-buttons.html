@@ -6,39 +6,44 @@ body{margin:0;padding:20px;background:var(--p-shell)}
 /* Portal buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 24px;min-width:96px;border-radius:4px;font:500 14px/1 Inter;cursor:pointer;border:1px solid transparent;background:#fff;transition:background .12s,border-color .12s,color .12s}
 
-/* Primary — blue fill */
-.btn-primary{background:#007CFF;color:#fff}
-.btn-primary:hover{background:#0066D6}
-.btn-primary[disabled]{background:rgba(0,124,255,.25);color:#fff;cursor:not-allowed}
+/* Primary — ink fill (INK‑FORWARD; inverts to a white surface in dark via --p-action) */
+.btn-primary{background:var(--p-action);color:var(--p-action-fg)}
+.btn-primary:hover{background:var(--p-action-hover)}
+.btn-primary[disabled]{background:var(--p-action-disabled-bg);color:var(--p-action-disabled-fg);cursor:not-allowed}
 
-/* Secondary — blue stroke, white fill, blue text */
-.btn-secondary{background:#fff;color:#007CFF;border-color:#007CFF}
-.btn-secondary:hover{background:rgba(0,124,255,.05)}
-.btn-secondary[disabled]{color:rgba(0,124,255,.25);border-color:rgba(0,124,255,.25);cursor:not-allowed}
+/* Secondary — ink stroke, white fill, ink text (was blue) */
+.btn-secondary{background:var(--p-surface);color:var(--p-ink);border-color:var(--p-ink)}
+.btn-secondary:hover{background:var(--p-surface-tint)}
+.btn-secondary[disabled]{color:var(--p-placeholder);border-color:var(--p-border);cursor:not-allowed}
 
-/* Secondary warning — red stroke, white fill, red text */
+/* Secondary warning — red stroke, white fill, red text (UNCHANGED — error stays red) */
 .btn-secondary-warn{background:#fff;color:#E5484D;border-color:#E5484D}
 .btn-secondary-warn:hover{background:rgba(229,72,77,.05)}
 .btn-secondary-warn[disabled]{color:rgba(229,72,77,.25);border-color:rgba(229,72,77,.25);cursor:not-allowed}
 
-/* Danger (solid) — terminal, already-confirmed destructive action */
+/* Danger (solid) — terminal, already-confirmed destructive action (UNCHANGED) */
 .btn-danger{background:#E5484D;color:#fff}
 .btn-danger:hover{background:#C93B40}
 .btn-danger[disabled]{background:rgba(229,72,77,.45);color:#fff;cursor:not-allowed}
 
-/* Tertiary — no stroke, blue text (tighter padding since there's no fill) */
-.btn-tertiary{background:transparent;color:#007CFF;padding:0 16px;min-width:72px}
-.btn-tertiary:hover{background:rgba(0,124,255,.05)}
-.btn-tertiary[disabled]{color:rgba(0,124,255,.25);cursor:not-allowed}
+/* Tertiary — ghost, neutral text (was blue; reserve blue for true links) */
+.btn-tertiary{background:transparent;color:var(--p-text);padding:0 16px;min-width:72px}
+.btn-tertiary:hover{background:var(--p-surface-tint)}
+.btn-tertiary[disabled]{color:var(--p-placeholder);cursor:not-allowed}
 
 /* Neutral — gray stroke, dark text; for secondary actions beside a primary (e.g. Batch Actions) */
 .btn-neutral{background:#fff;color:#364153;border-color:#D1D5DC}
 .btn-neutral:hover{background:#F3F4F6}
 .btn-neutral[disabled]{background:#fff;color:#99A1AF;border-color:#E5E7EB;cursor:not-allowed}
 
-/* Foundation neo — seldom, white fill only */
-.btn-neo{display:inline-flex;align-items:center;justify-content:center;height:39px;padding:0 30px;min-width:120px;border-radius:4px;background:#fff;color:#000;border:1px solid #000;box-shadow:2px 2px 0 0 #000;font:500 16px/1 Inter;letter-spacing:.05em;cursor:pointer}
-.btn-neo:hover{background:#F0F7FF}
+/* Foundation neo — adaptive offset shadow + tactile press; brand moments only */
+.btn-neo{display:inline-flex;align-items:center;justify-content:center;height:39px;padding:0 30px;min-width:120px;border-radius:4px;background:var(--p-surface);color:var(--p-ink);border:1px solid var(--p-ink);box-shadow:var(--shadow-brutal);font:500 16px/1 Inter;letter-spacing:.05em;cursor:pointer;transition:transform .08s ease,box-shadow .08s ease,background .12s}
+.btn-neo:hover{background:var(--p-surface-tint)}
+.btn-neo:active{transform:translate(2px,2px);box-shadow:0 0 0 0 var(--p-ink)}  /* collapses onto its shadow */
+
+/* Focus ring — keyboard‑only, stays BLUE (focus = state inside content, not chrome) */
+.btn:focus-visible{outline:none;box-shadow:0 0 0 2px var(--p-surface),0 0 0 4px var(--p-primary)}
+.btn-neo:focus-visible{outline:none;box-shadow:var(--shadow-brutal),0 0 0 2px var(--p-surface),0 0 0 4px var(--p-primary)}
 
 /* ════════ Table row actions ════════ */
 .mi{font-family:'Material Symbols Sharp';line-height:1;font-feature-settings:'liga';display:inline-flex;align-items:center}
@@ -53,15 +58,15 @@ body{margin:0;padding:20px;background:var(--p-shell)}
 .split .caret{display:inline-flex;align-items:center;justify-content:center;width:26px;cursor:pointer;border:none;background:transparent;color:inherit}
 .split .main .mi{font-size:15px}
 .split .caret .mi{font-size:17px}
-.split.primary{background:#007CFF;color:#fff}
-.split.primary .caret{border-left:1px solid rgba(255,255,255,.28)}
-.split.primary .main:hover,.split.primary .caret:hover{background:rgba(255,255,255,.14)}
+.split.primary{background:var(--p-action);color:var(--p-action-fg)}
+.split.primary .caret{border-left:1px solid rgba(127,127,127,.32)}  /* neutral divider survives both fills */
+.split.primary .main:hover,.split.primary .caret:hover{background:var(--p-action-hover)}
 .split.error{background:#E5484D;color:#fff}
 .split.error .caret{border-left:1px solid rgba(255,255,255,.32)}
 .split.error .main:hover,.split.error .caret:hover{background:rgba(255,255,255,.14)}
-.split.secondary{background:#fff;color:#007CFF;border:1px solid #007CFF}
-.split.secondary .caret{border-left:1px solid #007CFF}
-.split.secondary .main:hover,.split.secondary .caret:hover{background:rgba(0,124,255,.06)}
+.split.secondary{background:var(--p-surface);color:var(--p-ink);border:1px solid var(--p-ink)}
+.split.secondary .caret{border-left:1px solid var(--p-ink)}
+.split.secondary .main:hover,.split.secondary .caret:hover{background:var(--p-surface-tint)}
 .split.open .caret{background:rgba(0,0,0,.10)}
 
 /* Menu popover (the dropdown the caret opens; also used standalone by the kebab) */
@@ -78,6 +83,13 @@ body{margin:0;padding:20px;background:var(--p-shell)}
 .kebab{width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;color:var(--p-muted);cursor:pointer;border:none;background:transparent}
 .kebab:hover{background:rgba(0,0,0,.05);color:var(--p-text)}
 .kebab .mi{font-size:20px}
+
+/* Neutral icon button — repeated per-row action (e.g. single-product coverage Map). Soft-gray
+   border keeps the affordance visible at rest even over the row-hover tint; glyph is INK, not blue. */
+.btn-iconaction{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:32px;min-width:32px;padding:0;border-radius:6px;border:1px solid var(--p-border-strong);background:var(--p-surface);color:var(--p-ink);cursor:pointer;font:500 13px/1 Inter}
+.btn-iconaction.labeled{padding:0 10px}
+.btn-iconaction:hover{background:var(--p-surface-tint)}
+.btn-iconaction .mi{font-size:18px}
 
 /* In-row demo table */
 .tbl{border:1px solid var(--p-border);border-radius:8px;overflow:hidden;max-width:660px;margin-top:6px}
@@ -105,14 +117,19 @@ code{font:400 11px 'Geist Mono',monospace;background:#F3F4F6;padding:1px 5px;bor
 .notes p{margin:0 0 8px}
 </style></head><body>
 
-<div class="lbl">Primary — blue fill</div>
+<div style="max-width:680px;margin:0 0 22px;padding:12px 14px;border:1px solid var(--p-border);border-radius:8px;background:var(--p-surface)">
+  <p style="margin:0 0 6px;font:600 13px/1.3 Inter;color:var(--p-ink)">Ink‑forward color rule</p>
+  <p style="margin:0;font:400 13px/1.6 Inter;color:var(--p-text-2)">Primary actions and active navigation use <b style="color:var(--p-ink)">brand ink</b> (<code>--p-action</code> — near‑black in light, a white surface in dark). <b style="color:var(--p-ink)">Blue</b> (<code>--p-primary</code>) is reserved for links, focus, and selection inside content. <b style="color:var(--p-ink)">Focus rings stay blue</b> — focus is state inside content, not chrome.</p>
+</div>
+
+<div class="lbl">Primary — ink fill</div>
 <div class="row">
   <button class="btn btn-primary">Confirm</button>
   <button class="btn btn-primary">Save Changes</button>
   <button class="btn btn-primary" disabled>Finalize for Simulation</button>
 </div>
 
-<div class="lbl">Secondary — blue stroke</div>
+<div class="lbl">Secondary — ink stroke</div>
 <div class="row">
   <button class="btn btn-secondary">Edit Section</button>
   <button class="btn btn-secondary">Save as Draft</button>
@@ -132,7 +149,7 @@ code{font:400 11px 'Geist Mono',monospace;background:#F3F4F6;padding:1px 5px;bor
   <button class="btn btn-danger" disabled>Delete Permanently</button>
 </div>
 
-<div class="lbl">Tertiary — ghost, blue text</div>
+<div class="lbl">Tertiary — ghost, neutral text</div>
 <div class="row">
   <button class="btn btn-tertiary">Go Back</button>
   <button class="btn btn-tertiary">Show More</button>
@@ -217,6 +234,23 @@ code{font:400 11px 'Geist Mono',monospace;background:#F3F4F6;padding:1px 5px;bor
     <button class="kebab" style="background:rgba(0,0,0,.05);color:var(--p-text)"><span class="mi">more_horiz</span></button>
     <span style="font:400 13px Inter;color:var(--p-muted)">← hover / open</span>
   </div>
+</div>
+
+<!-- ════════════════ NEUTRAL ICON ACTION (trigger) ════════════════ -->
+<div class="section">
+  <p class="h">Trigger · Neutral icon button (repeated per-row action)</p>
+  <p class="d">For a <b>repeated, per-row</b> action — e.g. the single-product <b>coverage Map</b> button on every row — use a <b>DS neutral icon button</b>: <code>32×32</code>, <code>radius 6px</code>, a persistent soft-gray <code>--p-border-strong</code> border, <code>--p-surface</code> fill, and an <b>ink glyph</b> (not blue — it's an action, not a link). Hover tints <code>--p-surface-tint</code>. Add a short verb label for discoverability.</p>
+  <div class="row">
+    <button class="btn-iconaction" title="Coverage map"><span class="mi">map</span></button>
+    <span style="font:400 13px Inter;color:var(--p-muted)">← icon only</span>
+    <span style="width:24px"></span>
+    <button class="btn-iconaction labeled"><span class="mi">map</span> Map</button>
+    <span style="font:400 13px Inter;color:var(--p-muted)">← icon + verb</span>
+    <span style="width:24px"></span>
+    <button class="btn-iconaction" style="background:var(--p-surface-tint)" title="Coverage map"><span class="mi">map</span></button>
+    <span style="font:400 13px Inter;color:var(--p-muted)">← hover</span>
+  </div>
+  <p class="cap">Why neutral (not ghost / secondary / primary): the soft-gray border stays visible at rest <i>over the row-hover tint</i>, without the weight of a black secondary border ×N rows or the over-emphasis of a filled primary. Reserve secondary/primary for singular, page-level actions.</p>
 </div>
 
 <!-- ════════════════ IN A ROW ════════════════ -->
