@@ -113,16 +113,6 @@ function MS({ name, size = 20, color = 'currentColor' }) {
     : <span style={{ display:'inline-flex', width:size, height:size, flexShrink:0 }} />;
 }
 
-/* ── Mini toggle ── */
-function OpsToggle({ checked, onChange }) {
-  return (
-    <span role="switch" aria-checked={checked} onClick={e => { e.stopPropagation(); onChange(!checked); }}
-      style={{ position:'relative', display:'inline-flex', alignItems:'center', width:36, height:20, borderRadius:999, cursor:'pointer', flexShrink:0, background: checked ? 'rgba(0,124,255,0.15)' : 'rgba(0,0,0,0.10)', transition:'background 150ms' }}>
-      <span style={{ position:'absolute', left: checked ? 18 : 2, width:16, height:16, borderRadius:'50%', background: checked ? '#007CFF' : '#fff', boxShadow:'0 1px 3px rgba(0,0,0,.18)', transition:'left 150ms ease-out, background 150ms' }} />
-    </span>
-  );
-}
-
 /* ── Constants ── */
 const BRAND_BLUE   = '#007CFF';
 const INK          = '#101828';
@@ -200,7 +190,6 @@ function FlyoutPanel({ item, currentRoute, onSelect, style = {} }) {
 ══════════════════════════════════════════════════ */
 function Sidebar({ collapsed, onToggleCollapse, currentRoute, onNavigate, interactive = false, highlightItemId = null }) {
   const [expanded, setExpanded] = React.useState({ insights:false, sales:true, orchestration:false });
-  const [opsTools, setOpsTools]   = React.useState(true);
   const [flyout, setFlyout]       = React.useState(null); // { item, x, y }
   const closeRef  = React.useRef(null);
 
@@ -374,10 +363,12 @@ function Sidebar({ collapsed, onToggleCollapse, currentRoute, onNavigate, intera
       {/* ── Utility nav ── */}
       <div style={{ flexShrink:0, borderTop:`1px solid ${BORDER_LIGHT}`, padding: collapsed ? '8px 12px 16px' : '8px 16px 16px 16px' }}>
         <ul style={{ margin:0, padding:0, listStyle:'none', display:'flex', flexDirection:'column', gap:1 }}>
-          {!collapsed && <UtilRow icon="engineering" label="Ops Tools" trailing={<OpsToggle checked={opsTools} onChange={setOpsTools} />} />}
-          <UtilRow icon="public"  label="Help Center" external />
-          <UtilRow icon="person"  label="Greater CBC" />
-          <UtilRow icon="logout"  label="Sign Out" />
+          <UtilRow icon="help_center"        label="Help Center" external />
+          <UtilRow icon="history"            label="Audit Log" />
+          <UtilRow icon="settings"           label="Settings" />
+          <UtilRow icon="contrast"           label="System Theme" trailing={<span style={{ font:'500 11px/1 Inter', color:'var(--p-placeholder)', textTransform:'uppercase', letterSpacing:'.04em' }}>Auto</span>} />
+          <UtilRow icon="person_raised_hand" label="Greater CBC" />
+          <UtilRow icon="logout"             label="Sign Out" />
         </ul>
       </div>
 
@@ -399,8 +390,8 @@ function App() {
     { num:3, name:'Parent Nav Row',      desc:'Icon + label + chevron. Click toggles children or navigates.' },
     { num:4, name:'Child Nav Item',      desc:'Indented 34px. Solid ink (--p-action) fill when active.' },
     { num:5, name:'Collapse Toggle',     desc:'26px circle, overlapping the right edge at top:28px, right:−13px.' },
-    { num:6, name:'Ops Tools Toggle',    desc:'Mini switch in bottom utility area. Hidden when collapsed.' },
-    { num:7, name:'Utility Links',       desc:'Help Center (external), account, sign out. Icon-only collapsed.' },
+    { num:6, name:'Theme Toggle',        desc:'Cycles Light → Dark → System (light_mode / dark_mode / contrast) in the bottom utility area.' },
+    { num:7, name:'Utility Links',       desc:'Help Center (external), Audit Log, Settings, account, sign out. Icon-only when collapsed.' },
     { num:8, name:'Collapsed Flyout',    desc:'Hover a parent icon → floating panel reveals all sub-items without expanding the rail. 150ms grace period lets mouse travel from icon to panel.', highlight: true },
   ];
 
