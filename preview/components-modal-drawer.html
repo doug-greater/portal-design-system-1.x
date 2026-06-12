@@ -116,6 +116,26 @@ code { font: 400 11px 'Geist Mono', monospace; background: #F3F4F6; padding: 1px
 </div>
 
 <div>
+  <div class="sec">Modal · confirm — tone="general" (1.7, purple concept)</div>
+  <div class="stage center" style="background:var(--p-genstock-tint)">
+    <div class="modal confirm">
+      <div class="confirm-body">
+        <div class="confirm-title">
+          <span class="confirm-icon" style="background:var(--p-genstock-tint)"><span class="mi" style="font-size:20px;color:var(--p-genstock)">shuffle</span></span>
+          <h2 class="confirm-h">Mark as General Stock Area?</h2>
+        </div>
+        <p class="confirm-p">Products can’t be placed in a General Stock Area — it tracks variable, unmerchandised inventory. Existing placements in this section will be cleared.</p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-primary">Mark as General Stock</button>
+      </div>
+    </div>
+  </div>
+  <p style="font:400 12px/1.5 Inter;color:var(--p-muted);margin:6px 0 0">The <code>tone="general"</code> icon-disc uses the purple concept tokens (<code>--p-genstock</code> on <code>--p-genstock-tint</code>) with <code>icon="shuffle"</code> — alongside the existing danger / warning / success / primary tones.</p>
+</div>
+
+<div>
   <div class="sec">Side sheet / drawer · right-anchored quick view (md · 460px)</div>
   <div class="stage right">
     <div class="drawer">

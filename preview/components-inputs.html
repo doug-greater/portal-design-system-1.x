@@ -141,6 +141,24 @@ body { margin: 0; padding: 20px 24px; background: #fff; font: 400 14px Inter; co
 </head>
 <body>
 
+<!-- ── CLEARABLE ✕ + SEARCH HINT (1.7) ── -->
+<div>
+  <div class="sec">Clearable ✕ + search-syntax hint (1.7)</div>
+  <div class="row">
+    <div style="position:relative;width:280px">
+      <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-family:'Material Symbols Sharp';font-size:18px;line-height:1;color:var(--p-placeholder)">search</span>
+      <input value="pinot noir" readonly style="width:100%;height:40px;box-sizing:border-box;padding:0 36px;border:1px solid var(--p-border-strong);border-radius:6px;font:400 14px Inter;color:var(--p-ink)">
+      <button title="Clear search" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:transparent;cursor:pointer;color:var(--p-muted);display:flex"><span style="font-family:'Material Symbols Sharp';font-size:18px;line-height:1">close</span></button>
+    </div>
+    <div style="position:relative;width:280px">
+      <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-family:'Material Symbols Sharp';font-size:18px;line-height:1;color:var(--p-placeholder)">search</span>
+      <input placeholder="Search products" readonly style="width:100%;height:40px;box-sizing:border-box;padding:0 36px;border:1px solid var(--p-border-strong);border-radius:6px;font:400 14px Inter;color:var(--p-ink)">
+      <span title="Search tips — wine red (AND) · wine OR beer · &quot;red wine&quot; phrase · ignores case &amp; accents" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--p-placeholder);cursor:help;display:flex"><span style="font-family:'Material Symbols Sharp';font-size:18px;line-height:1">help</span></span>
+    </div>
+  </div>
+  <p style="margin:10px 0 0;font:400 13px/1.5 Inter;color:var(--p-text-2);max-width:640px">The <b>✕</b> auto-appears on any <code>icon="search"</code> field once it has a value (clears on click). When empty, a subtle <b>?</b> reveals the query grammar on hover — AND by default · uppercase <b>OR</b> · <b>"exact phrase"</b> · case/accent-insensitive. They share the right slot, and the input's right padding bumps to 32px while either shows.</p>
+</div>
+
 <!-- ── FLOATING-LABEL FIELD ── -->
 <div>
   <div class="sec">Field · states</div>

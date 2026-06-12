@@ -1,0 +1,99 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,400,0..1,0">
+<style>
+body { margin: 0; padding: 0; background: var(--p-shell); font: 400 14px Inter; color: var(--p-ink); }
+.mi { font-family: 'Material Symbols Sharp'; line-height: 1; display: inline-flex; align-items: center; vertical-align: middle; }
+
+/* the dimmed stage standing in for the z-12000 backdrop */
+.stage { min-height: 560px; padding: 56px 24px; background: var(--p-backdrop, rgba(16,24,40,.45)); display: flex; justify-content: center; align-items: flex-start; }
+
+.cmdk { width: 560px; max-width: 100%; background: var(--p-surface); border: 1px solid var(--p-border); border-radius: 12px; box-shadow: var(--shadow-float); overflow: hidden; }
+
+/* search field */
+.cmdk-field { position: relative; display: flex; align-items: center; height: 52px; padding: 0 14px; border-bottom: 1px solid var(--p-border); gap: 10px; }
+.cmdk-field .lead { font-size: 20px; color: var(--p-placeholder); }
+.cmdk-field input { flex: 1; border: none; outline: none; background: transparent; font: 400 16px Inter; color: var(--p-ink); }
+.cmdk-field .clear { border: none; background: transparent; cursor: pointer; color: var(--p-muted); display: flex; padding: 4px; }
+
+.cmdk-list { max-height: 380px; overflow: auto; padding: 6px 0; }
+.glabel { font: 500 10px/1 Inter; letter-spacing: .08em; text-transform: uppercase; color: var(--p-muted); padding: 12px 16px 6px; }
+.opt { display: flex; align-items: center; gap: 12px; padding: 8px 14px; cursor: pointer; }
+.opt.on { background: var(--p-action); }                 /* active row = ink (keyboard cursor / hover) */
+.opt.on .nm, .opt.on .sub, .opt.on .ic { color: var(--p-action-fg) !important; }
+.opt .ic { color: var(--p-text-2); font-size: 20px; flex-shrink: 0; }
+.opt .nm { font: 500 14px Inter; color: var(--p-ink); }
+.opt .sub { font: 400 12px Inter; color: var(--p-muted); margin-left: 6px; }
+.opt .rel { margin-left: auto; display: inline-flex; gap: 6px; flex-shrink: 0; }
+.relchip { display: inline-flex; align-items: center; gap: 3px; height: 19px; padding: 0 7px; border-radius: 999px; background: var(--p-primary-tint); color: var(--p-primary-ink); font: 600 10.5px/1 Inter; white-space: nowrap; }
+.relchip .mi { font-size: 12px; }
+.opt.on .relchip { background: rgba(255,255,255,.18); color: var(--p-action-fg); }
+
+.cmdk-foot { display: flex; align-items: center; gap: 16px; padding: 10px 16px; border-top: 1px solid var(--p-border); background: var(--p-surface-alt); font: 400 12px Inter; color: var(--p-muted); }
+.kbd { font: 500 11px 'Geist Mono', monospace; background: var(--p-surface); border: 1px solid var(--p-border-strong); border-radius: 4px; padding: 1px 5px; color: var(--p-text-2); }
+
+.cap { max-width: 720px; margin: 18px auto 0; padding: 0 24px; }
+.notes { font: 400 13px/1.7 Inter; color: var(--p-text-2); }
+.notes b { color: var(--p-ink); font-weight: 600; }
+code { font: 400 12px 'Geist Mono', monospace; background: var(--p-surface-tint); padding: 1px 5px; border-radius: 4px; color: var(--p-text); }
+</style></head>
+<body>
+
+<div class="stage">
+  <div class="cmdk" data-testid="command-palette">
+    <div class="cmdk-field">
+      <span class="mi lead">search</span>
+      <input data-testid="command-palette-input" value="harbor" readonly>
+      <span class="mi" title="Search tips — AND by default · uppercase OR · &quot;phrase&quot; · ignores case/accents" style="color:var(--p-placeholder);cursor:help;font-size:18px">help</span>
+      <button class="clear" data-testid="command-palette-clear" title="Clear"><span class="mi" style="font-size:18px">close</span></button>
+    </div>
+    <div class="cmdk-list">
+      <div class="glabel">Accounts</div>
+      <div class="opt on">
+        <span class="mi ic">store</span>
+        <span class="nm"><mark class="gr-hl">Harbor</mark> Foods #1</span><span class="sub">Farmville · Grocery</span>
+        <span class="rel"><span class="relchip"><span class="mi">blur_medium</span>POD Plans</span><span class="relchip"><span class="mi">award_star</span>Store Promos</span></span>
+      </div>
+      <div class="opt">
+        <span class="mi ic">store</span>
+        <span class="nm"><mark class="gr-hl">Harbor</mark> Point Bar</span><span class="sub">Elizabeth City · Bar</span>
+        <span class="rel"><span class="relchip"><span class="mi">blur_medium</span>POD Plans</span></span>
+      </div>
+
+      <div class="glabel">Products</div>
+      <div class="opt">
+        <span class="mi ic">category</span>
+        <span class="nm"><mark class="gr-hl">Harbor</mark> Mist Pilsner</span><span class="sub">SKU-3318 · Beer</span>
+        <span class="rel"><span class="relchip"><span class="mi">blur_medium</span>POD Plans</span></span>
+      </div>
+
+      <div class="glabel">Store Promotions</div>
+      <div class="opt">
+        <span class="mi ic">award_star</span>
+        <span class="nm"><mark class="gr-hl">Harbor</mark> Summer Reset</span><span class="sub">42 accounts · 18 products</span>
+      </div>
+
+      <div class="glabel">Jump to</div>
+      <div class="opt"><span class="mi ic">category</span><span class="nm">In the Market</span></div>
+      <div class="opt"><span class="mi ic">blur_medium</span><span class="nm">POD Planner</span></div>
+      <div class="opt"><span class="mi ic">history</span><span class="nm">Audit Log</span></div>
+    </div>
+    <div class="cmdk-foot">
+      <span><span class="kbd">↑</span> <span class="kbd">↓</span> navigate</span>
+      <span><span class="kbd">↵</span> open</span>
+      <span><span class="kbd">esc</span> close</span>
+      <span style="margin-left:auto"><span class="kbd">⌘</span> <span class="kbd">K</span> to open</span>
+    </div>
+  </div>
+</div>
+
+<div class="cap">
+  <div class="notes">
+    <p><b>Command Palette (⌘K).</b> Global launcher opened with <b>⌘K / Ctrl-K</b> (or the sidebar "Search" button). Grouped, deep-linked results across Accounts, Products, Promotions, Plans, Users + page-jumps. Backdrop <b>z-index <code>12000</code></b> (top of the ladder, above modals at <code>10000</code>).</p>
+    <p>Uses the <b>Search Query Grammar</b> and <b><code>&lt;Highlight&gt;</code></b> on result titles/subtitles and page-jump labels. Each row carries the <b>entity icon</b> (§8 canon); Account/Product rows expose related <b>POD Plans</b> (<code>blur_medium</code>) and <b>Store Promos</b> (<code>award_star</code>) deep-link chips. The active row is the <b>ink</b> cursor (keyboard ↑↓ / hover).</p>
+    <p>In-field <b>clear ✕</b> (<code>command-palette-clear</code>) mirrors the <code>Input</code> clear, and the <b><code>?</code> hint</b> (<code>SEARCH_HINT</code>) renders its tooltip at <code>z={12001}</code> so it floats above the backdrop. Test ids: <code>command-palette</code> / <code>…-input</code>.</p>
+  </div>
+</div>
+
+</body></html>
