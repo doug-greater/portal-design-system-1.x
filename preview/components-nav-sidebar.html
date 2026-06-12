@@ -131,7 +131,7 @@ const GRAY_800     = '#1E2939';
 const BORDER_LIGHT = '#E5E7EB';
 
 const NAV_ITEMS = [
-  { id:'insights',     label:'Insights',     icon:'insights', children:[
+  { id:'insights',     label:'Insights',     icon:'line_axis', children:[
     { id:'business-weekly',     label:'Business Weekly' },
     { id:'daily-pulse',         label:'Daily Pulse' },
     { id:'account-spotlight',   label:'Account Spotlight' },
@@ -141,7 +141,7 @@ const NAV_ITEMS = [
     { id:'inventory-in-market', label:'Inventory in Market' },
     { id:'manager-view',        label:'Manager View' },
   ]},
-  { id:'sales',          label:'Sales',          icon:'paid',    children:[
+  { id:'sales',          label:'Sales',          icon:'ballot',  children:[
     { id:'planned-assignments', label:'Planned Assignments' },
     { id:'past-activity',       label:'Past Activity' },
   ]},
@@ -149,8 +149,8 @@ const NAV_ITEMS = [
     { id:'view-plans',       label:'View Plans' },
     { id:'visualize-impact', label:'Visualize Impact' },
   ]},
-  { id:'accounts', label:'Accounts', icon:'storefront', children:null },
-  { id:'users',    label:'Users',    icon:'group',      children:null },
+  { id:'accounts', label:'Accounts', icon:'store', children:null },
+  { id:'users',    label:'Users',    icon:'person',     children:null },
 ];
 
 /* ══════════════════════════════════════════════════
@@ -529,7 +529,7 @@ function App() {
               <div style={{ flex:1, background:'#F5F7FA', borderRadius:'0 12px 12px 0', position:'relative' }}>
                 {/* Leaf tooltip — Accounts is 3rd nav item, Y ≈ 76 + 3*46 = 214px */}
                 <div style={{ position:'absolute', left:6, top:206, zIndex:10 }}>
-                  <FlyoutPanel item={{ id:'accounts', label:'Accounts', icon:'storefront', children:null }} currentRoute="accounts" onSelect={() => {}} />
+                  <FlyoutPanel item={{ id:'accounts', label:'Accounts', icon:'store', children:null }} currentRoute="accounts" onSelect={() => {}} />
                 </div>
               </div>
             </div>
