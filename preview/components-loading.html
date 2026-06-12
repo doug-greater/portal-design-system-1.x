@@ -8,19 +8,19 @@ body { margin: 0; padding: 28px; background: #fff; font: 400 14px Inter; color: 
 .row { display: flex; gap: 28px; flex-wrap: wrap; align-items: center; }
 
 /* ── Spinner ── */
-.spin { display: inline-block; border-radius: 50%; border: 2.5px solid var(--p-border); border-top-color: var(--p-primary); animation: rot .7s linear infinite; }
+.spin { display: inline-block; border-radius: 50%; border: 2.5px solid var(--p-border); border-top-color: var(--p-ink); animation: rot .7s linear infinite; }  /* head = ink: near-black in light, white in dark — matches the ink primary */
 .spin.s16 { width: 16px; height: 16px; border-width: 2px; }
 .spin.s20 { width: 20px; height: 20px; }
 .spin.s24 { width: 24px; height: 24px; border-width: 3px; }
-.spin.onfill { border-color: rgba(255,255,255,.4); border-top-color: #fff; }
+.spin.onfill { border-color: color-mix(in srgb, currentColor 40%, transparent); border-top-color: currentColor; }  /* inside a fill: inherits parent fg so it contrasts in both themes */
 @keyframes rot { to { transform: rotate(360deg); } }
 .cap { font: 400 11px/1.4 'Geist Mono', monospace; color: var(--p-placeholder); margin-top: 8px; text-align: center; }
 .item { display: flex; flex-direction: column; align-items: center; }
 
 /* ── Button loading ── */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 24px; min-width: 96px; border-radius: 4px; font: 500 14px/1 Inter; border: 1px solid transparent; cursor: default; }
-.btn-primary { background: #007CFF; color: #fff; }
-.btn-primary.busy { background: rgba(0,124,255,.85); }
+.btn-primary { background: var(--p-action); color: var(--p-action-fg); }
+.btn-primary.busy { background: var(--p-action); opacity: .85; }
 .btn-neutral { background: #fff; color: #364153; border-color: #D1D5DC; }
 
 /* ── Skeleton ── */
@@ -50,7 +50,7 @@ code { font: 400 11px 'Geist Mono', monospace; background: #F3F4F6; padding: 1px
     <div class="item"><span class="spin s16"></span><div class="cap">16</div></div>
     <div class="item"><span class="spin s20"></span><div class="cap">20</div></div>
     <div class="item"><span class="spin s24"></span><div class="cap">24</div></div>
-    <div class="item"><span style="background:#007CFF;border-radius:6px;padding:8px;display:inline-flex"><span class="spin s20 onfill"></span></span><div class="cap">on-fill</div></div>
+    <div class="item"><span style="background:#007CFF;color:#fff;border-radius:6px;padding:8px;display:inline-flex"><span class="spin s20 onfill"></span></span><div class="cap">on-fill</div></div>
   </div>
 </div>
 
@@ -115,7 +115,7 @@ code { font: 400 11px 'Geist Mono', monospace; background: #F3F4F6; padding: 1px
 <div>
   <div class="sec">Rules</div>
   <div class="notes">
-    <p style="margin:0 0 6px"><b>Spinner:</b> 2.5px ring, track <code>--p-border</code>, head <code>--p-primary</code>, <code>0.7s</code> linear spin. On a colored fill use the <code>on-fill</code> variant (white head over 40% white track). Sizes 16 / 20 / 24.</p>
+    <p style="margin:0 0 6px"><b>Spinner:</b> 2.5px ring, track <code>--p-border</code>, head <code>--p-ink</code> (near‑black in light, white in dark — matches the ink primary), <code>0.7s</code> linear spin. Inside a filled button use the <code>on-fill</code> variant — the head inherits the button's foreground (<code>currentColor</code>), so it's <code>--p-action-fg</code> on the primary and white on danger, always contrasting the fill in both themes. Sizes 16 / 20 / 24.</p>
     <p style="margin:0 0 6px"><b>Prefer skeletons over spinners</b> for any layout whose shape is known — tables, stat rows, cards. They hold the page geometry so content doesn't jump. Reserve the bare spinner for unknown-shape or sub-second waits, and the inline spinner for in-place refreshes.</p>
     <p style="margin:0 0 6px"><b>Skeleton:</b> base <code>#EDEFF2</code>, a left-to-right white shimmer at <code>1.3s</code>. Each block mirrors the real element's size &amp; radius — text lines ~12–13px tall, pills 18px/999px, avatars circular. Render 3–6 placeholder rows, never a full page of them.</p>
     <p style="margin:0"><b>Motion:</b> respect <code>prefers-reduced-motion</code> — drop the shimmer to a static tint and the spinner to a 1s step rotation.</p>

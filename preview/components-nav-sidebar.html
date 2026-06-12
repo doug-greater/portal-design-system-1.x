@@ -73,11 +73,11 @@
     from { opacity: 0; transform: translateX(-7px); }
     to   { opacity: 1; transform: translateX(0); }
   }
-  .gr-row:hover   { background: rgba(0,124,255,0.05) !important; }
-  .gr-sub-btn:not([disabled]):hover .gr-sub[data-on="0"] { background: rgba(0,124,255,0.05) !important; }
-  .gr-util:hover  { background: #F3F4F6 !important; }
-  .gr-collapse-btn:hover { background: #F3F4F6 !important; }
-  .flyout-child:hover { background: #EFF6FF !important; }
+  .gr-row:not(.is-active):hover   { background: var(--p-surface-tint) !important; }  /* neutral hover, never blue */
+  .gr-sub-btn:not([disabled]):hover .gr-sub[data-on="0"] { background: var(--p-surface-tint) !important; }
+  .gr-util:hover  { background: var(--p-surface-tint) !important; }
+  .gr-collapse-btn:hover { background: var(--p-surface-tint) !important; }
+  .flyout-child:hover { background: var(--p-surface-tint) !important; }
 </style>
 </head>
 <body>
@@ -182,8 +182,8 @@ function FlyoutPanel({ item, currentRoute, onSelect, style = {} }) {
                 <button
                   className={on ? '' : 'flyout-child'}
                   onClick={() => onSelect?.(c.id)}
-                  style={{ width:'100%', border:'none', padding:'7px 14px', background: on ? '#007CFF' : 'transparent', color: on ? '#fff' : '#101828', font:`${on ? 600 : 400} 13px/20px var(--font-sans)`, cursor:'pointer', textAlign:'left', transition:'background 100ms', display:'flex', alignItems:'center', gap:8 }}>
-                  {on && <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(255,255,255,.7)', flexShrink:0 }} />}
+                  style={{ width:'100%', border:'none', padding:'7px 14px', background: on ? 'var(--p-action)' : 'transparent', color: on ? 'var(--p-action-fg)' : '#101828', font:`${on ? 600 : 400} 13px/20px var(--font-sans)`, cursor:'pointer', textAlign:'left', transition:'background 100ms', display:'flex', alignItems:'center', gap:8 }}>
+                  {on && <span style={{ width:4, height:4, borderRadius:'50%', background:'var(--p-action-fg)', opacity:.7, flexShrink:0 }} />}
                   {c.label}
                 </button>
               </li>
@@ -226,7 +226,8 @@ function Sidebar({ collapsed, onToggleCollapse, currentRoute, onNavigate, intera
     const isOpen      = expanded[item.id];
     const hasKids     = !!item.children;
     const groupActive = hasKids && item.children.some(c => c.id === currentRoute);
-    const isActive    = (!hasKids && currentRoute === item.id) || groupActive;
+    const leafActive  = !hasKids && currentRoute === item.id;   // a leaf nav row that IS the route → solid ink
+    const isActive    = leafActive || groupActive;
     const isFlyoutOpen = flyout?.item?.id === item.id;
     const isHighlighted = !interactive && highlightItemId === item.id;
 
@@ -247,10 +248,10 @@ function Sidebar({ collapsed, onToggleCollapse, currentRoute, onNavigate, intera
             <div style={{
               display:'flex', alignItems:'center', justifyContent:'center',
               width:40, height:40, margin:'0 auto', borderRadius:6,
-              background: isActive ? 'rgba(0,124,255,0.10)' : (isFlyoutOpen || isHighlighted) ? 'rgba(0,124,255,0.08)' : 'transparent',
+              background: isActive ? 'var(--p-action)' : (isFlyoutOpen || isHighlighted) ? 'var(--p-surface-tint)' : 'transparent',
               transition:'background 100ms',
             }}>
-              <MS name={item.icon} size={22} color={isActive || isFlyoutOpen || isHighlighted ? BRAND_BLUE : '#364153'} />
+              <MS name={item.icon} size={22} color={isActive ? 'var(--p-action-fg)' : '#364153'} />
             </div>
           </button>
         </li>
@@ -260,9 +261,9 @@ function Sidebar({ collapsed, onToggleCollapse, currentRoute, onNavigate, intera
     return (
       <li style={{ listStyle:'none' }}>
         <button onClick={handleClick} style={{ width:'100%', border:'none', background:'transparent', padding:0, cursor: interactive ? 'pointer' : 'default' }}>
-          <div className="gr-row" style={{ display:'flex', alignItems:'center', padding:'8px 8px', borderRadius:6, gap:10, transition:'background 100ms', minWidth:0 }}>
-            <MS name={item.icon} size={20} color={isActive ? BRAND_BLUE : '#364153'} />
-            <span style={{ flex:1, minWidth:0, textAlign:'left', font:'400 14px/1.25 var(--font-sans)', color: isActive ? BRAND_BLUE : INK, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{item.label}</span>
+          <div className={'gr-row' + (leafActive ? ' is-active' : '')} style={{ display:'flex', alignItems:'center', padding:'8px 8px', borderRadius:6, gap:10, transition:'background 100ms', minWidth:0, background: leafActive ? 'var(--p-action)' : groupActive ? 'var(--p-surface-tint)' : 'transparent' }}>
+            <MS name={item.icon} size={20} color={leafActive ? 'var(--p-action-fg)' : '#364153'} />
+            <span style={{ flex:1, minWidth:0, textAlign:'left', font:'400 14px/1.25 var(--font-sans)', color: leafActive ? 'var(--p-action-fg)' : INK, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{item.label}</span>
             {hasKids && (
               <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:20, height:20, transform: isOpen ? 'rotate(180deg)' : 'none', transition:'transform 200ms' }}>
                 <MS name="expand_more" size={16} color="#6A7282" />
@@ -278,7 +279,7 @@ function Sidebar({ collapsed, onToggleCollapse, currentRoute, onNavigate, intera
                 <li key={c.id}>
                   <button className="gr-sub-btn" onClick={() => interactive && onNavigate?.(c.id)}
                     style={{ width:'100%', border:'none', padding:0, cursor: interactive ? 'pointer' : 'default', background:'transparent' }}>
-                    <div className="gr-sub" data-on={on ? '1' : '0'} style={{ display:'flex', alignItems:'center', padding:'6px 8px 6px 34px', borderRadius:6, background: on ? BRAND_BLUE : 'transparent', color: on ? '#fff' : GRAY_800, font:`${on ? 500 : 400} 13px/20px var(--font-sans)`, transition:'background 100ms', minHeight:30 }}>
+                    <div className="gr-sub" data-on={on ? '1' : '0'} style={{ display:'flex', alignItems:'center', padding:'6px 8px 6px 34px', borderRadius:6, background: on ? 'var(--p-action)' : 'transparent', color: on ? 'var(--p-action-fg)' : GRAY_800, font:`${on ? 500 : 400} 13px/20px var(--font-sans)`, transition:'background 100ms', minHeight:30 }}>
                       {c.label}
                     </div>
                   </button>
@@ -396,7 +397,7 @@ function App() {
     { num:1, name:'Logo / Wordmark',     desc:'Full logotype expanded; crow mark collapsed. Links to home.' },
     { num:2, name:'Org Header',          desc:'Org name + city selector. Hidden when collapsed.' },
     { num:3, name:'Parent Nav Row',      desc:'Icon + label + chevron. Click toggles children or navigates.' },
-    { num:4, name:'Child Nav Item',      desc:'Indented 34px. Solid #007CFF fill when active.' },
+    { num:4, name:'Child Nav Item',      desc:'Indented 34px. Solid ink (--p-action) fill when active.' },
     { num:5, name:'Collapse Toggle',     desc:'26px circle, overlapping the right edge at top:28px, right:−13px.' },
     { num:6, name:'Ops Tools Toggle',    desc:'Mini switch in bottom utility area. Hidden when collapsed.' },
     { num:7, name:'Utility Links',       desc:'Help Center (external), account, sign out. Icon-only collapsed.' },
@@ -411,8 +412,8 @@ function App() {
     { label:'Background',         value:'#FFFFFF' },
     { label:'Border-right',       value:'1px solid #E5E7EB' },
     { label:'Nav item height',    value:'40px (parent), 30px (child)' },
-    { label:'Active child bg',    value:'#007CFF' },
-    { label:'Group hover bg',     value:'rgba(0,124,255,.05)' },
+    { label:'Active child bg',    value:'var(--p-action) · ink' },
+    { label:'Group hover bg',     value:'var(--p-surface-tint)' },
     { label:'Font — parent',      value:'Inter 400 14px' },
     { label:'Font — child',       value:'Inter 400/500 13px' },
     { label:'Icon set',           value:'Material Symbols Sharp 20px' },
@@ -492,7 +493,7 @@ function App() {
                 <span style={{ font:'400 12px var(--font-sans)', color:'var(--p-placeholder)', textAlign:'center', padding:'0 16px' }}>page content</span>
               </div>
             </div>
-            <p style={{ margin:0, font:'400 12px/1.5 var(--font-sans)', color:'var(--p-muted)', maxWidth:252 }}>Icon tints blue. Flyout opens immediately on hover.</p>
+            <p style={{ margin:0, font:'400 12px/1.5 var(--font-sans)', color:'var(--p-muted)', maxWidth:252 }}>Icon tile tints neutral. Flyout opens immediately on hover.</p>
           </div>
 
           {/* Arrow */}
@@ -514,7 +515,7 @@ function App() {
               </div>
             </div>
             <p style={{ margin:0, font:'400 12px/1.5 var(--font-sans)', color:'var(--p-muted)', maxWidth:420 }}>
-              Flyout lists all sub-items. Active item highlighted in blue. Mouse can travel from icon to panel — 150ms grace period prevents accidental closure. Click to navigate; flyout closes.
+              Flyout lists all sub-items. Active item highlighted in ink. Mouse can travel from icon to panel — 150ms grace period prevents accidental closure. Click to navigate; flyout closes.
             </p>
           </div>
 

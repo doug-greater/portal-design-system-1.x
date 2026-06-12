@@ -28,7 +28,7 @@ body { margin: 0; padding: 28px; background: #fff; font: 400 14px Inter; color: 
 .pager { display: inline-flex; align-items: center; gap: 4px; }
 .pg { min-width: 30px; height: 30px; padding: 0 8px; border-radius: 6px; border: 1px solid transparent; background: transparent; display: inline-flex; align-items: center; justify-content: center; font: 500 13px/1 Inter; color: var(--p-text); cursor: pointer; }
 .pg:hover { background: var(--p-surface-tint); }
-.pg.active { background: var(--p-primary); color: #fff; }
+.pg.active { background: var(--p-action); color: var(--p-action-fg); }  /* active page = ink (wayfinding); inverts in dark */
 .pg.nav { color: var(--p-muted); border: 1px solid var(--p-border-strong); background: #fff; }
 .pg.nav .mi { font-size: 18px; }
 .pg.disabled { color: var(--p-placeholder); cursor: default; }
@@ -103,7 +103,7 @@ code { font: 400 11px 'Geist Mono', monospace; background: #F3F4F6; padding: 1px
   <div class="sec">Rules</div>
   <div class="notes">
     <p style="margin:0 0 6px"><b>Footer bar:</b> attaches to the table's bottom (shares its border, <code>--p-surface-alt</code> fill, <code>border-radius: 0 0 8px 8px</code>). Left = result range <code>Showing 1–50 of 3,600</code> in <code>--p-muted</code> with bold figures; right = rows-per-page select + pager.</p>
-    <p style="margin:0 0 6px"><b>Pager:</b> 30px cells, <code>radius 6px</code>. Active page is a solid <code>--p-primary</code> chip; others are ghost (hover <code>--p-surface-tint</code>). Prev/next are bordered icon buttons that disable at the ends. Collapse long ranges with an ellipsis, always keeping first, last, and the current ±1.</p>
+    <p style="margin:0 0 6px"><b>Pager:</b> 30px cells, <code>radius 6px</code>. Active page is a solid <code>--p-action</code> (ink) chip — you navigate <i>to</i> a page, so it's wayfinding like the active tab, not selection; others are ghost (hover <code>--p-surface-tint</code>). The rows-per-page select keeps its blue focus ring (control focus stays blue). Prev/next are bordered icon buttons that disable at the ends. Collapse long ranges with an ellipsis, always keeping first, last, and the current ±1.</p>
     <p style="margin:0 0 6px"><b>Page size:</b> 25 / 50 / 100. Default 50 — matches the Filter Menu's 50-row search cap so the two never disagree.</p>
     <p style="margin:0 0 6px"><b>Paging vs. Load more:</b> use numbered paging for tables operators scan and jump around (Products, Accounts, Users). Use <i>Load More</i> for feed-like or append-only lists where position doesn't matter. Don't use both on one surface.</p>
     <p style="margin:0"><b>Numerals</b> use Geist Mono nowhere here — counts read as prose; only in-cell data stays mono.</p>

@@ -2,7 +2,7 @@
 body{margin:0;padding:28px;background:var(--p-shell);color:var(--p-text);display:flex;flex-direction:column;gap:26px}
 .mi{font-family:'Material Symbols Sharp';line-height:1;font-variation-settings:'GRAD' var(--ms-grad,0)}
 .sec{font:500 11px/1.2 'Geist Mono',monospace;color:var(--p-muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px}
-.ramp{display:grid;grid-template-columns:repeat(11,1fr);gap:8px}
+.ramp{display:grid;grid-template-columns:repeat(12,1fr);gap:8px}
 .rsw{height:54px;border-radius:6px;border:1px solid var(--p-border)}
 .rlbl{font:400 9px/1.3 'Geist Mono',monospace;color:var(--p-muted);margin-top:4px;text-align:center}
 .card{background:var(--p-surface);border:1px solid var(--p-border);border-radius:10px;box-shadow:var(--shadow-surface);padding:18px;max-width:520px}
@@ -16,7 +16,7 @@ body{margin:0;padding:28px;background:var(--p-shell);color:var(--p-text);display
 .c-success{background:var(--p-success-bg);color:var(--p-success-fg)}
 .banner{display:flex;align-items:center;gap:10px;background:var(--g-gold-10);color:var(--p-ink);border-radius:8px;padding:10px 12px;font:400 14px/1.4 Inter;max-width:520px}
 .btn{height:36px;padding:0 16px;border-radius:4px;font:500 14px Inter;cursor:pointer;border:1px solid transparent}
-.btn-primary{background:var(--p-primary);color:#0A0A0B;border-color:var(--p-primary)}
+.btn-primary{background:var(--p-action);color:var(--p-action-fg);border-color:var(--p-action)}
 .btn-secondary{background:var(--p-surface);color:var(--p-text);border-color:var(--p-border-strong)}
 .field{width:240px;height:36px;padding:0 12px;border:1px solid var(--p-border-strong);border-radius:4px;font:400 14px Inter;color:var(--p-ink);background:var(--p-surface);box-sizing:border-box}
 .field.dis{background:var(--p-surface-tint);color:var(--p-placeholder);cursor:not-allowed;position:relative}
@@ -40,6 +40,7 @@ body{margin:0;padding:28px;background:var(--p-shell);color:var(--p-text);display
     <div><div class="rsw" style="background:var(--p-text-2)"></div><div class="rlbl">text-2</div></div>
     <div><div class="rsw" style="background:var(--p-text)"></div><div class="rlbl">text</div></div>
     <div><div class="rsw" style="background:var(--p-primary)"></div><div class="rlbl">primary</div></div>
+    <div><div class="rsw" style="background:var(--p-action)"></div><div class="rlbl">action</div></div>
   </div>
 </div>
 
@@ -64,6 +65,8 @@ body{margin:0;padding:28px;background:var(--p-shell);color:var(--p-text);display
     </span>
   </div>
 </div>
+
+<div class="note"><b>Ink‑forward inversion.</b> In dark mode the primary action inverts to a <b>white surface with near‑black text</b> (the <code>Save Changes</code> button above, and the <code>action</code> swatch in the ramp) — driven by <code>--p-action</code> / <code>--p-action-fg</code>. The same inversion carries the active nav row, active tab, active wizard step, and active pagination page, since all of them reference <code>--p-action</code>. Blue (<code>--p-primary</code>) stays blue for links / focus / selection.</div>
 
 <div class="note">Condition Palette A (dark, map-tuned) is shown in <code>colors-conditions.html</code>; the dark Coverage-Map basemap + overlay overrides are in <code>maps.css</code> / <code>brand-maps.html</code>.</div>
 

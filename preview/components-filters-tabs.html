@@ -49,7 +49,7 @@ body{margin:0;padding:24px;background:var(--p-shell);color:var(--p-ink);font-fam
 .foot{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--p-border);background:var(--p-surface-alt)}
 .foot .fc{font:400 13px Inter;color:var(--p-muted)}
 .btn-ghost{background:transparent;border:none;color:#007CFF;font:500 14px/1 Inter;cursor:pointer;padding:0 12px;height:36px}
-.btn-primary{background:#007CFF;border:none;color:#fff;font:500 14px/1 Inter;cursor:pointer;padding:0 18px;height:36px;border-radius:4px}
+.btn-primary{background:var(--p-action);border:none;color:var(--p-action-fg);font:500 14px/1 Inter;cursor:pointer;padding:0 18px;height:36px;border-radius:4px}
 
 /* Checkbox */
 .cb{width:18px;height:18px;border-radius:3px;border:1.5px solid var(--p-border-strong);background:#fff;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
@@ -58,8 +58,8 @@ body{margin:0;padding:24px;background:var(--p-shell);color:var(--p-ink);font-fam
 /* Tabs (kept) */
 .ptabs{display:flex;gap:12px;border-bottom:1px solid var(--p-border);padding:0 4px}
 .ptab{padding:14px 16px;font:600 15px/1 Inter;color:#4A5565;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;letter-spacing:-0.005em;background:transparent;border-left:none;border-right:none;border-top:none}
-.ptab.on{color:#007CFF;border-bottom-color:#007CFF}
-.ptab .ct{font:500 11px 'Geist Mono',monospace;color:#007CFF;background:rgba(0,124,255,.12);padding:1px 6px;border-radius:999px;margin-left:8px}
+.ptab.on{color:var(--p-ink);border-bottom-color:var(--p-ink)}  /* active tab = ink (wayfinding) */
+.ptab .ct{font:500 11px 'Geist Mono',monospace;color:var(--p-text);background:var(--p-surface-tint);padding:1px 6px;border-radius:999px;margin-left:8px}  /* active count badge = neutral (filter badges stay blue) */
 .ptab .ct.muted{background:var(--g-off-white);color:var(--p-muted)}
 .cols{display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap}
 </style></head><body>
@@ -72,7 +72,7 @@ body{margin:0;padding:24px;background:var(--p-shell);color:var(--p-ink);font-fam
     <span class="token"><span class="b"><span class="lab">Account:</span><span class="val">240 selected</span></span><span class="x"><span class="mi">close</span></span></span>
     <button class="clear-all">Clear All</button>
   </div>
-  <p class="note">One <b>Filters</b> button replaces a dropdown-per-column. Active filters surface as removable <b>tokens</b> (click body to reopen that attribute, ✕ to clear just it). The button shows a total-active-count badge and turns primary whenever any filter is set. Bar stays compact no matter how many columns are filterable.</p>
+  <p class="note">One <b>Filters</b> button replaces a dropdown-per-column. Active filters surface as removable <b>tokens</b> (click body to reopen that attribute, ✕ to clear just it). The button shows a total-active-count badge and takes on the active‑filter (blue) state whenever any filter is set — filters are selection/state, so they stay blue. Bar stays compact no matter how many columns are filterable.</p>
 </div>
 
 <div>
@@ -147,7 +147,7 @@ body{margin:0;padding:24px;background:var(--p-shell);color:var(--p-ink);font-fam
     <button class="ptab on">Products in Market<span class="ct">64</span></button>
     <button class="ptab">All Products<span class="ct muted">+7</span></button>
   </div>
-  <p class="note">Underlined page-level tabs. Counts use the same pill as filter badges. No leading icons.</p>
+  <p class="note">Underlined page-level tabs; the active tab is <b>ink</b> (wayfinding, like the active nav row). The active count uses a <b>neutral</b> pill — filter badges stay blue. No leading icons.</p>
 </div>
 
 </body></html>

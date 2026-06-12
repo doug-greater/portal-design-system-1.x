@@ -58,7 +58,7 @@ body{margin:0;padding:24px;background:var(--p-shell);font-family:Inter;color:var
   <div class="cell">
     <div class="cap">Crow · primary</div>
     <div class="stage"><img class="cr" src="../assets/greater-crow.png" alt="Greater crow"></div>
-    <div class="tag">App icon, favicon, avatar, loading states, tab icon — where space is tight.</div>
+    <div class="tag">Portrait master mark (718×844). Loading states and in-product moments where it sits free. For any <b>square</b> slot (favicon, app icon, avatar) use the squared <b>-icon</b> asset below — never this raw portrait, which a square slot stretches.</div>
   </div>
   <div class="cell dark center">
     <div class="cap">Crow · knockout</div>
@@ -67,6 +67,33 @@ body{margin:0;padding:24px;background:var(--p-shell);font-family:Inter;color:var
   </div>
 </div>
 
+<hr class="divider">
+
+<div class="section-label">Crow · square icon (favicons, app icons, avatars)</div>
+<div class="grid">
+  <div class="cell center">
+    <div class="cap">Square icon · 512 → 16</div>
+    <div class="stage" style="gap:20px;align-items:center;justify-content:center">
+      <img src="../assets/greater-crow-icon.png" alt="Greater crow icon" style="height:72px;width:72px">
+      <img src="../assets/greater-crow-icon.png" alt="" style="height:32px;width:32px">
+      <img src="../assets/greater-crow-icon.png" alt="" style="height:16px;width:16px">
+    </div>
+    <div class="tag"><b>greater-crow-icon.png</b> — aspect-preserved on a transparent square canvas, exported at 512. Crisp at 72 / 32 / 16 with no distortion. Ships with a multi-size <b>favicon.ico</b>.</div>
+  </div>
+  <div class="cell">
+    <div class="cap">Why squared</div>
+    <div class="stage" style="align-items:center;justify-content:center">
+      <div style="display:flex;gap:14px;align-items:center">
+        <div style="text-align:center"><img src="../assets/greater-crow.png" alt="" style="height:56px;width:56px;border:1px dashed var(--p-border-strong);border-radius:6px"><div class="tag" style="margin-top:6px">portrait in a square → stretched</div></div>
+        <span style="color:var(--p-muted);font-size:20px">→</span>
+        <div style="text-align:center"><img src="../assets/greater-crow-icon.png" alt="" style="height:56px;width:56px;border:1px dashed var(--p-border-strong);border-radius:6px"><div class="tag" style="margin-top:6px">squared → correct</div></div>
+      </div>
+    </div>
+    <div class="tag">A browser forces a favicon into a square slot; a portrait source gets stretched. The squared asset pads it instead.</div>
+  </div>
+</div>
+
 <p class="note"><b>In-product:</b> use the wordmark or crow alone — never the full lockup. The crow+wordmark lockup is reserved for marketing and external materials.</p>
+<p class="note"><b>Square slots:</b> the crow mark is portrait (718×844). For any square slot — favicon, app icon, avatar — use the squared <b>greater-crow-icon.png</b> (or the multi-size <b>favicon.ico</b>), never the raw portrait PNG.</p>
 
 </body></html>

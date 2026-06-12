@@ -28,15 +28,15 @@ body { margin: 0; padding: 20px 24px; background: #fff; font: 400 14px Inter; co
 
 /* Buttons */
 .btn { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 18px; border-radius: 4px; font: 500 14px/1 Inter; border: 1px solid transparent; cursor: default; white-space: nowrap; }
-.btn-primary    { background: #007CFF; color: #fff; }
-.btn-primary-dis { background: rgba(0,124,255,.25); color: #fff; }
+.btn-primary    { background: var(--p-action); color: var(--p-action-fg); }
+.btn-primary-dis { background: var(--p-action-disabled-bg); color: var(--p-action-disabled-fg); }
 .btn-warn       { background: #fff; color: #E5484D; border-color: #E5484D; }
 .btn-secondary-dis { background: #fff; color: rgba(0,124,255,.25); border-color: rgba(0,124,255,.25); }
 
 /* Tab strip */
 .ph-tabs { display: flex; gap: 4px; margin-top: 16px; }
 .ph-tab { padding: 12px 14px; margin-bottom: -1px; border: none; border-bottom: 2px solid transparent; background: transparent; cursor: default; font: 600 15px/1 Inter; color: #4A5565; }
-.ph-tab.on { color: #007CFF; border-bottom-color: #007CFF; }
+.ph-tab.on { color: var(--p-ink); border-bottom-color: var(--p-ink); }  /* active tab = ink (wayfinding) */
 .ph-divider { height: 1px; background: var(--p-border); }
 </style>
 </head>
