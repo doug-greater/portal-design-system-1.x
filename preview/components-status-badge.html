@@ -12,48 +12,31 @@ body { margin: 0; padding: 32px; background: #fff; font: 400 14px Inter; color: 
 .col { display: flex; flex-direction: column; gap: 14px; }
 .mi { font-family: 'Material Symbols Sharp'; line-height: 1; font-feature-settings: 'liga'; display: inline-flex; align-items: center; }
 
-/* ─────────── Base badge shell (shared by all directions) ─────────── */
-.b { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px;
-     font: 500 12px/1.4 Inter; letter-spacing: .01em; white-space: nowrap; }
+/* ─────────── Base badge shell (shared by both variants) ─────────── */
+.b { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px;
+     font: 500 12px/1.5 Inter; letter-spacing: .01em; white-space: nowrap; }
 .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
 /* SOFT (default) — tint bg + deep text + dot */
 .b.neutral { background: #F3F4F6; color: #4A5565; } .b.neutral .dot { background: #99A1AF; }
-.b.info    { background: #EFF6FF; color: #1447E6; } .b.info .dot    { background: #155DFC; }
+.b.info    { background: #EFF6FF; color: #1447E6; } .b.info .dot    { background: #007CFF; }
 .b.amber   { background: #FFFBEB; color: #B45309; } .b.amber .dot   { background: #DB9E03; }
 .b.green   { background: #ECFDF5; color: #047857; } .b.green .dot   { background: #00BC57; }
 .b.orange  { background: #FFF7ED; color: #C2410C; } .b.orange .dot  { background: #C2410C; }
 .b.red     { background: #FEECEC; color: #C8252B; } .b.red .dot     { background: #E5484D; }
 
-/* SOLID — max attention */
-.b.solid-ink   { background: #101828; color: #fff; } .b.solid-ink .dot { background: #7DD3FC; }
-.b.solid-amber { background: #F4BE36; color: #422C00; }
-.b.solid-blue  { background: #007CFF; color: #fff; }
-.b.solid-green { background: #00BC57; color: #fff; }
-.b.solid-red   { background: #E5484D; color: #fff; }
-
-/* QUIET — recede */
-.b.quiet { background: transparent; color: #6A7282; padding-left: 4px; } .b.quiet .dot { background: #C4C9D2; }
-.b.outline { background: #fff; color: #4A5565; border: 1px solid #D1D5DC; }
-
 /* Live / in-progress dot pulse */
 .dot.live { position: relative; }
 .dot.live::after { content: ''; position: absolute; inset: 0; border-radius: 50%; box-shadow: 0 0 0 0 currentColor; animation: ping 1.8s cubic-bezier(0,0,.2,1) infinite; }
-.b.info .dot.live { color: #155DFC; } .b.green .dot.live { color: #00BC57; }
-.b.solid-ink .dot.live { color: #7DD3FC; }
+.b.info .dot.live { color: #007CFF; } .b.green .dot.live { color: #00BC57; }
 @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(0,0,0,.001); opacity: .55; } 70% { box-shadow: 0 0 0 5px rgba(0,0,0,0); opacity: 0; } 100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .dot.live::after { animation: none; } }
 
-/* Direction C — uppercase micro-pill */
-.b.caps { font: 600 10px/1.5 Inter; letter-spacing: .07em; text-transform: uppercase; padding: 3px 9px; gap: 5px; }
-.b.caps .dot { width: 5px; height: 5px; }
-
-/* Direction B — borderless dot + label */
+/* Borderless variant — dot + colored label, no fill (for rows that already carry a Role/Category pill) */
 .b.bare { background: transparent !important; border: none !important; padding: 2px 2px; font-weight: 500; gap: 7px; }
 .b.bare .dot { width: 7px; height: 7px; }
 .b.bare.neutral { color: #4A5565; } .b.bare.info { color: #1447E6; } .b.bare.amber { color: #B45309; }
 .b.bare.green { color: #047857; } .b.bare.orange { color: #C2410C; } .b.bare.red { color: #C8252B; }
-.b.bare.quiet { color: #8A93A3; } .b.bare.quiet .dot { background: #C4C9D2; }
 
 /* Demo tables */
 .tbl { border: 1px solid var(--p-border); border-radius: 8px; overflow: hidden; }
@@ -77,7 +60,7 @@ code { font: 400 11px 'Geist Mono', monospace; background: #F3F4F6; padding: 1px
   <!-- ═══════════ THE MODEL ═══════════ -->
   <div>
     <p class="sec">Status badge · the model</p>
-    <p class="sec-d">One form: a <b>soft pill + a dot</b>. The <b>tone</b> does two jobs at once — it says what the state <i>means</i> and how much it should <i>draw the eye</i> (amber leans in, gray recedes). The single genuinely in-progress state earns a <b>live, pulsing dot</b>. That's the whole system — no separate "emphasis" levels to pick, which is what keeps one vocabulary working across every entity (a plan, a user, an invoice, a job).</p>
+    <p class="sec-d">Two forms: the standard <b>soft pill + a dot</b>, and a <b>borderless</b> variant for rows that already carry a Role or Category pill. The <b>tone</b> does two jobs at once — it says what the state <i>means</i> and how much it should <i>draw the eye</i> (amber leans in, gray recedes). The single genuinely in-progress state earns a <b>live, pulsing dot</b>. One vocabulary works across every entity (a plan, a user, an invoice, a job).</p>
     <div class="col" style="gap:8px;margin-top:8px">
       <span class="lbl" style="width:auto">SIX TONES — each carries meaning + its own built-in attention</span>
       <div class="row">
@@ -93,10 +76,10 @@ code { font: 400 11px 'Geist Mono', monospace; background: #F3F4F6; padding: 1px
 
   <hr class="hr">
 
-  <!-- ═══════════ THE BADGE (Direction A, finalized) ═══════════ -->
+  <!-- ═══════════ THE BADGE ═══════════ -->
   <div>
     <p class="sec">The status badge</p>
-    <p class="sec-d">Tinted pill, deep text, a leading dot. Calm and highly scannable, and it shares the Role Pill shell so the badge family stays coherent — Title Case, one or two words. Attention is built into the <b>tone</b> (Pending’s amber leans in, Past’s gray recedes) and into the <b>live dot</b> on the one in-progress state — so you never reach for a louder “Solid” form.</p>
+    <p class="sec-d">Tinted pill, deep text, a leading dot. Calm and highly scannable, and it shares the Role Pill shell so the badge family stays coherent — Title Case, one or two words. Attention is built into the <b>tone</b> (Pending’s amber leans in, Past’s gray recedes) and into the <b>live dot</b> on the one in-progress state.</p>
     <div class="row">
       <span class="b neutral"><span class="dot"></span>Draft</span>
       <span class="b amber"><span class="dot"></span>Pending</span>
@@ -188,10 +171,10 @@ code { font: 400 11px 'Geist Mono', monospace; background: #F3F4F6; padding: 1px
   <div>
     <p class="sec">Anatomy &amp; rules</p>
     <div class="notes">
-      <p style="margin:0 0 6px"><b>Shell:</b> shares the Role Pill — <code>padding: 3px 10px</code>, <code>border-radius: 999px</code>, <code>500 12px Inter</code>, 6px dot, <code>gap: 6px</code>; the pill hugs its content. <code>sm</code> = 11px / <code>1px 8px</code>. The borderless variant drops the fill and keeps the dot + colored label.</p>
+      <p style="margin:0 0 6px"><b>Shell:</b> shares the Role Pill — <code>padding: 2px 10px</code>, <code>border-radius: 999px</code>, <code>500 12px Inter</code>, 6px dot, <code>gap: 6px</code>; the pill hugs its content. <code>sm</code> = 11px / <code>1px 8px</code>. The borderless variant drops the fill and keeps the dot + colored label.</p>
       <p style="margin:0 0 6px"><b>Two forms.</b> The <b>soft pill</b> is the default everywhere. The <b>borderless</b> form (dot + colored label, no fill) is only for rows that already carry a Role or Category pill, so the two don't read as twins.</p>
       <p style="margin:0 0 6px"><b>Tone = meaning, not feature.</b> Map a status to the nearest of the six tones (Neutral · Info · Pending/amber · Success/green · At-risk/orange · Danger/red) — never invent a new color per feature. Pending (amber) and At-risk (orange) are deliberately distinct hues so “awaiting” never reads as “problem”.</p>
-      <p style="margin:0 0 6px"><b>Attention is built in.</b> There are no emphasis levels to choose — loudness comes from the tone itself (amber leans in, gray recedes) plus the <b>live, pulsing dot</b>, which is reserved for the single genuinely in-progress state and respects <code>prefers-reduced-motion</code>.</p>
+      <p style="margin:0 0 6px"><b>Attention is built in.</b> Loudness comes from the tone itself (amber leans in, gray recedes) plus the <b>live, pulsing dot</b>, which is reserved for the single genuinely in-progress state and respects <code>prefers-reduced-motion</code>.</p>
       <p style="margin:0 0 6px"><b>Status vs. other pills:</b> a status describes a <i>lifecycle state</i> (it changes over time); Role/Category pills are <i>fixed attributes</i>. The dot is the tell — if a row already shows a Role pill, use the borderless variant for status.</p>
       <p style="margin:0"><b>Copy:</b> one or two words, Title Case. No icons by default — color + dot carry the meaning, matching the system’s “color conveys status” rule.</p>
     </div>
