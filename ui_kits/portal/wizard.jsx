@@ -42,11 +42,11 @@ function WizardShell({
                 <button onClick={() => clickable && onJump?.(n)} disabled={!clickable}
                   style={{ display: "inline-flex", alignItems: "center", gap: 8, border: "none", background: "transparent", padding: "4px 6px", borderRadius: 4, cursor: clickable ? "pointer" : "default", flexShrink: 0 }}>
                   <span style={{ width: 24, height: 24, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-                    background: active ? "var(--p-ink)" : done ? "var(--p-success)" : "var(--p-surface-tint)",
-                    color: active || done ? "#fff" : "var(--p-placeholder)", font: "600 12px/1 Geist Mono, monospace" }}>
-                    {done ? <Icon name="check" size={14} color="#fff" /> : n}
+                    background: active || done ? "var(--p-action)" : "var(--p-surface-tint)",
+                    color: active || done ? "var(--p-action-fg)" : "var(--p-placeholder)", font: "600 12px/1 Geist Mono, monospace" }}>
+                    {done ? <Icon name="check" size={14} color="var(--p-action-fg)" /> : n}
                   </span>
-                  <span style={{ font: `${active ? 600 : 500} 14px/1 Inter`, whiteSpace: "nowrap", color: active ? "var(--p-ink)" : done ? "var(--p-success)" : "var(--p-placeholder)" }}>{label}</span>
+                  <span style={{ font: `${active ? 600 : 500} 14px/1 Inter`, whiteSpace: "nowrap", color: active ? "var(--p-ink)" : done ? "var(--p-text)" : "var(--p-placeholder)" }}>{label}</span>
                 </button>
                 {n < steps.length && <span style={{ flex: 1, height: 1, background: "var(--p-border)", minWidth: 16 }} />}
               </React.Fragment>

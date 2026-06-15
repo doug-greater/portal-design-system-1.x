@@ -1,11 +1,10 @@
 // App shell — persistent left nav + content area.
-// Mirrors the real Greater portal side navigation: org header with city
-// selector, expandable nav with solid-blue active state, bottom utility
-// rows + Ops Tools toggle. Supports a collapsed (icon-only) state.
+// Mirrors the real Greater portal side navigation: org header with global
+// search, expandable nav with ink active state, bottom utility
+// rows. Supports a collapsed (icon-only) state.
 
 function AppShell({ currentRoute = 'route-assignments', onNavigate, userName = 'Greater CBC', children }) {
   const [expanded, setExpanded] = React.useState({ products: true });
-  const [opsTools, setOpsTools] = React.useState(true);
   const [collapsed, setCollapsed] = React.useState(() => localStorage.getItem('gr-nav-collapsed') === '1');
   React.useEffect(() => { localStorage.setItem('gr-nav-collapsed', collapsed ? '1' : '0'); }, [collapsed]);
 
@@ -49,14 +48,14 @@ function AppShell({ currentRoute = 'route-assignments', onNavigate, userName = '
   const BORDER_LIGHT = 'var(--p-border)';
 
   const nav = [
-    { id: 'insights', label: 'Insights', icon: 'insights', disabled: true, children: null },
-    { id: 'sales', label: 'Sales', icon: 'paid', disabled: true, children: null },
+    { id: 'insights', label: 'Insights', icon: 'line_axis', disabled: true, children: null },
+    { id: 'sales', label: 'Sales', icon: 'ballot', disabled: true, children: null },
     { id: 'orchestration', label: 'Orchestration', icon: 'graph_7', disabled: true, children: null },
     { id: 'products', label: 'Products', icon: 'category', children: [
       { id: 'in-the-market', label: 'In the Market' },
     ]},
-    { id: 'accounts', label: 'Accounts', icon: 'storefront', disabled: true, children: null },
-    { id: 'users', label: 'Users', icon: 'group', children: null },
+    { id: 'accounts', label: 'Accounts', icon: 'store', disabled: true, children: null },
+    { id: 'users', label: 'Users', icon: 'person', children: null },
   ];
 
   const MS = (name, size = 20, color = 'currentColor') => (
@@ -216,24 +215,6 @@ function AppShell({ currentRoute = 'route-assignments', onNavigate, userName = '
     );
   };
 
-  // Tiny toggle for Ops Tools
-  const Toggle = ({ checked, onChange }) => (
-    <span role="switch" aria-checked={checked} onClick={(ev)=>{ ev.stopPropagation(); onChange(!checked); }}
-      style={{
-        position: 'relative', display: 'inline-flex', width: 40, height: 16, borderRadius: 999,
-        background: checked ? 'rgba(0,124,255,0.10)' : 'rgba(0,0,0,0.12)',
-        boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.06)', transition: 'background 120ms', cursor: 'pointer', flexShrink: 0,
-      }}>
-      <span style={{
-        position: 'absolute', top: '50%', left: 0, transform: `translate(${checked ? 20 : 0}px, -50%)`,
-        width: 20, height: 20, borderRadius: '50%',
-        background: checked ? BRAND_BLUE : '#fff',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
-        transition: 'transform 150ms ease-out, background 150ms',
-      }}/>
-    </span>
-  );
-
   // Flyout panel — parent shows label header + children; leaf shows just the label (tooltip).
   const FlyoutPanel = ({ item }) => {
     if (!item) return null;
@@ -371,10 +352,11 @@ function AppShell({ currentRoute = 'route-assignments', onNavigate, userName = '
           boxShadow: '0 -8px 16px -8px rgba(255,255,255,1), 0 -1px 0 rgba(0,0,0,0.04)',
         }}>
           <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {!collapsed && <BottomRow icon="engineering" label="Ops Tools" trailing={<Toggle checked={opsTools} onChange={setOpsTools} />} />}
+            <BottomRow icon="help_center" label="Help Center" external onClick={() => window.open('https://help.greater.co', '_blank')} />
+            <BottomRow icon="history" label="Audit Log" onClick={() => onNavigate?.('audit-log')} />
+            <BottomRow icon="settings" label="Settings" onClick={() => onNavigate?.('settings')} />
             <BottomRow icon={themeMeta.icon} label={themeMeta.label} onClick={cycleTheme} testid="theme-toggle" />
-            <BottomRow icon="public" label="Help Center" external onClick={() => window.open('https://help.greater.co', '_blank')} />
-            <BottomRow icon="person" label={userName} />
+            <BottomRow icon="person_raised_hand" label={userName} />
             <BottomRow icon="logout" label="Sign Out" />
           </ul>
         </nav>
