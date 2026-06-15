@@ -3,8 +3,8 @@
    =======================================================================
    The Greater portal uses TWO coexisting visual languages:
 
-   (A) "Portal" — the current product UI: neutral grays, indigo-shifted
-       blue #155DFC for primary accents, colored category pills, tight
+   (A) "Portal" — the current product UI: neutral grays, a single brand
+       blue #007CFF for links/selection (primary actions are ink — --p-action), colored category pills, tight
        14–16px Inter. StatCards, tables, filter bars.
    (B) "Foundation" — the Figma color section (authoritative tokens):
        a pure blue primary #007CFF, black headings, warm accent quintet
@@ -66,7 +66,7 @@
   --p-primary-hover: #0066D6;
   --p-primary-soft:  #DBEAFE;  /* pill bg for active count badges     */
   --p-primary-tint:  #EFF6FF;  /* row hover / info backgrounds        */
-  --p-primary-ink:   #155DFC;  /* link text                           */
+  --p-primary-ink:   #007CFF;  /* link text — consolidated to the single brand blue (was #155DFC) */
 
   /* ---------- Portal: action (INK‑FORWARD) ----------
      The primary‑action & active‑navigation color. Ink‑forward: the brand's near‑black is the

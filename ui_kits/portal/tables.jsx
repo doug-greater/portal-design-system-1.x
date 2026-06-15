@@ -34,7 +34,7 @@ function Pagination({ page = 1, pageCount = 1, onPage }) {
         : <span key={p} onClick={() => go(p)} style={{
             minWidth: 30, height: 30, padding: '0 8px', borderRadius: 6, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
             font: '500 13px/1 Inter, sans-serif', cursor: 'pointer',
-            background: p === page ? 'var(--p-primary)' : 'transparent', color: p === page ? '#fff' : 'var(--p-text)',
+            background: p === page ? 'var(--p-action)' : 'transparent', color: p === page ? 'var(--p-action-fg)' : 'var(--p-text)',
           }}>{p}</span>
       )}
       {navBtn('chevron_right', page + 1, page >= pageCount, 'next')}

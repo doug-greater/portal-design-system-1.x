@@ -41,31 +41,31 @@ function Button({ variant = 'primary', size = 'md', icon, iconRight, children, o
     whiteSpace: 'nowrap',
   };
   const variants = {
-    primary:   { background: '#007CFF', color: '#fff' },
-    secondary: { background: '#fff', color: '#007CFF', borderColor: '#007CFF' },
+    primary:   { background: 'var(--p-action)', color: 'var(--p-action-fg)' },
+    secondary: { background: 'var(--p-surface)', color: 'var(--p-ink)', borderColor: 'var(--p-ink)' },
     warning:   { background: '#fff', color: '#E5484D', borderColor: '#E5484D' },
     danger:    { background: '#E5484D', color: '#fff' },
     neutral:   { background: '#fff', color: '#364153', borderColor: '#D1D5DC' },
-    ghost:     { background: 'transparent', color: '#007CFF', padding: '0 12px', minWidth: 0 },
+    ghost:     { background: 'transparent', color: 'var(--p-text)', padding: '0 12px', minWidth: 0 },
     neo:       { background: '#fff', color: '#000', border: '1px solid #000', boxShadow: '2px 2px 0 0 #000', letterSpacing: '.05em', height: 39, padding: '0 30px', minWidth: 120, fontSize: 16 },
   };
   const [hover, setHover] = useState(false);
   const hoverBg = {
-    primary:   '#0066D6',
-    secondary: 'rgba(0,124,255,.05)',
+    primary:   'var(--p-action-hover)',
+    secondary: 'var(--p-surface-tint)',
     warning:   'rgba(229,72,77,.05)',
     danger:    '#C93B40',
     neutral:   '#F3F4F6',
-    ghost:     'rgba(0,124,255,.05)',
+    ghost:     'var(--p-surface-tint)',
     neo:       '#F0F7FF',
   }[variant];
   const disabledStyle = disabled ? ({
-    primary:   { background: 'rgba(0,124,255,.25)', color: '#fff', opacity: 1 },
-    secondary: { color: 'rgba(0,124,255,.25)', borderColor: 'rgba(0,124,255,.25)', opacity: 1 },
+    primary:   { background: 'var(--p-action-disabled-bg)', color: 'var(--p-action-disabled-fg)', opacity: 1 },
+    secondary: { color: 'var(--p-placeholder)', borderColor: 'var(--p-border)', opacity: 1 },
     warning:   { color: 'rgba(229,72,77,.25)', borderColor: 'rgba(229,72,77,.25)', opacity: 1 },
     danger:    { background: 'rgba(229,72,77,.45)', color: '#fff', opacity: 1 },
     neutral:   { background: '#fff', color: '#99A1AF', borderColor: '#E5E7EB', opacity: 1 },
-    ghost:     { color: 'rgba(0,124,255,.25)', opacity: 1 },
+    ghost:     { color: 'var(--p-placeholder)', opacity: 1 },
     neo:       { opacity: 0.4 },
   }[variant] || {}) : {};
   return (
@@ -123,7 +123,7 @@ function Input({ icon, value, onChange, placeholder, type = 'text', error, style
           color: disabled ? 'var(--p-placeholder)' : 'var(--p-ink)',
           background: disabled ? 'var(--p-surface-tint)' : '#fff',
           cursor: disabled ? 'not-allowed' : 'text',
-          outline: 'none', boxShadow: focus && !disabled ? '0 0 0 3px rgba(21,93,252,.15)' : 'none',
+          outline: 'none', boxShadow: focus && !disabled ? '0 0 0 3px var(--p-focus-ring)' : 'none',
           transition: 'border-color .12s, box-shadow .12s',
           boxSizing: 'border-box', ...inputStyle,
         }} {...rest} />
@@ -322,19 +322,19 @@ function SegmentedTabs({ value, onChange, items }) {
           <button key={it.id} onClick={() => onChange?.(it.id)} style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             padding: '14px 16px', marginBottom: -1,
-            border: 'none', borderBottom: `2px solid ${on ? '#007CFF' : 'transparent'}`,
+            border: 'none', borderBottom: `2px solid ${on ? 'var(--p-ink)' : 'transparent'}`,
             background: 'transparent', cursor: 'pointer',
-            color: on ? '#007CFF' : '#4A5565',
+            color: on ? 'var(--p-ink)' : 'var(--p-text-2)',
             font: '600 15px/1 Inter, sans-serif',
             letterSpacing: '-0.005em',
           }}>
-            {it.icon && <Icon name={it.icon} size={16} color={on ? '#007CFF' : '#4A5565'} />}
+            {it.icon && <Icon name={it.icon} size={16} color={on ? 'var(--p-ink)' : 'var(--p-text-2)'} />}
             {it.label}
             {it.count != null && (
               <span style={{
                 font: '500 11px Geist Mono, monospace',
-                color: on ? '#007CFF' : 'var(--p-muted)',
-                background: on ? 'rgba(0,124,255,.12)' : 'var(--g-off-white)',
+                color: on ? 'var(--p-text)' : 'var(--p-muted)',
+                background: on ? 'var(--p-surface-tint)' : 'var(--g-off-white)',
                 padding: '1px 6px', borderRadius: 999,
               }}>{it.count}</span>
             )}

@@ -57,7 +57,7 @@ The Portal design system supports two coexisting visual languages:
 
 | Language | Where Used | Primary Color | Character |
 |---|---|---|---|
-| **Portal** | Shipping product UI | `#155DFC` / `#007CFF` | Cool-gray neutrals, 14–16px Inter, tight headlines |
+| **Portal** | Shipping product UI | `#007CFF` (blue) + `--p-action` ink | Cool-gray neutrals, 14–16px Inter, tight headlines |
 | **Foundation** | Brand / marketing / onboarding moments | `#007CFF` | Black headings, five-accent palette, neo-brutalist button |
 
 **Prefer Portal tokens for all product work.** Fall back to Foundation tokens for brand-forward moments (login, landing pages, onboarding).
@@ -154,7 +154,7 @@ The portal is information-dense — big data tables, filter chips, stat cards, c
 | `--p-primary-hover` | `#0066D6` | Hover state |
 | `--p-primary-soft` | `#DBEAFE` | Active count badge backgrounds |
 | `--p-primary-tint` | `#EFF6FF` | Row hover / info backgrounds |
-| `--p-primary-ink` | `#155DFC` | Link text |
+| `--p-primary-ink` | `#007CFF` | Link text (consolidated to the single brand blue; was `#155DFC`) |
 
 > **Blue's job narrowed in 1.6.** `--p-primary` is now reserved for **selection, state & focus _inside content_** — links, focus rings, input/field focus, selected rows, applied filters, checkboxes/toggles, calendar selection, info. The **commitment & navigation** color moved to `--p-action` (below).
 
@@ -412,7 +412,7 @@ Base unit is **4px**. All spacing tokens are multiples of this base.
 |---|---|
 | Cards / tables | `1px solid #E5E7EB` (`--p-border`) |
 | Inputs (default) | `1px solid #D1D5DC` (`--p-border-strong`) |
-| Inputs (focus) | `1px solid #007CFF` + `box-shadow: 0 0 0 3px rgba(21,93,252,.15)` |
+| Inputs (focus) | `1px solid #007CFF` + `box-shadow: 0 0 0 3px rgba(0,124,255,.15)` |
 | Inputs (error) | `1px solid #E5484D` |
 | Inputs (disabled) | `1px solid #E5E7EB`, bg `#fff` (white, dimmed via uniform `#99A1AF`) |
 
@@ -714,10 +714,10 @@ All form inputs use the **floating-label** pattern — one canonical style acros
 #### Field
 
 ```css
-height: 44px;
-border-radius: 6px;          /* --radius-md */
+height: 36px;
+border-radius: 4px;          /* --radius-sm */
 padding: 0 14px;
-font: 400 15px Inter;
+font: 400 14px Inter;
 border: 1px solid #D1D5DC;   /* --p-border-strong */
 background: #fff;
 ```
@@ -1130,12 +1130,12 @@ font: 500 12px/1.5 Inter;
 /* dot */ width: 6px; height: 6px; border-radius: 50%;
 ```
 
-**One form, six tones — no emphasis levels.** The *tone* carries both meaning and how much it draws the eye (amber leans in, gray recedes); the single in-progress state earns a **live, pulsing dot**.
+**Six tones, two forms.** The standard is a soft tinted pill + dot; the **borderless variant** (below) drops the fill for rows that already carry a pill. The *tone* carries both meaning and how much it draws the eye (amber leans in, gray recedes); the single in-progress state earns a **live, pulsing dot**.
 
 | Tone | Background | Text | Dot | Typical states |
 |---|---|---|---|---|
 | Neutral | `#F3F4F6` | `#4A5565` | `#99A1AF` | Draft · Past · Archived · Inactive · Deactivated |
-| Info | `#EFF6FF` | `#1447E6` | `#155DFC` | Active · In progress · New *(live dot)* |
+| Info | `#EFF6FF` | `#1447E6` | `#007CFF` | Active · In progress · New *(live dot)* |
 | Pending (amber) | `#FFFBEB` | `#B45309` | `#DB9E03` | Pending · Invited · Scheduled |
 | Success | `#ECFDF5` | `#047857` | `#00BC57` | Complete · Approved · Paid · In market |
 | At-risk (orange) | `#FFF7ED` | `#C2410C` | `#C2410C` | At risk · Draining · Expiring |
@@ -1146,7 +1146,7 @@ font: 500 12px/1.5 Inter;
 **Rules**
 
 - **Tone = meaning, not feature.** Map a status to the nearest of the six tones; never mint a per-feature color. Pending (amber) and At-risk (orange) are deliberately distinct hues so “awaiting” never reads as “problem”.
-- **Attention is built in** — loudness comes from the tone + the live dot (reserved for genuinely in-progress states; respects `prefers-reduced-motion`). There is no “Solid” or “Quiet” emphasis variant.
+- **Attention is built in** — loudness comes from the tone + the live dot (reserved for genuinely in-progress states; respects `prefers-reduced-motion`).
 - **Copy:** one or two words, Title Case. No icons by default — color + dot carry it.
 
 **Lifecycle mappings (examples — reuse a tone, don't re-mint one).**
@@ -1399,7 +1399,7 @@ As the portal gained real role-based capabilities, a consistent rule emerged for
 
 > **One of two selection patterns.** For operator **list / table pages with a footer + pager, the [Batch Actions header dropdown](#batch-actions-header-dropdown) is the default** — it sits with the data-table chrome instead of floating over it. Reserve this **floating** Selection Bar for **canvas / non-tabular surfaces** (maps, boards, galleries) where there is no table footer to anchor to.
 
-A floating bar that appears when one or more rows are selected, showing the live count and bulk actions. Sticks to the bottom of the viewport, right-aligned, and floats above content. Reference: the selection bar in `ProductsScreen.jsx`.
+A floating bar that appears when one or more rows are selected, showing the live count and batch actions. Sticks to the bottom of the viewport, right-aligned, and floats above content. Reference: the selection bar in `ProductsScreen.jsx`.
 
 ```css
 position: sticky;
@@ -1419,7 +1419,7 @@ box-shadow: var(--shadow-float);
 
 - **Count** — `{n} selected`, `500 14px Inter`, `--p-ink`. This is the core of the component and always present.
 - **Divider** — `1px × 20px`, `--p-border`.
-- **Actions** — start with a `Clear` ghost button (deselects all). Append context-specific bulk actions (e.g. Deactivate, Export) as the surrounding feature requires — but only actions that belong to *this* page's job. Do not stuff cross-flow steps (a "Continue to a multi-step wizard" CTA, etc.) into a list page's selection bar; route those from their own flow.
+- **Actions** — start with a `Clear` ghost button (deselects all). Append context-specific batch actions (e.g. Deactivate, Export) as the surrounding feature requires — but only actions that belong to *this* page's job. Do not stuff cross-flow steps (a "Continue to a multi-step wizard" CTA, etc.) into a list page's selection bar; route those from their own flow.
 
 **Rules**
 
@@ -1428,10 +1428,10 @@ box-shadow: var(--shadow-float);
 
 #### Batch Actions (header dropdown)
 
-The **default** multi-select pattern for operator list / table pages. Bulk actions live in a persistent header control rather than a floating bar, so they sit with the table footer (count + pager) instead of fighting it. Reference: `screens/PodPlanner.js`, `screens/Promotions.js`, `screens/Users.js`.
+The **default** multi-select pattern for operator list / table pages. Batch Actions live in a persistent header control rather than a floating bar, so they sit with the table footer (count + pager) instead of fighting it. Reference: `screens/PodPlanner.js`, `screens/Promotions.js`, `screens/Users.js`.
 
 - A **Neutral** Button labeled **"Batch Actions"** with a trailing `expand_more`, placed in the page header **to the left of the primary "New …" CTA**.
-- **Always present**, but **disabled** until `selected > 0`. When active it opens the standard **Menu** popover of bulk actions (e.g. *Edit Dates*, *Edit Qty*, *Delete*); destructive items go **last**, in `--p-danger`.
+- **Always present**, but **disabled** until `selected > 0`. When active it opens the standard **Menu** popover of batch actions (e.g. *Edit Dates*, *Edit Qty*, *Delete*); destructive items go **last**, in `--p-danger`.
 - Pairs with a **header-checkbox select-all (visible page)** and the standard table footer (`Showing X–Y of Z` + `RowsSelect` + Pagination).
 - **Do not** also float a Selection Bar on the same surface — pick one. On tables, that's Batch Actions.
 
@@ -1686,8 +1686,14 @@ The sidebar must sit **outside** the scroll region (a sibling of `main`), never 
 | Right divider | `1px solid var(--p-border)` on the **`<aside>` itself** (full height — must NOT live on an inner top-nav container, or it stops above the bottom utility nav) |
 | Collapse toggle | 26×26px circle, `right: -13px`, `top: 28px`, floats on the divider edge; chevron icon flips |
 
-- **Org header** — wordmark (collapsed: crow mark) + company name + city selector. City selector hidden when collapsed.
+- **Org header** — wordmark (collapsed: crow mark) + company name + a global **Search** field (`search` icon + "Search…" placeholder + a `⌘K` hint) that opens the **Command Palette** (see §Command Palette). When the rail is collapsed the field becomes a single search-icon button. *(Replaces the former city/location selector, which has been removed.)*
 - **Primary nav** — parent rows (40px, icon + 15px label + `expand_more` chevron when it has children) with expandable child lists. **Active leaf** row: solid `--p-action` fill with `--p-action-fg` label + icon (ink — inverts to white-on-near-black in dark). **Open group** (parent of an active child): neutral `--p-surface-tint`. **Hover** (any row): neutral `--p-surface-tint` — never blue. Active **child** row: solid `--p-action`, `--p-action-fg`, `30px` min-height. Keyboard focus-visible outlines stay `--p-primary` (blue).
+- **Navigation IA (groups → routes).** Parent groups expand to child routes; **Users** navigates directly. Entity glyphs follow the §8 canon:
+  - **Insights** (`line_axis`) · **Sales** (`ballot`) — analytics & planning groups.
+  - **Orchestration** (`graph_7`) → View Plans · Visualize Impact.
+  - **Products** (`category`) → In the Market · POD Planner.
+  - **Accounts** (`store`) → Accounts List · Store Layouts · Store Promotions.
+  - **Users** (`person`) — direct leaf, no children.
 - **Bottom utility nav** — pinned to the bottom. Top → bottom: **Help Center** (`help_center`) [external], **Audit Log** (`history`), **Settings** (`settings`), a **theme toggle** (cycles Light → Dark → System; icon `light_mode` / `dark_mode` / `contrast`, "Auto" hint on System), **Account** (`person_raised_hand`, the signed-in user's name), **Sign Out** (`logout`). "Audit Log" (`/audit-log`), "Settings" (`/settings`), and the Account row (own profile) are real routes and carry an **active/selected** state (solid `--p-action` fill + `--p-action-fg` icon, like the primary nav); Help Center opens externally, Sign Out is a utility. (The former "Ops Tools" toggle has been removed.)
 
 #### Collapse / expand motion
@@ -2119,7 +2125,7 @@ Single-date and range, both built on the floating-label field. Reference: `previ
 #### Trigger
 
 Two trigger variants:
-- **Field** — the standard 44px floating-label field with a leading icon — `calendar_today` (single) / `date_range` (range). Value formats as `Jun 11, 2026` / `Apr 20 – Apr 26, 2026` (en-dash range).
+- **Field** — the standard 36px floating-label field with a leading icon — `calendar_today` (single) / `date_range` (range). Value formats as `Jun 11, 2026` / `Apr 20 – Apr 26, 2026` (en-dash range).
 - **Filter chip** — a **36px** filter-chip-style trigger for table **range filters**: reads `Date: {from – to}` and tints `--p-primary-tint` when active (matches the Filter Chip pattern).
 
 #### Calendar popover
@@ -2601,7 +2607,7 @@ All tokens are defined in `colors_and_type.css`. Load it first, then optionally 
   --p-primary-hover: #0066D6;
   --p-primary-soft: #DBEAFE;
   --p-primary-tint: #EFF6FF;
-  --p-primary-ink: #155DFC;
+  --p-primary-ink: #007CFF;   /* consolidated to the single brand blue (was #155DFC) */
 
   /* Portal action (ink-forward) — primary actions & active nav; inverts to a white surface in dark */
   --p-action: var(--p-ink);
@@ -2672,7 +2678,7 @@ All tokens are defined in `colors_and_type.css`. Load it first, then optionally 
   --space-16: 64px;
 
   /* Type families */
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-sans: "Inter", "Inter Fallback", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   /* Type scale */

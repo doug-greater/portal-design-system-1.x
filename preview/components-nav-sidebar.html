@@ -98,7 +98,7 @@ function MS({ name, size = 20, color = 'currentColor' }) {
   const [svg, setSvg] = React.useState(_svgCache[name] || null);
   React.useEffect(() => {
     if (_svgCache[name]) { setSvg(_svgCache[name]); return; }
-    const url = `https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsrounded/${name}/default/24px.svg`;
+    const url = `https://fonts.gstatic.com/s/i/short-term/release/materialsymbolssharp/${name}/default/24px.svg`;
     fetch(url).then(r => r.text()).then(text => {
       const clean = text
         .replace(/fill="[^"]*"/g, 'fill="currentColor"')
@@ -139,7 +139,15 @@ const NAV_ITEMS = [
     { id:'view-plans',       label:'View Plans' },
     { id:'visualize-impact', label:'Visualize Impact' },
   ]},
-  { id:'accounts', label:'Accounts', icon:'store', children:null },
+  { id:'products', label:'Products', icon:'category', children:[
+    { id:'in-the-market', label:'In the Market' },
+    { id:'pod-planner',   label:'POD Planner' },
+  ]},
+  { id:'accounts', label:'Accounts', icon:'store', children:[
+    { id:'accounts-list',    label:'Accounts List' },
+    { id:'store-layouts',    label:'Store Layouts' },
+    { id:'store-promotions', label:'Store Promotions' },
+  ]},
   { id:'users',    label:'Users',    icon:'person',     children:null },
 ];
 
@@ -345,9 +353,10 @@ function Sidebar({ collapsed, onToggleCollapse, currentRoute, onNavigate, intera
         {!collapsed && (
           <div style={{ minWidth:0 }}>
             <p style={{ margin:'0 0 8px', font:'400 13px/20px var(--font-sans)', color:INK, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>Coastal Beverage Company</p>
-            <button type="button" style={{ display:'flex', alignItems:'center', width:'100%', minHeight:28, padding:'3px 4px 3px 8px', gap:4, borderRadius:8, border:'0.5px solid #D1D5DB', background:'#fff', font:'500 12px/20px var(--font-sans)', color:INK, cursor:'default', overflow:'hidden', minWidth:0 }}>
-              <span style={{ flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', textAlign:'left' }}>Elizabeth City</span>
-              <MS name="arrow_drop_down" size={18} color={GRAY_800} />
+            <button type="button" style={{ display:'flex', alignItems:'center', width:'100%', minHeight:32, padding:'0 8px', gap:8, borderRadius:6, border:'1px solid #D1D5DB', background:'#fff', font:'400 13px/1 var(--font-sans)', color:'var(--p-placeholder)', cursor:'text', overflow:'hidden', minWidth:0 }}>
+              <MS name="search" size={18} color={GRAY_800} />
+              <span style={{ flex:1, textAlign:'left' }}>Search…</span>
+              <span style={{ font:'500 10px/1 var(--font-mono)', color:'var(--p-muted)', border:'1px solid var(--p-border)', borderRadius:4, padding:'3px 5px' }}>⌘K</span>
             </button>
           </div>
         )}
@@ -386,7 +395,7 @@ function App() {
   /* ── Anatomy ── */
   const anatomy = [
     { num:1, name:'Logo / Wordmark',     desc:'Full logotype expanded; crow mark collapsed. Links to home.' },
-    { num:2, name:'Org Header',          desc:'Org name + city selector. Hidden when collapsed.' },
+    { num:2, name:'Org Header',          desc:'Org name + global Search field (⌘K → Command Palette). Hidden when collapsed.' },
     { num:3, name:'Parent Nav Row',      desc:'Icon + label + chevron. Click toggles children or navigates.' },
     { num:4, name:'Child Nav Item',      desc:'Indented 34px. Solid ink (--p-action) fill when active.' },
     { num:5, name:'Collapse Toggle',     desc:'26px circle, overlapping the right edge at top:28px, right:−13px.' },

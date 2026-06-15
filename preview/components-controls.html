@@ -4,11 +4,11 @@ body{margin:0;padding:20px;background:var(--p-shell);display:flex;gap:30px;align
 .lbl{font:500 11px/1.2 'Geist Mono',monospace;color:var(--p-muted)}
 
 /* Foundation toggle — pill track with knob riding on top */
-.tg{width:36px;height:20px;position:relative;cursor:pointer;display:inline-block}
-.tg .track{position:absolute;inset:0;border-radius:999px;background:#D1D5DB;transition:background .15s}
-.tg .knob{position:absolute;top:1px;left:1px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:left .15s}
-.tg.on .track{background:#007CFF}
-.tg.on .knob{left:17px}
+.tg{width:37px;height:20px;position:relative;cursor:pointer;display:inline-block}
+.tg .track{position:absolute;inset:0;border-radius:999px;background:#DADADA;transition:background .15s}
+.tg .knob{position:absolute;top:0;left:0;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:left .15s}
+.tg.on .track{background:rgba(0,124,255,.25)}
+.tg.on .knob{left:17px;background:#007CFF;border:.5px solid #007CFF}
 .tg.genstock.on .track{background:var(--p-genstock)}  /* color prop (1.7) — concept-colored switch */
 .tg.dis .track{background:#E5E7EB}
 .tg.dis .knob{background:#F3F4F6}

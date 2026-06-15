@@ -15,9 +15,9 @@
     .g-split { display:inline-flex; height:28px; border-radius:6px; overflow:hidden; font:500 13px/1 Inter,sans-serif; vertical-align:middle; box-sizing:border-box; }
     .g-split .g-split-main { display:inline-flex; align-items:center; gap:6px; padding:0 11px; cursor:pointer; border:none; background:transparent; font:inherit; color:inherit; }
     .g-split .g-split-caret { display:inline-flex; align-items:center; justify-content:center; width:26px; cursor:pointer; border:none; background:transparent; color:inherit; }
-    .g-split.primary { background:#007CFF; color:#fff; }
-    .g-split.primary .g-split-caret { border-left:1px solid rgba(255,255,255,.28); }
-    .g-split.primary .g-split-main:hover, .g-split.primary .g-split-caret:hover { background:rgba(255,255,255,.14); }
+    .g-split.primary { background:var(--p-action); color:var(--p-action-fg); }
+    .g-split.primary .g-split-caret { border-left:1px solid rgba(127,127,127,.32); }
+    .g-split.primary .g-split-main:hover, .g-split.primary .g-split-caret:hover { background:var(--p-action-hover); }
     .g-split.error { background:#E5484D; color:#fff; }
     .g-split.error .g-split-caret { border-left:1px solid rgba(255,255,255,.32); }
     .g-split.error .g-split-main:hover, .g-split.error .g-split-caret:hover { background:rgba(255,255,255,.14); }

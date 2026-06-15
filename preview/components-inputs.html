@@ -10,18 +10,18 @@ body { margin: 0; padding: 20px 24px; background: #fff; font: 400 14px Inter; co
 .row { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; }
 
 /* ── Canonical floating-label field ── */
-/* height: 44px, border-radius: 6px (--radius-md), 15px Inter */
+/* height: 36px, border-radius: 4px (--radius-sm), 14px Inter */
 .fl { position: relative; }
 .fl input,
 .fl .fl-select {
   display: block;
   width: 100%;
-  height: 44px;
+  height: 36px;
   padding: 0 14px;
   box-sizing: border-box;
   border: 1px solid var(--p-border-strong);
-  border-radius: 6px;
-  font: 400 15px/1 Inter;
+  border-radius: 4px;
+  font: 400 14px/1 Inter;
   color: var(--p-ink);
   background: #fff;
   outline: none;
@@ -74,11 +74,11 @@ body { margin: 0; padding: 20px 24px; background: #fff; font: 400 14px Inter; co
 }
 /* label always floats on the white page — never inherits the field's gray bg */
 
-/* Select — native element, same 44px shell as text input */
+/* Select — native element, same 36px shell as text input */
 .fl select {
   display: block;
   width: 100%;
-  height: 44px;
+  height: 36px;
   padding: 0 36px 0 14px;
   box-sizing: border-box;
   border: 1px solid var(--p-border-strong);
@@ -272,7 +272,7 @@ body { margin: 0; padding: 20px 24px; background: #fff; font: 400 14px Inter; co
 <div>
   <div class="sec">Spec</div>
   <div class="note">
-    <b style="color:var(--p-ink)">Field:</b> height <code>44px</code> · border-radius <code>6px</code> · font <code>400 15px Inter</code> · padding <code>0 14px</code> · focus ring <code>0 0 0 3px rgba(0,124,255,.15)</code><br><br>
+    <b style="color:var(--p-ink)">Field:</b> height <code>36px</code> · border-radius <code>4px</code> · font <code>400 14px Inter</code> · padding <code>0 14px</code> · focus ring <code>0 0 0 3px rgba(0,124,255,.15)</code><br><br>
     <b style="color:var(--p-ink)">Search bar:</b> height <code>48px</code> · border-radius <code>8px</code> · padding-left <code>44px</code> (18px icon + gutter) · otherwise identical<br><br>
     <b style="color:var(--p-ink)">Floating label:</b> <code>position: absolute; top: -7px; left: 10px; padding: 0 4px; background: #fff</code> · 12px 400 Inter · color <code>#6A7282</code> (error: <code>#E5484D</code>, focus: <code>#007CFF</code>)<br><br>
     Required fields append <code> *</code> to the label string.<br><br>
