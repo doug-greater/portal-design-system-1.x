@@ -22,8 +22,9 @@ Everything in this repo — `colors_and_type.css`, the `preview/` spec cards, an
 The system has since been **extended well beyond that origin** with
 net-new components designed from first principles: the consolidated Filter
 Menu, the floating Selection Bar, User Avatars & Role Pills, the Account
-Type Icon, Permission Cards, the Confirmation Dialog, the Page Detail
-Header, and a full app shell with a collapsible Navigation Sidebar.
+Type Icon, Permission Cards, the Confirmation Dialog (now the Modal
+`confirm` variant), the Page Detail Header, and a full app shell with a
+collapsible Navigation Sidebar.
 
 ---
 
@@ -70,8 +71,9 @@ all day, not marketing surfaces. Copy is literal, never cute.
 
 Two visual languages coexist and the system supports both:
 
-- **Portal** — the shipping UI. Cool-gray neutrals, indigo-shifted blue
-  (`#155DFC`), 14/16px Inter, tight headlines (−0.025em), `E5E7EB` borders,
+- **Portal** — the shipping UI. Cool-gray neutrals, a single brand blue
+  (`#007CFF`) for links/selection (primary actions are ink — `--p-action`),
+  14/16px Inter, tight headlines (−0.025em), `E5E7EB` borders,
   colored category pills (Beer=amber, Wine=purple, Spirits=orange…).
 - **Foundation** — the Figma token/spec page. Pure `#007CFF` primary,
   absolute black headings, a five-accent palette plus a "seldom sky"
@@ -137,8 +139,9 @@ Examples taken verbatim from the Figma scrape:
 ## Visual foundations
 
 **Colors.** Black / dark-gray / medium-gray / light-gray / off-white /
-white forms the neutral spine. Primary is `#007CFF` foundation-blue OR
-`#155DFC` portal-blue — both resolve from `--p-primary` / `--g-primary-blue`.
+white forms the neutral spine. The brand blue is a single `#007CFF`
+(`--p-primary` / `--g-primary-blue`), reserved for links / selection / focus;
+primary actions & active nav are **ink** (`--p-action`, see ink-forward).
 Five accents (green/red/gold/purple) plus "seldom sky" cover feedback and
 category pills. Tints are always computed as 25%/10%/5% of the accent over
 white, never ad-hoc.
@@ -259,7 +262,7 @@ inside the product. Don't skew, don't recolor.
 - **Portal chrome (global nav, user menu):** not present in the original
   Figma scrape — designed from first principles in this system. The UI kit
   now ships a full app shell: a collapsible Navigation Sidebar (with
-  collapsed-icon flyout), org header + city selector, and a bottom utility
+  collapsed-icon flyout), org header + global search, and a bottom utility
   nav. Only the user menu remains a light placeholder.
 - **One full map/illustration:** TableView's Leaflet map uses a
   placeholder CSS-gradient tile and numbered pins — not a real tile
