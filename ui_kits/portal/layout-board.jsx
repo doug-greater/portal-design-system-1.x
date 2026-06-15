@@ -59,9 +59,8 @@ function SectionCard({ name, count, children, general }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: 'var(--p-surface-alt)', borderRadius: open ? '10px 10px 0 0' : 10, borderBottom: open ? '1px solid var(--p-border)' : 'none' }}>
         <Icon name="drag_indicator" size={20} color="var(--p-placeholder)" style={{ cursor: 'grab' }} />
         <span style={{ font: '600 14px Inter', color: 'var(--p-ink)' }}>{name}</span>
-        {general
-          ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, font: '500 11px Inter', color: 'var(--p-muted)' }}><Icon name="shuffle" size={13} /> General Stock</span>
-          : <span style={{ font: '500 12px/1 Geist Mono, monospace', color: 'var(--p-muted)' }}>{count} items</span>}
+        {/* single-indicator (1.7): no header pill for general sections — the purple toggle + empty-state carry it */}
+        {!general && <span style={{ font: '500 12px/1 Geist Mono, monospace', color: 'var(--p-muted)' }}>{count} items</span>}
         <div style={{ flex: 1 }} />
         <button onClick={() => setOpen((o) => !o)} style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--p-muted)', display: 'inline-flex' }}><Icon name="expand_more" size={20} style={{ transform: open ? 'none' : 'rotate(-90deg)', transition: 'transform .15s' }} /></button>
         <Kebab items={kebab} />
@@ -89,12 +88,12 @@ function MetaRow() {
         </button>
       )}
       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-        <Icon name="shuffle" size={14} color={general ? 'var(--p-primary)' : 'var(--p-muted)'} />
-        <span style={{ font: '500 13px Inter', color: general ? 'var(--p-primary-ink)' : 'var(--p-text-2)' }}>General Stock Area</span>
+        <Icon name="shuffle" size={14} color={general ? 'var(--p-genstock)' : 'var(--p-muted)'} />
+        <span style={{ font: '500 13px Inter', color: general ? 'var(--p-genstock-ink)' : 'var(--p-text-2)' }}>General Stock Area</span>
         <Tooltip side="bottom" maxWidth={340} text="General stock areas do not have a stable list of products or sequence — like a back stock area. Inventory may change with each delivery.">
           <Icon name="info" size={14} color="var(--p-placeholder)" style={{ cursor: 'help' }} />
         </Tooltip>
-        <Toggle on={general} onChange={setGeneral} />
+        <Toggle on={general} onChange={setGeneral} color="var(--p-genstock)" />
       </span>
     </div>
   );
@@ -146,7 +145,7 @@ function LayoutBoard() {
 
         <SectionCard name="Back Stock" general>
           <div style={{ border: '1px dashed var(--p-border)', borderRadius: 8, background: 'var(--p-surface-alt)', padding: '28px 16px', textAlign: 'center' }}>
-            <Icon name="inventory_2" size={24} color="var(--p-muted)" />
+            <Icon name="shuffle" size={24} color="var(--p-muted)" />
             <div style={{ font: '600 14px Inter', color: 'var(--p-ink)', marginTop: 8 }}>General Stock Area</div>
             <div style={{ font: '400 13px Inter', color: 'var(--p-muted)', marginTop: 2 }}>Products can't be placed here. Use this section to track variable inventory.</div>
           </div>

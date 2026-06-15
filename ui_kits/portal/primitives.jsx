@@ -85,8 +85,25 @@ function Button({ variant = 'primary', size = 'md', icon, iconRight, children, o
    rendered UNDER the field; SUPPRESSED while an `error` shows (error wins).
    `error` may be a boolean (red border only) or a string (red border + message).
    `disabled` (1.5): readOnly + tinted bg + not-allowed cursor, no focus ring. */
-function Input({ icon, value, onChange, placeholder, type = 'text', error, style, onFocus, onBlur, helper, disabled }) {
+/* Shared search-syntax hint (the `?` affordance teaches the query grammar — §9 Search). */
+const SEARCH_HINT = (
+  <span style={{ display: 'grid', gap: 4 }}>
+    <span style={{ fontWeight: 700, marginBottom: 1 }}>Search tips</span>
+    <span><code>wine red</code> — match both (AND)</span>
+    <span><code>wine OR beer</code> — match either</span>
+    <span><code>"red wine"</code> — exact phrase</span>
+    <span style={{ opacity: .72 }}>Ignores case &amp; accents</span>
+  </span>
+);
+
+function Input({ icon, value, onChange, placeholder, type = 'text', error, style, inputStyle, onKeyDown, autoFocus, name, clearable, onClear, hint, onFocus, onBlur, helper, disabled, ...rest }) {
   const [focus, setFocus] = useState(false);
+  const hasValue = value != null && String(value).length > 0;
+  // Auto-clear on search fields; opt-in elsewhere via `clearable`. Renders only when filled.
+  const showClear = (clearable ?? icon === 'search') && hasValue && !disabled;
+  const showHint = !!hint && !hasValue && !disabled;   // ✕ and ? share the right slot
+  const rightPad = (showClear || showHint) ? 32 : 12;
+  const clear = () => { if (onClear) onClear(); else onChange?.({ target: { value: '' } }); };
   return (
     <div style={{ position: 'relative', display: 'inline-block', ...style }}>
       {icon && (
@@ -95,11 +112,12 @@ function Input({ icon, value, onChange, placeholder, type = 'text', error, style
         </span>
       )}
       <input type={type} value={value} onChange={onChange} placeholder={placeholder}
+        name={name} autoFocus={autoFocus} onKeyDown={onKeyDown}
         disabled={disabled} readOnly={disabled}
         onFocus={(e) => { if (disabled) return; setFocus(true); onFocus?.(e); }}
         onBlur={(e) => { setFocus(false); onBlur?.(e.target.value); }}
         style={{
-          width: '100%', height: 36, padding: icon ? '0 12px 0 32px' : '0 12px',
+          width: '100%', height: 36, padding: icon ? `0 ${rightPad}px 0 32px` : `0 ${rightPad}px`,
           border: `1px solid ${error ? 'var(--p-danger)' : focus ? 'var(--p-primary)' : 'var(--p-border-strong)'}`,
           borderRadius: 4, font: '400 14px Inter, sans-serif',
           color: disabled ? 'var(--p-placeholder)' : 'var(--p-ink)',
@@ -107,8 +125,22 @@ function Input({ icon, value, onChange, placeholder, type = 'text', error, style
           cursor: disabled ? 'not-allowed' : 'text',
           outline: 'none', boxShadow: focus && !disabled ? '0 0 0 3px rgba(21,93,252,.15)' : 'none',
           transition: 'border-color .12s, box-shadow .12s',
-          boxSizing: 'border-box',
-        }} />
+          boxSizing: 'border-box', ...inputStyle,
+        }} {...rest} />
+      {showClear && (
+        <button type="button" aria-label="Clear search" data-testid="input-clear"
+          onMouseDown={(e) => e.preventDefault()} onClick={clear}
+          style={{ position: 'absolute', right: 8, top: 18, transform: 'translateY(-50%)', border: 'none', background: 'transparent', padding: 0, cursor: 'pointer', color: 'var(--p-muted)', display: 'flex' }}>
+          <Icon name="close" size={15} />
+        </button>
+      )}
+      {showHint && (
+        <span data-testid="input-hint" style={{ position: 'absolute', right: 8, top: 18, transform: 'translateY(-50%)', display: 'flex' }}>
+          <Tooltip text={hint === true ? SEARCH_HINT : hint} side="bottom" maxWidth={260}>
+            <span style={{ color: 'var(--p-placeholder)', cursor: 'help', display: 'flex' }}><Icon name="help" size={15} /></span>
+          </Tooltip>
+        </span>
+      )}
       {error
         ? (typeof error === 'string'
             ? <div className="g-error" style={{ font: '500 12px/1.4 Inter, sans-serif', color: 'var(--p-danger)', marginTop: 4 }}>{error}</div>
@@ -120,12 +152,16 @@ function Input({ icon, value, onChange, placeholder, type = 'text', error, style
   );
 }
 
-/* ---------------- Toggle (Foundation style) ---------------- */
-function Toggle({ on, onChange }) {
+/* ---------------- Toggle (Foundation style) ----------------
+   `color` overrides the "on" fill (default --p-primary) for concept-colored switches,
+   e.g. the General Stock toggle passes color="var(--p-genstock)". */
+function Toggle({ on, onChange, disabled, color }) {
+  const fill = color || '#007CFF';
+  const track = on ? (color ? `color-mix(in srgb, ${color} 30%, transparent)` : 'rgba(0,124,255,.25)') : '#DADADA';
   return (
-    <span onClick={() => onChange?.(!on)} style={{ width: 37, height: 20, position: 'relative', cursor: 'pointer', display: 'inline-block' }}>
-      <span style={{ position: 'absolute', left: 0, top: 3, width: 29, height: 14, borderRadius: 10, background: on ? 'rgba(0,124,255,.25)' : '#DADADA', transition: 'background .15s' }} />
-      <span style={{ position: 'absolute', top: 0, left: on ? 17 : 0, width: 20, height: 20, borderRadius: '50%', background: on ? '#007CFF' : '#fff', border: on ? '.5px solid #007CFF' : '.5px solid #DADADA', boxShadow: '0 1px 2px rgba(0,0,0,.25)', transition: 'left .15s, background .15s, border-color .15s' }} />
+    <span onClick={() => !disabled && onChange?.(!on)} style={{ width: 37, height: 20, position: 'relative', cursor: disabled ? 'not-allowed' : 'pointer', display: 'inline-block', opacity: disabled ? .5 : 1 }}>
+      <span style={{ position: 'absolute', left: 0, top: 3, width: 29, height: 14, borderRadius: 10, background: track, transition: 'background .15s' }} />
+      <span style={{ position: 'absolute', top: 0, left: on ? 17 : 0, width: 20, height: 20, borderRadius: '50%', background: on ? fill : '#fff', border: on ? `.5px solid ${fill}` : '.5px solid #DADADA', boxShadow: '0 1px 2px rgba(0,0,0,.25)', transition: 'left .15s, background .15s, border-color .15s' }} />
     </span>
   );
 }
@@ -200,11 +236,11 @@ const CHIP_TONES = {
   danger:  { bg: 'var(--g-red-10)',       fg: 'var(--p-danger-strong)' },
   success: { bg: '#ECFDF5',               fg: '#047857' },
 };
-function Chip({ tone = 'neutral', icon, children, title, style }) {
+function Chip({ tone = 'neutral', icon, iconRight, children, title, testid, style }) {
   const t = CHIP_TONES[tone] || CHIP_TONES.neutral;
   return (
-    <span title={title} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, height: 19, padding: '0 7px', borderRadius: 999, background: t.bg, color: t.fg, font: '600 10.5px/1 Inter, sans-serif', whiteSpace: 'nowrap', flexShrink: 0, ...style }}>
-      {icon && <Icon name={icon} size={12} color="currentColor" />}{children}
+    <span title={title} data-testid={testid} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, height: 19, padding: '0 7px', borderRadius: 999, background: t.bg, color: t.fg, font: '600 10.5px/1 Inter, sans-serif', whiteSpace: 'nowrap', flexShrink: 0, ...style }}>
+      {icon && <Icon name={icon} size={12} color="currentColor" />}{children}{iconRight && <Icon name={iconRight} size={12} color="currentColor" />}
     </span>
   );
 }
@@ -381,7 +417,7 @@ function StatCard({ value, label, color = 'ink', action, active, onClick }) {
    wrap (required for copy longer than ~6 words); `side="bottom"` opens downward.
    Re-measures on each open (hover) — for anchors that move while shown, re-open.
    (1.4: replaces the 1.2 absolutely-positioned implementation; maxWidth preserved.) */
-function Tooltip({ text, children, side = 'top', maxWidth }) {
+function Tooltip({ text, children, side = 'top', maxWidth, z = 4000 }) {
   const [show, setShow] = useState(false);
   const ref = useRef(null);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
@@ -411,12 +447,90 @@ function Tooltip({ text, children, side = 'top', maxWidth }) {
           font: `500 11px/${maxWidth ? '1.5' : '1.3'} Inter, sans-serif`,
           padding: maxWidth ? '7px 10px' : '4px 8px',
           borderRadius: 6, boxShadow: 'var(--shadow-float)',
-          zIndex: 4000, pointerEvents: 'none', textAlign: 'left',
+          zIndex: z, pointerEvents: 'none', textAlign: 'left',
         }}>{text}</span>,
         document.body
       )}
     </span>
   );
+}
+
+/* ---------------- searchQuery (lib/searchQuery.js) ----------------
+   Portal-wide query grammar — implemented once here, mirrored on the backend
+   (search_utils.py); the two MUST stay in sync. AND by default · a bare,
+   exactly-uppercase OR flips to OR · "quoted" = exact phrase · case- &
+   accent-insensitive (NFKD + strip combining marks). */
+const TOKEN_RE = /"([^"]*)"|(\S+)/g;
+
+function normalize(s) {
+  if (!s) return '';
+  return String(s).normalize('NFKD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+}
+
+function parseQuery(q) {
+  let mode = 'and'; const tokens = [];
+  TOKEN_RE.lastIndex = 0; let m;
+  while ((m = TOKEN_RE.exec(q || '')) !== null) {
+    if (m[1] !== undefined) { const p = normalize(m[1]); if (p) tokens.push(p); }   // quoted phrase
+    else { const raw = m[2]; if (raw === 'OR') { mode = 'or'; continue; }            // bare uppercase OR
+           const t = normalize(raw); if (t) tokens.push(t); }
+  }
+  return { mode, tokens };
+}
+
+function matchesQuery(q, text) {
+  const { mode, tokens } = parseQuery(q);
+  if (!tokens.length) return true;
+  const h = normalize(text);
+  return mode === 'or' ? tokens.some((t) => h.includes(t)) : tokens.every((t) => h.includes(t));
+}
+
+/* matchRanges(text, q): merged [start,end) ranges in ORIGINAL-string coords, via a
+   per-character diacritic fold + index map, so highlights survive accents. */
+function matchRanges(text, q) {
+  const t = text == null ? '' : String(text);
+  const { tokens } = parseQuery(q);
+  if (!tokens.length || !t) return [];
+  let folded = ''; const idx = [];
+  for (let i = 0; i < t.length; i++) {
+    const f = normalize(t[i]);
+    for (let k = 0; k < f.length; k++) idx.push(i);
+    folded += f;
+  }
+  const ranges = [];
+  for (const tok of tokens) {
+    let from = 0, at;
+    while ((at = folded.indexOf(tok, from)) !== -1) {
+      ranges.push([idx[at], idx[at + tok.length - 1] + 1]);
+      from = at + tok.length;
+    }
+  }
+  ranges.sort((a, b) => a[0] - b[0]);
+  const merged = [];
+  for (const r of ranges) {
+    const last = merged[merged.length - 1];
+    if (last && r[0] <= last[1]) last[1] = Math.max(last[1], r[1]);
+    else merged.push(r.slice());
+  }
+  return merged;
+}
+
+/* ---------------- Highlight (search-match wrapper) ----------------
+   Wraps the substrings of `text` that satisfy `query` in <mark class="gr-hl">
+   (token --p-highlight). Diacritic-folds with an index map so highlights land on
+   the un-normalized characters (`pina` highlights `Piña`). Mirrors the BE matcher. */
+function Highlight({ text, query }) {
+  const t = text == null ? '' : String(text);
+  const ranges = useMemo(() => matchRanges(t, query), [t, query]);
+  if (!ranges.length) return <>{t}</>;
+  const out = []; let last = 0;
+  ranges.forEach(([s, e], i) => {
+    if (s > last) out.push(<React.Fragment key={`p${i}`}>{t.slice(last, s)}</React.Fragment>);
+    out.push(<mark key={`m${i}`} className="gr-hl">{t.slice(s, e)}</mark>);
+    last = e;
+  });
+  if (last < t.length) out.push(<React.Fragment key="end">{t.slice(last)}</React.Fragment>);
+  return <>{out}</>;
 }
 
 /* ---------------- CountDeltaCell — count + pending +N / −N deep-link chips ----------------

@@ -9,6 +9,7 @@ body{margin:0;padding:20px;background:var(--p-shell);display:flex;gap:30px;align
 .tg .knob{position:absolute;top:1px;left:1px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:left .15s}
 .tg.on .track{background:#007CFF}
 .tg.on .knob{left:17px}
+.tg.genstock.on .track{background:var(--p-genstock)}  /* color prop (1.7) — concept-colored switch */
 .tg.dis .track{background:#E5E7EB}
 .tg.dis .knob{background:#F3F4F6}
 
@@ -30,6 +31,11 @@ body{margin:0;padding:20px;background:var(--p-shell);display:flex;gap:30px;align
   <span class="lbl">TOGGLE</span>
   <div class="row"><span class="tg on"><span class="track"></span><span class="knob"></span></span>On</div>
   <div class="row"><span class="tg"><span class="track"></span><span class="knob"></span></span>Off</div>
+</div>
+<div class="g">
+  <span class="lbl">TOGGLE · color (1.7)</span>
+  <div class="row"><span class="tg genstock on"><span class="track"></span><span class="knob"></span></span>General Stock (purple)</div>
+  <div class="row"><span class="tg"><span class="track"></span><span class="knob"></span></span>Default (blue)</div>
 </div>
 <div class="g">
   <span class="lbl">CHECKBOX</span>

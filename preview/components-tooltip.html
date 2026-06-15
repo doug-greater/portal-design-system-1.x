@@ -34,6 +34,7 @@ body{margin:0;padding:48px 24px;background:var(--p-shell);color:var(--p-ink)}
     <p><b>Portal-rendered (1.4).</b> The live <code>Tooltip</code> renders into <code>document.body</code> via <code>createPortal</code> with <code>position: fixed</code> and <code>z-index: 4000</code>, measuring the anchor with <code>getBoundingClientRect()</code> on hover and <b>clamping its center to the viewport</b>. So it never clips inside scrolling tables, transformed cards, or map overlays, and floats above modals/popovers. <i>(Supersedes the 1.2 absolutely-positioned, <code>z-index: 200</code> version.)</i></p>
     <p><b><code>maxWidth</code> (px)</b> switches to <code>white-space: normal</code> + <code>width</code> + a cap of <code>min(maxWidth, calc(100vw - 24px))</code> + line-height 1.5 — <b>required</b> for copy longer than ~6 words (else it shrink-wraps to one line).</p>
     <p><b><code>side</code></b> (<code>"top"</code>/<code>"bottom"</code>) only chooses which way the bubble opens now — the horizontal center-clamp handles left/right overflow on its own.</p>
+    <p><b><code>z</code> (1.7)</b> overrides the bubble's z-index (default <code>4000</code>). Raise it when a tooltip fires from inside a higher-z overlay — the ⌘K palette backdrop is <code>12000</code>, so its in-field <code>?</code> hint passes <code>z={12001}</code>. Ladder (§7): Tooltip <code>4000</code> · Wizard <code>9000</code> · Modal <code>10000</code> · Command Palette <code>12000</code>.</p>
   </div>
 </div>
 

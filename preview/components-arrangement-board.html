@@ -13,6 +13,8 @@ body{margin:0;padding:24px;background:var(--p-surface-alt);color:var(--p-ink)}
 .noteghost{display:inline-flex;align-items:center;gap:5px;font:400 13px Inter;color:var(--p-muted);background:none;border:none}
 .gstock{display:inline-flex;align-items:center;gap:8px;font:500 13px Inter;color:var(--p-text-2)}
 .tog{width:37px;height:20px;border-radius:10px;background:#DADADA;position:relative}.tog::after{content:'';position:absolute;top:0;left:0;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.tog.on{background:var(--p-genstock)}.tog.on::after{left:17px}  /* color prop (1.7) — purple concept switch */
+.gstock.on{color:var(--p-genstock-ink)}
 /* placement row */
 .prow{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--p-border);border-radius:8px;background:#fff;margin-bottom:8px}
 .seq{font:600 11px/1 'Geist Mono',monospace;color:var(--p-muted);background:var(--p-surface-alt);border-radius:6px;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center}
@@ -75,15 +77,21 @@ body{margin:0;padding:24px;background:var(--p-surface-alt);color:var(--p-ink)}
     </div>
     <!-- general stock section -->
     <div class="card">
-      <div class="shead"><span class="mi" style="color:var(--p-placeholder)">drag_indicator</span><span class="sname">Back Stock</span><span class="gbadge"><span class="mi" style="font-size:13px">shuffle</span> General Stock</span><span style="flex:1"></span><span class="mi" style="color:var(--p-muted)">more_horiz</span></div>
-      <div class="body"><div class="gempty"><span class="mi" style="font-size:24px;color:var(--p-muted)">inventory_2</span><div style="font:600 14px Inter;margin-top:8px">General Stock Area</div><div style="font:400 13px Inter;color:var(--p-muted);margin-top:2px">Products can't be placed here. Use this section to track variable inventory.</div></div></div>
+      <div class="shead"><span class="mi" style="color:var(--p-placeholder)">drag_indicator</span><span class="sname">Back Stock</span><span style="flex:1"></span><span class="mi" style="color:var(--p-muted)">more_horiz</span></div>
+      <div class="body">
+        <div class="meta">
+          <button class="noteghost"><span class="mi" style="font-size:14px">sticky_note_2</span> Add a note about this section</button>
+          <span class="gstock on"><span class="mi" style="font-size:14px;color:var(--p-genstock)">shuffle</span> General Stock Area <span class="mi" style="font-size:14px;color:var(--p-placeholder);cursor:help">info</span> <span class="tog on"></span></span>
+        </div>
+        <div class="gempty"><span class="mi" style="font-size:24px;color:var(--p-muted)">shuffle</span><div style="font:600 14px Inter;margin-top:8px">General Stock Area</div><div style="font:400 13px Inter;color:var(--p-muted);margin-top:2px">Products can't be placed here. Use this section to track variable inventory.</div></div>
+      </div>
     </div>
   </div>
   <!-- unassigned tray -->
   <div class="tray">
     <div class="traylabel"><span class="mi" style="font-size:16px;color:var(--p-muted)">inventory_2</span><span style="font:600 13px Inter">Unassigned</span><span class="countpill">2</span></div>
-    <div class="traychip"><span class="mi rm">drag_indicator</span><div style="flex:1"><div style="font:500 13px Inter">Hazy IPA 6pk</div><div style="font:400 11px Inter;color:var(--p-muted)">Beer · 6×12oz</div></div><span class="chip c-amber"><span class="mi">add_business</span>New to store</span></div>
-    <div class="traychip"><span class="mi rm">drag_indicator</span><div style="flex:1"><div style="font:500 13px Inter">Cold Brew 4pk</div><div style="font:400 11px Inter;color:var(--p-muted)">Non-Alc · 4×11oz</div></div></div>
+    <div class="traychip"><span class="mi rm">drag_indicator</span><div style="flex:1"><div style="font:500 13px Inter">Hazy IPA 6pk</div><div style="font:400 11px Inter;color:var(--p-muted)">Beer · 6×12oz</div></div><span class="chip c-amber"><span class="mi">add_business</span>New to store</span><span class="mi rm" title="Add to Section · Discontinue from Store" style="cursor:pointer;margin-left:4px">more_horiz</span></div>
+    <div class="traychip"><span class="mi rm">drag_indicator</span><div style="flex:1"><div style="font:500 13px Inter">Cold Brew 4pk</div><div style="font:400 11px Inter;color:var(--p-muted)">Non-Alc · 4×11oz</div></div><span class="mi rm" title="Add to Section · Discontinue from Store" style="cursor:pointer;margin-left:4px">more_horiz</span></div>
     <p style="font:400 12px/1.4 Inter;color:var(--p-muted);margin:8px 4px 0">Products at this store that aren't placed in any section appear here. Drag one into a section to place it.</p>
   </div>
 </div>
@@ -91,6 +99,7 @@ body{margin:0;padding:24px;background:var(--p-surface-alt);color:var(--p-ink)}
 <div class="notes">
   <p><b>Built on <code>@dnd-kit</code></b> (core + sortable + utilities) — accessible, keyboard-operable DnD; the only new runtime dependency. Two-column grid: editor <code>minmax(0,1fr)</code> + a sticky <code>340px</code> Unassigned tray.</p>
   <p><b>Drag rules:</b> a product may live in multiple sections, so the tray <b>emits but never accepts</b> placements (dragging a placement to the tray is forbidden). General Stock sections reject all drops. After any move, self-heal tray membership (unplaced = catalog − placed).</p>
+  <p><b>New in 1.7.</b> Each tray chip has a <code>more_horiz</code> kebab — <b>Add to Section…</b> (opens the multi-select <b>Section Picker</b> modal, rendered at the board root so the sticky tray can't clip it) and <b>Discontinue from Store</b> (staged pending discontinue, the inverse of a staged add; toggles to <b>Keep at Store</b>). Staged markers standardized to the gerund pair <b>Adding</b> (green) / <b>Discontinuing</b> (red), with "when published" in the tooltip; dated <code>Adds {M/D}</code> / <code>Disc. {M/D}</code> are unchanged. <b>General Stock</b> is now <b>purple</b> (the <code>color</code>-prop toggle + <code>tone="general"</code> confirm) and shown by a <b>single</b> indicator — the redundant header pill was removed; the empty-state glyph is <code>shuffle</code>. The "Suggested →" nudge uses a trailing arrow pointing at the toggle.</p>
   <p><b>Capacity</b> is soft-required: unset shows <b>amber</b> (not red). The label morphs <code>Capacity → Display Size</code> via <code>gr-label-swap</code> when Display is on. "Set Capacity For All" (section kebab) bulk-applies one value.</p>
 </div>
 

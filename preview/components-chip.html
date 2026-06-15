@@ -45,7 +45,14 @@ body{margin:0;padding:24px;background:var(--p-shell);color:var(--p-ink)}
   <span class="chip c-amber"><span class="mi">add_business</span>New to store</span>
   <span class="chip c-info"><span class="mi">curtains</span>1 Display</span>
   <span class="chip c-amber">Draft exists</span>
-  <span class="chip c-amber"><span class="mi">lightbulb</span>Suggested</span>
+  <span class="chip c-amber">Suggested<span class="mi">arrow_forward</span></span>
+</div>
+
+<p class="lbl">Trailing icon — iconRight (1.7)</p>
+<div class="row">
+  <span class="chip c-amber">Suggested<span class="mi">arrow_forward</span></span>
+  <span class="chip c-info">POD Plans<span class="mi">blur_medium</span></span>
+  <span class="chip c-info">Store Promos<span class="mi">award_star</span></span>
 </div>
 
 <p class="lbl">Clickable status pills (Chip visual, but &lt;button&gt; that stops propagation + navigates)</p>
@@ -66,6 +73,7 @@ body{margin:0;padding:24px;background:var(--p-shell);color:var(--p-ink)}
     <p><b>Tone = meaning</b> — map to the nearest of the six tones (neutral / info / amber / <b>atrisk</b> / danger / success); never mint a per-feature color. Copy is one to three words; the leading icon is optional.</p>
     <p><b><code>atrisk</code></b> (<code>--g-orange-10</code> / <code>--p-atrisk-strong</code>) is a soft orange between <code>amber</code> and <code>danger</code> — "At Risk" / "~N draining". It's the chip-tint sibling of the saturated Inventory Condition swatch <code>--cond-at</code> (<code>#F59E0B</code>) used on the map/legend.</p>
     <p><b>Chip Toggle</b> is the interactive sibling — a boolean attribute pill (off: gray outline; on: <code>--p-primary-tint</code> + <code>--p-primary-ink</code>). Distinct from the 32px Filter Chip.</p>
+    <p><b><code>iconRight</code> (1.7)</b> renders a 12px trailing glyph after the label (mirrors the leading <code>icon</code>). Use a trailing <b>directional arrow</b> when a chip's job is to point at the control it recommends — the "Suggested <span class="mi" style="font-size:12px">arrow_forward</span>" nudge now points toward the toggle it wants enabled (it dropped the leading <code>lightbulb</code>). Also carries entity glyphs on deep-link chips (POD Plans <code>blur_medium</code>, Store Promos <code>award_star</code>).</p>
   </div>
 </div>
 

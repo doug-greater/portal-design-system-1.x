@@ -281,10 +281,10 @@ coverage:
 - **Navigation & filtering** — Page-level & segmented Tabs, Filter Chips,
   the consolidated **Filter Menu**, the **Navigation Sidebar** (expanded
   / collapsed + collapsed flyout), and **Row actions** — the **Menu** popover
-  primitive opened by either a **Split button** or a **Kebab** trigger.
-- **Overlays & feedback** — **Modal** (`default` + `confirm` variants) and **Drawer**
+  primitive opened by either a **Split button** or a **Kebab** trigger. Portal-wide **Search** (one query grammar + `<Highlight>` match-painting) powers every list field and the ⌘K palette.
+- **Overlays & feedback** — **Modal** (`default` + `confirm` variants, incl. the purple `tone="general"`) and **Drawer**
   on a shared **Overlay** foundation (both now take an optional `subtitle`), **Toast** (success / error, top-center, always-present ✕),
-  **Loading & Skeleton**, **Empty States**, and the **Echo Pulse** post-auth brand moment.
+  **Loading & Skeleton**, **Empty States**, the **Command Palette (⌘K)** global launcher, and the **Echo Pulse** post-auth brand moment.
 - **Data display** — Tables (incl. **grid-row** read-only ledgers), **Pagination** (footer count + page-size + pager),
   **Stat Cards** (with drill-in `active` state + Show / Hide Stats), **Pills** (one tinted-label component for Category *and* Role on the
   shared 10-color palette), the **Status Badge** (soft pill + dot, 6 tones),
@@ -333,6 +333,20 @@ coverage:
   filter↔column parity, granular **audit records**, a **Replace-in-place** placement action,
   the **Route** facet, and **"Days on Hand"** (*supersedes* "Weeks on Hand"). New files:
   `theme.js`, `conditions.js`, a `Select` primitive; Appendix A documents the RBAC vocabulary.
+- **New in Portal 1.6 (Ink-Forward)** — primary actions & active navigation moved **blue → ink**
+  (`--p-action`, inverting to a white surface in dark); blue narrowed to selection / state / focus;
+  adaptive `--shadow-brutal`; a single **ink wizard track**; the **ink spinner**; the illustrated
+  **EmptyArt** empty states (state-accent dot); the neutral **row-action icon button**; and a squared
+  **crow icon** for favicons / square slots.
+- **New in Portal 1.7 (Search · ⌘K · General Stock)** — the **Command Palette (⌘K)** + a portal-wide
+  **Search Query Grammar** (`AND` default · uppercase `OR` · `"phrase"` · accent-insensitive) +
+  **`<Highlight>`** match-painting; the **search-highlight** token `--p-highlight` (the only sanctioned
+  yellow) and the **General Stock purple** concept tokens (`--p-genstock*`); the **entity-icon canon**
+  (one glyph per entity — POD Planner `blur_medium`, Store Promotions `award_star`); `Input` clearable
+  ✕ + `?` hint, `Toggle.color`, `Chip.iconRight`, `Tooltip.z`, `Modal tone="general"`; the
+  **Arrangement Board** tray kebab (Add to Section / Discontinue), `Adding` / `Discontinuing` badges,
+  single-indicator **purple** General Stock, and the "Suggested →" nudge; the **Section Picker**; and
+  the z-index ladder + the fixed-inside-`sticky`/`transform` rule.
 
 **Terminology (1.1 canon).** "Store Promotions" (short "Store Promos", `/store-promotions`),
 "POD Planner" (`/pod-planner`), "Audit Log" (events Created / Updated / Restored / Deleted;

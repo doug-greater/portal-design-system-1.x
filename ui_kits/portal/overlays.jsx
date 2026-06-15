@@ -71,7 +71,7 @@ function useOutside(onClose) {
 function Scrim({ children, onClose, justify = 'center' }) {
   return (
     <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, zIndex: 900, background: 'rgba(16,24,40,.45)',
+      position: 'fixed', inset: 0, zIndex: 10000, background: 'rgba(16,24,40,.45)',
       display: 'flex', alignItems: justify === 'center' ? 'center' : 'stretch',
       justifyContent: justify === 'right' ? 'flex-end' : 'center',
     }}>
@@ -105,6 +105,7 @@ function Modal({ open, onClose, title, subtitle, children, footer, size = 'md', 
     warning: { tint: 'rgba(219,158,3,.12)', color: 'var(--p-warning)' },
     primary: { tint: 'var(--p-primary-tint)', color: 'var(--p-primary)' },
     success: { tint: 'rgba(0,188,87,.12)', color: 'var(--p-success)' },
+    general: { tint: 'var(--p-genstock-tint)', color: 'var(--p-genstock)' },  // General Stock (purple concept accent)
   };
   const t = TONES[tone] || TONES.danger;
   return (
@@ -247,6 +248,74 @@ function MenuButton({ label, items = [], variant = 'primary', icon, disabled, lo
         </div>
       )}
     </span>
+  );
+}
+
+/* ---------------- Command Palette (⌘K · 1.7) ----------------
+   Global launcher. Opens on ⌘K / Ctrl-K (or a sidebar "Search" button). Grouped,
+   deep-linked results + page-jumps. Backdrop z-index 12000 — top of the ladder
+   (Tooltip 4000 · Wizard 9000 · Modal 10000 · ⌘K 12000). Runs on the searchQuery
+   grammar + <Highlight> (primitives); rows carry the entity icon (§8 canon) + related
+   POD Plans / Store Promos deep-link chips; the in-field ? hint passes z=12001 so its
+   tooltip floats above the backdrop. The active row (↑↓ / hover) is the ink cursor.
+   `groups`: [{ label, items: [{ id, icon, title, subtitle, related:[{icon,label}], onSelect }] }]. */
+const CMDK_Z = 12000;
+function CommandPalette({ open, onClose, query = '', onQuery, groups = [] }) {
+  const flat = React.useMemo(() => groups.flatMap((g) => g.items), [groups]);
+  const [active, setActive] = React.useState(0);
+  React.useEffect(() => { setActive(0); }, [query, open]);
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose?.();
+      else if (e.key === 'ArrowDown') { e.preventDefault(); setActive((i) => Math.min(i + 1, flat.length - 1)); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((i) => Math.max(i - 1, 0)); }
+      else if (e.key === 'Enter') { flat[active]?.onSelect?.(); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, flat, active, onClose]);
+  if (!open) return null;
+  let idx = -1;
+  return ReactDOM.createPortal(
+    <div data-testid="command-palette" onMouseDown={onClose}
+      style={{ position: 'fixed', inset: 0, zIndex: CMDK_Z, background: 'var(--p-backdrop, rgba(16,24,40,.45))', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '56px 24px' }}>
+      <div onMouseDown={(e) => e.stopPropagation()}
+        style={{ width: 560, maxWidth: '100%', background: 'var(--p-surface)', border: '1px solid var(--p-border)', borderRadius: 12, boxShadow: 'var(--shadow-float)', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', height: 52, padding: '0 14px', borderBottom: '1px solid var(--p-border)', gap: 10 }}>
+          <Icon name="search" size={20} color="var(--p-placeholder)" />
+          <input autoFocus value={query} onChange={(e) => onQuery?.(e.target.value)} placeholder="Search…" data-testid="command-palette-input"
+            style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', font: '400 16px Inter, sans-serif', color: 'var(--p-ink)' }} />
+          {query
+            ? <button type="button" data-testid="command-palette-clear" onClick={() => onQuery?.('')} style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--p-muted)', display: 'flex' }}><Icon name="close" size={18} /></button>
+            : <Tooltip text={SEARCH_HINT} side="bottom" maxWidth={260} z={CMDK_Z + 1}><span style={{ color: 'var(--p-placeholder)', cursor: 'help', display: 'flex' }}><Icon name="help" size={18} /></span></Tooltip>}
+        </div>
+        <div style={{ maxHeight: 380, overflow: 'auto', padding: '6px 0' }}>
+          {groups.map((g) => (
+            <div key={g.label}>
+              <div style={{ font: '500 10px/1 Inter, sans-serif', letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--p-muted)', padding: '12px 16px 6px' }}>{g.label}</div>
+              {g.items.map((it) => {
+                idx += 1; const on = idx === active;
+                return (
+                  <div key={it.id} onMouseEnter={() => setActive(flat.indexOf(it))} onClick={it.onSelect}
+                    style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 14px', cursor: 'pointer', background: on ? 'var(--p-action)' : 'transparent', color: on ? 'var(--p-action-fg)' : 'var(--p-ink)' }}>
+                    <Icon name={it.icon} size={20} color={on ? 'var(--p-action-fg)' : 'var(--p-text-2)'} />
+                    <span style={{ font: '500 14px Inter, sans-serif' }}><Highlight text={it.title} query={query} /></span>
+                    {it.subtitle && <span style={{ font: '400 12px Inter, sans-serif', color: on ? 'var(--p-action-fg)' : 'var(--p-muted)', marginLeft: 6 }}><Highlight text={it.subtitle} query={query} /></span>}
+                    {it.related?.length > 0 && (
+                      <span style={{ marginLeft: 'auto', display: 'inline-flex', gap: 6 }}>
+                        {it.related.map((r) => <Chip key={r.label} tone="info" icon={r.icon} style={on ? { background: 'rgba(255,255,255,.18)', color: 'var(--p-action-fg)' } : undefined}>{r.label}</Chip>)}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>,
+    document.body
   );
 }
 
