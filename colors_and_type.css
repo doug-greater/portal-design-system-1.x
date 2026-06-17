@@ -45,6 +45,7 @@
   --g-red-10:    rgba(229,72,77,.12);
   --g-green-10:  rgba(0,188,87,.12);
   --g-gold-10:   rgba(219,158,3,.12);
+  --g-gold-04:   rgba(219,158,3,.05);   /* faintest amber — whole-row "this row changed" tint (§Amber/Red editing law, 1.8) */
   --g-purple-10: rgba(123,104,238,.12);
   --g-orange-10: #FFF7ED;   /* 10% orange tint over white — Chip "atrisk" bg (§C) */
 
@@ -104,6 +105,7 @@
   --p-warning:       #DB9E03;
   --p-danger:        #E5484D;
   --p-danger-strong: #DC2626;
+  --p-danger-soft:   #FCEBEC;   /* red WASH for "conflict" calendar cells / buffer flags (§Amber/Red law, 1.8) — fill counterpart to --p-danger text; distinct from the --g-red-10 chip/banner tint */
   --p-atrisk-strong: #C2410C;  /* readable orange text on --g-orange-10 — Chip "atrisk" / "draining" (§C) */
 
   /* ---------- Inventory Condition palette — "Palette A" (1.5) ----------
@@ -280,6 +282,7 @@ html[data-theme="dark"] {
   /* Foundation rgba tints (Chip / InfoBanner) */
   --g-red-10: rgba(239,68,68,.16); --g-green-10: rgba(16,185,129,.16);
   --g-gold-10: rgba(245,158,11,.16); --g-purple-10: rgba(147,51,234,.16);
+  --p-danger-soft: rgba(239,68,68,.16); --g-gold-04: rgba(245,158,11,.08);   /* §Amber/Red editing law — dark */
   --g-orange-10: rgba(234,88,12,.15); --g-blue-10: rgba(59,130,246,.16);
   --g-off-white: #27272A;
 
