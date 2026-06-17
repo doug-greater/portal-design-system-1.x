@@ -105,7 +105,7 @@ body { margin: 0; padding: 20px 24px; background: #fff; font: 400 14px Inter; co
 .fl input.mono { font-family: 'Geist Mono', monospace; }
 
 /* ── Floating-label search bar ── */
-/* height: 48px, border-radius: 8px (--radius-lg), icon at left */
+/* height: 48px, border-radius: 4px (--radius-sm), icon at left */
 .sb { position: relative; }
 .sb input {
   display: block;
@@ -114,7 +114,7 @@ body { margin: 0; padding: 20px 24px; background: #fff; font: 400 14px Inter; co
   padding: 0 14px 0 44px;
   box-sizing: border-box;
   border: 1px solid var(--p-border-strong);
-  border-radius: 8px;
+  border-radius: 4px;
   font: 400 15px/1 Inter;
   color: var(--p-ink);
   background: #fff;
@@ -248,7 +248,7 @@ body { margin: 0; padding: 20px 24px; background: #fff; font: 400 14px Inter; co
 
 <!-- ── SEARCH BAR ── -->
 <div>
-  <div class="sec">Search bar · 48px · radius-lg</div>
+  <div class="sec">Search bar · 48px · radius-sm</div>
   <div class="row">
     <div class="sb" style="width:400px">
       <span class="fl-label">Search</span>
@@ -273,7 +273,7 @@ body { margin: 0; padding: 20px 24px; background: #fff; font: 400 14px Inter; co
   <div class="sec">Spec</div>
   <div class="note">
     <b style="color:var(--p-ink)">Field:</b> height <code>36px</code> · border-radius <code>4px</code> · font <code>400 14px Inter</code> · padding <code>0 14px</code> · focus ring <code>0 0 0 3px rgba(0,124,255,.15)</code><br><br>
-    <b style="color:var(--p-ink)">Search bar:</b> height <code>48px</code> · border-radius <code>8px</code> · padding-left <code>44px</code> (18px icon + gutter) · otherwise identical<br><br>
+    <b style="color:var(--p-ink)">Search bar:</b> height <code>48px</code> · border-radius <code>4px</code> · padding-left <code>44px</code> (18px icon + gutter) · otherwise identical<br><br>
     <b style="color:var(--p-ink)">Floating label:</b> <code>position: absolute; top: -7px; left: 10px; padding: 0 4px; background: #fff</code> · 12px 400 Inter · color <code>#6A7282</code> (error: <code>#E5484D</code>, focus: <code>#007CFF</code>)<br><br>
     Required fields append <code> *</code> to the label string.<br><br>
     <b style="color:var(--p-ink)">Disabled / locked (1.5):</b> bg <code>--p-surface-tint</code>, text <code>--p-placeholder</code>, <code>cursor: not-allowed</code>, no focus ring. A disabled <code>Select</code> swaps its chevron for a <code>lock</code> glyph and won't open — the at-a-glance "capability-locked" signal. Pair a locked surface with the amber capability-lock banner (leading <code>lock</code> icon) explaining why.
