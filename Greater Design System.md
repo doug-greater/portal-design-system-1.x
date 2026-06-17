@@ -802,7 +802,7 @@ Taller search input used at the top of list views (Users, Products).
 
 ```css
 height: 48px;
-border-radius: 8px;          /* --radius-lg */
+border-radius: 4px;          /* --radius-sm — matches the shared Input primitive + the §6 control-radius normalization (was 8px) */
 padding: 0 14px 0 44px;      /* 44px accommodates the 18px icon + gutter */
 font: 400 15px Inter;
 
