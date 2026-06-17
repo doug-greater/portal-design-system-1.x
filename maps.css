@@ -388,3 +388,16 @@ html[data-theme="dark"] .g-hex-cell:hover .g-hex-outline { stroke: #FFFFFF; fill
 html[data-theme="dark"] .g-hex-fill { stroke: rgba(10,10,11,.55); }   /* gap stroke goes dark */
 html[data-theme="dark"] .g-hex-grid { stroke: rgba(255,255,255,.10); }
 html[data-theme="dark"] .g-cov-pin { stroke: #0A0A0B; }               /* pin halo = shell */
+
+/* =======================================================================
+   In-popup "Edit Assignment" deep-link (1.8) — a blue in-content text link
+   (it navigates, so it stays blue per the ink/blue law). Sits at the bottom
+   of a hover-reveal route-pin popup; clicking deep-links to the list editor. */
+.g-map-popup-edit {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 9px; padding-top: 8px;
+  border-top: 1px solid var(--p-border);
+  font: 600 12px/1 Inter, sans-serif;
+  color: var(--p-primary); text-decoration: none;
+}
+.g-map-popup-edit:hover { color: var(--p-primary-hover); }

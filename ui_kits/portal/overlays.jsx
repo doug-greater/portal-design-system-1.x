@@ -92,8 +92,10 @@ function Scrim({ children, onClose, justify = 'center' }) {
        </>}>
        You have unsaved changes that haven't been saved yet. Leave this page anyway?
      </Modal>
-   Caveat: declarative BrowserRouter has no useBlocker — covers the back link +
-   hard unloads, not in-app sidebar nav (adopt a data router for full coverage). */
+   For full coverage of sidebar + programmatic navigation under a declarative
+   <BrowserRouter> (no data router needed), use the shared NavGuard context: a screen
+   registers `register(() => dirty)`; the sidebar navigates via `useGuardedNavigate`;
+   in-screen "leave" actions wrap themselves with `guard(proceed)`. See NavGuard.jsx. */
 function Modal({ open, onClose, title, subtitle, children, footer, size = 'md', width, variant = 'default', tone = 'danger', icon = 'warning', warning }) {
   useDismiss(open, onClose);
   if (!open) return null;

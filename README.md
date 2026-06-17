@@ -73,3 +73,31 @@ This repository is our **shared design system** — the single source of truth f
 - **Forms & flows.** An **Unsaved-Changes "Discard" guard** (with a data-router caveat), a fully specified **two-step Login + dev quick sign-in**, and a tightened **write-only secret** (Mobile PIN) rule.
 - **Hardening.** 4px control radii, unified **pending-change** tint language, mono bare-code table columns with em-dash empties + filter↔column parity, granular **audit-record** format, a **Replace-in-place** placement action, the **Route** facet, and **"Days on Hand"** (supersedes "Weeks on Hand").
 - **Deps** — adds the CARTO **dark_all** basemap (no new packages).
+
+## What's new in Portal 1.6
+
+> *the "Ink-Forward" pass — primary actions & active navigation move blue → ink.*
+
+- **Ink-forward.** Primary buttons, the active nav row / tab / wizard step / pagination page, and view-mode toggles use **brand ink** (`--p-action`), which **inverts to a white surface in dark**. **Blue** (`--p-primary`) is narrowed to selection / state / focus *inside content* (links, focus, selected rows, filters, controls, calendar, info).
+- **Components.** A single **ink wizard track** (green reserved for genuine success), the **ink spinner**, adaptive `--shadow-brutal` + a neo press, the illustrated **EmptyArt** empty states (state-accent dot), and a neutral **row-action icon button**.
+- **Brand.** A squared **crow icon** + multi-size favicon for square slots (favicon / app icon / avatar).
+
+## What's new in Portal 1.7
+
+> *the "search + ⌘K + General Stock" pass.*
+
+- **Command Palette (⌘K)** + a portal-wide **Search Query Grammar** (`AND` default · uppercase `OR` · `"exact phrase"` · case- & accent-insensitive) + **`<Highlight>`** match-painting, front-end and back-end in sync.
+- **Tokens.** A **search-highlight** family (`--p-highlight` — the only sanctioned yellow) and the **General Stock purple** concept accent (`--p-genstock*`).
+- **Iconography.** A canonical **entity-icon** table (one glyph per entity — POD Planner `blur_medium`, Store Promotions `award_star`).
+- **Component props.** `Input` clearable ✕ + `?` hint, `Toggle.color`, `Chip.iconRight`, `Tooltip.z`, `Modal tone="general"`.
+- **Arrangement Board.** Tray kebab (Add to Section / Discontinue), `Adding` / `Discontinuing` badges, single-indicator **purple** General Stock, the "Suggested →" nudge, and the **Section Picker**.
+
+## What's new in Portal 1.8
+
+> *the "governed + guarded" pass on top of 1.7.*
+
+- **Global Navigation Guard.** The unsaved-changes "Discard" guard now covers **all in-app navigation — sidebar, programmatic, in-page tabs, and hard unloads — under the existing declarative router** (a tiny `register/guard` context; no data router required). *Supersedes the 1.5 back-link-only caveat.*
+- **Role-derived RBAC + Settings → Roles & Permissions.** Permissions are now **role-level with no per-user overrides**, edited in a new Settings matrix that **re-syncs every user of a role on save**; the user page is **read-only** about permissions. *Supersedes the 1.5 per-user editor.*
+- **Assignment-Edit pattern.** A wide calendar + **live route preview** editor that codifies the **Amber = your edit / Red = real-world conflict** color law, a **legend-as-mini-cell** rule, and an amber **"(preview)"** label for staged views.
+- **Maps.** Pins moved to **hover-to-reveal** (with a grace timer) and carry an in-popup **"Edit Assignment"** deep-link back to the list editor.
+- **Hardening.** **Masonry** packing for variable-height cards, **native `title=` retired** in favor of the portal `Tooltip`, and **Cancel is ghost/neutral** (blue "Cancel" links retired). New tokens `--p-danger-soft` / `--g-gold-04`; new `NavGuard.jsx` kit + `SCREENS-1.8.md`.

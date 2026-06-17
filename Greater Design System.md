@@ -1,5 +1,5 @@
 # Greater Design System
-### Portal 1.7 · June 2026
+### Portal 1.8 · June 2026
 
 > Greater Industries builds AI that helps wholesalers and distributors make the smartest, most efficient, most profitable decisions across their entire business. From warehouse workers and truck drivers to sales reps and owners — Greater's portal is the cockpit that connects the people who power local economies.
 
@@ -42,6 +42,7 @@
    - **New in 1.5 (Dark Mode + governed UI):** **Theming — light/dark/system** (§3) · full dark token block + flip-pairs · **Conditions → Palette A** (§9, *supersedes*) · dark Coverage-Map basemap (§9 Maps) · disabled/locked control states + capability-lock banner (§9 Inputs/Info Banners) · **Permissions & Affordances** hide-vs-disable + **Unsaved-Changes guard** (§9) · two-step **Login** + dev sign-in (§9) · 4px control radii (§6) · pending-tint unification · **Days On Hand** (*supersedes* Weeks) · `ballot`=Sales (§8) · Appendix A (RBAC vocab)
    - **New in 1.6 (Ink-Forward):** primary actions & active navigation move **blue → ink** via the new `--p-action` family (§3) — primary buttons, active nav row / tab / wizard step / pagination page, view-mode toggles · **dark-mode action inversion** (white surface, near-black text) · **blue narrowed** to selection / state / focus inside content · adaptive `--shadow-brutal` + neo press (§7 / §9 Buttons) · single **ink wizard track** (green reserved for genuine success) · **ink spinner** (§9 Loading) · illustrated **EmptyArt** empty states with state-accent dot (§9 Empty States) · neutral **row-action icon button** (§9 Row Actions) · squared **crow icon** for square slots (§2 Brand)
    - **New in 1.7 (Search · ⌘K · General Stock):** [Command Palette (⌘K)](#command-palette-k--17) + portal-wide [Search Query Grammar & Highlight](#search--highlight-17) (`AND` default · uppercase `OR` · `"phrase"` · accent-insensitive) · search-highlight token `--p-highlight` (the only sanctioned yellow) + **General Stock purple** concept tokens `--p-genstock*` (§3) · **Entity-icon canon** (§8 — POD Planner `blur_medium`, Store Promotions `award_star`) · `Input` clearable ✕ + `?` hint · `Toggle.color` · `Chip.iconRight` · `Tooltip.z` · `Modal tone="general"` (§9) · **Arrangement Board** tray kebab (Add to Section / Discontinue), `Adding` / `Discontinuing` badges, single-indicator purple General Stock, "Suggested →" + **Section Picker** (§9) · z-index ladder + the fixed-inside-`sticky`/`transform` rule (§7)
+   - **New in 1.8 (Governed RBAC · Global Nav Guard · Assignment-Edit):** the unsaved-changes guard goes **global** — sidebar + programmatic + in-page tabs + hard unload under the declarative router (new `NavGuard.jsx`) *[supersedes the 1.5 data-router caveat]* · **role-derived RBAC** — one role→capability matrix in **Settings → Roles & Permissions** that re-syncs all users on save; the user page is **read-only** *[supersedes the 1.5 per-user editor]* · **Masonry** card packing (§12) · the **Assignment-Edit** modal + the **Amber = edit / Red = conflict** color law + **legend-as-mini-cell** + amber **"(preview)"** (§9 / §3 / Maps) · Maps **hover-reveal pins** + in-popup **Edit** deep-link (`.g-map-popup-edit`) · native **`title=` → portal Tooltip** · **Cancel = ghost / neutral** (retire blue links) · tokens `--p-danger-soft` / `--g-gold-04` (§6) · icon adds (§8) · `SCREENS-1.8.md`
 10. [Motion](#motion)
 11. [Voice & Copy](#voice--copy)
 12. [Layout](#layout)
@@ -178,6 +179,7 @@ The **commitment & active-navigation** color (1.6): primary buttons, the active 
 | `--p-warning` | `#DB9E03` | Warning |
 | `--p-danger` | `#E5484D` | Danger / error |
 | `--p-danger-strong` | `#DC2626` | Strong danger |
+| `--p-danger-soft` (1.8) | `#FCEBEC` / dark `rgba(239,68,68,.16)` | Red **wash** for "conflict" calendar cells / buffer flags (§Amber/Red law) — the fill under `--p-danger` text; distinct from the `--g-red-10` chip/banner tint |
 
 ### Portal Search Highlight (1.7)
 
@@ -234,6 +236,7 @@ Concept accent for the Store-Layout **"General Stock Area"** section type only. 
 
 - **Ink-forward (the core rule, 1.6).** Brand **ink** (`--p-action`) is the color of **commitment & navigation** — primary buttons, the active nav row, the active tab, the active wizard step, the active pagination page, active view-mode toggles. **Blue** (`--p-primary`) is reserved for **selection, state & focus _inside content_** — links, focus rings, input/field focus, selected rows, applied filters, checkboxes/toggles, calendar selection, info. Two tests resolve edge cases: **chrome vs content** (control chrome → ink; something inside the data → blue) and **location vs target** (a "you are here" marker → ink; a thing you select to act upon → blue). In **dark mode the action inverts** to a white surface with near-black text.
 - **Concept-accent legend (1.7).** Each meaning owns a color: **blue = action / link / selection**, **green = add**, **red = remove / destructive**, **amber = warning / suggestion**, **yellow = search-highlight only**, **purple = General Stock**. When a feature needs a distinct identity, add it as **semantic tokens** (light + dark), never inline hex, and document what it means next to the token (see General Stock purple). Add concept colors sparingly.
+- **Amber = your edit / Red = real-world conflict — the editing law (1.8).** On any **staged-edit surface** (the Settings role editor, the Edit Assignment modal), **amber** (`--p-warning` / `--g-gold-10`) means *"you changed this"* (staged, unsaved); **red** (`--p-danger` / `--p-danger-soft`) means *"this is a real-world conflict / warning"* (e.g. a calendar buffer or date violation). **Never mix them:** an edited-but-valid field is amber; a field that *also* violates a constraint shows the red warning. They are semantically different and must stay visually separate — staged amber also drives the §Unsaved-changes guard, while red flags a hard constraint.
 - **Search highlight = the only yellow.** `--p-highlight` / `--p-highlight-fg` are reserved exclusively for the literal characters a search query matched (§9 Highlight) — never for warnings, selection, or emphasis.
 - Tints are always 25% / 10% / 5% of the accent over white — never ad-hoc.
 - No gradients in product surfaces. No full-bleed imagery. No repeating patterns.
@@ -427,6 +430,8 @@ Base unit is **4px**. All spacing tokens are multiples of this base.
 | `--radius-xl` | 10px | Cards / large surfaces, map overlay cards, elevated floating cards (TableView) |
 | `--radius-pill` | 999px | Status Chips, role/category pills, count & "N selected" badges, toggle track |
 
+> **Dense edit surfaces use the scale, no magic numbers (reaffirmed 1.8).** In the Assignment-Edit surface: number / sequence inputs, calendar day cells, and legend cells → `--radius-sm` (4px); icon buttons (calendar prev/next, undo) → `--radius-md` (6px); the map/preview container and the changes ledger → `--radius-lg` (8px); count pills → `--radius-pill`. The scale itself is unchanged.
+
 > **4px control-radius normalization (1.5, usage clarification).** Interactive **control** corners are squared to a single small radius for a crisper, more "operational" feel. **Form controls, filter chips/menus, `Select`, pagination, and secondary toolbar buttons → `--radius-sm` (4px), standard height 36px.** (Login inputs were 10px → now 4px / 56px tall on the auth screen specifically.) **Pills stay fully round (`--radius-pill`)** — status Chips, role/category pills, count badges, the "N selected" pill are *labels*, not controls. **Cards / surfaces keep `--radius-xl` (10px).** The scale itself is unchanged; this is which element maps to which step — don't use 8–10px on inputs/chips/pagination anymore.
 
 ---
@@ -513,6 +518,8 @@ Use variable-font axes (`FILL`, `wght`, `GRAD`, `opsz`) sparingly — prefer out
 **Account-type icons** (rendered inside the Account Type Icon avatar — see §9): `storefront` (Retail / Store), `fastfood` (Restaurant), `shopping_cart` (Grocery), `local_convenience_store` (C-Store), `local_bar` (Bar), `attach_money` (Discount Store). All outline weight (`FILL 0`).
 
 **New in 1.5:** `ballot` (**Sales** — the nav item **and** the permissions "Sales" section; **supersedes** any earlier Sales glyph — apply in both so they match), `lock` (locked / disabled control + capability-lock banner), `compare_arrows` (replace-in-place / swap product), `route` (Route facet / column), `bolt` (dev quick sign-in button), `light_mode` / `dark_mode` / `contrast` (theme toggle — light / dark / system).
+
+**New in 1.8:** `difference` (Changes/diff ledger header), `undo` (per-row / ledger Undo + Reset), `open_in_full` (expand map to full screen), `badge` (edit Sales Rep — row action), `calendar_today` (edit Service Date — row action), `block` (skip service — danger row action), `group` (role-permission save-confirm modal).
 
 ### Entity icons (the canon · 1.7)
 
@@ -614,6 +621,8 @@ min-width: 0;          /* ghost hugs its label */
 /* disabled */ color: var(--p-placeholder);
 ```
 
+> **Cancel / dismiss = ghost or neutral, never a blue link (1.8).** A modal / dialog **Cancel** (or any "dismiss without committing") is a **`ghost`** button — or **`neutral`** when it needs a visible resting outline beside a filled primary in a footer (e.g. "Cancel" next to "Apply Changes"). **Ghost** is the lowest-emphasis dismiss (e.g. "Keep Editing" in the discard modal). **Never** style a dismiss as a blue text-link (`.linkBtn`): blue is reserved for true in-content links (the ink/blue law), and a blue "Cancel" reads like navigation and fights the ink primary beside it. Retire any `.linkBtn` / blue-text "Cancel". *(The "Reset all" text-button in the §Assignment-Edit ledger follows the same rule — neutral, not blue.)*
+
 **Foundation Neo** — brand moments only (e.g. login Next button)
 
 ```css
@@ -704,6 +713,7 @@ A dark popover (`--p-ink` bg, white text) anchored to its trigger; hover-only, `
 - **`side`** — `"top"` (default) or `"bottom"`. Controls vertical placement (the horizontal center-clamp handles left/right overflow on its own, so `"bottom"` is now only about which way the bubble opens, not an anti-clipping workaround).
 - **Re-measures on each open.** Positions from `getBoundingClientRect` at hover time; for an anchor that moves *while* the tooltip is shown, re-open to re-measure.
 - **`z` (1.7)** — z-index override, default `4000`. Raise it when a tooltip is triggered from inside a higher-z overlay (e.g. the ⌘K palette backdrop is `12000`, so its in-field `?` hint passes `z={12001}`). See the z-index ladder in §7. Signature: `Tooltip({ text, children, side = "top", maxWidth, z = 4000 })`.
+- **Never native `title=` for interactive affordances (1.8).** Use the component `Tooltip` for any **interactive control** whose meaning isn't obvious (icon-only buttons, kebab actions, undo/reset glyphs, map controls) — native `title` is inconsistent across OSes, slow to appear, un-styleable, and invisible on touch. **Native `title` is acceptable only** for (a) **non-interactive** decorative marks where a tooltip would be overkill (a 7px "unsaved" status dot, a map delivery-dot), and (b) strings inside **raw HTML injected into Leaflet popups** where a React component can't mount. Everything a user can click / operate gets the component. Tooltip copy is **terse, sentence-case, verb-first** for actions (*"Open full map"*, *"Undo date change"*).
 
 ---
 
@@ -1379,19 +1389,48 @@ A reusable variant: an **amber `InfoBanner` with a leading `lock` icon** that ex
 
 ---
 
-### Permissions & Affordances — hide vs disable (1.5)
+### Permissions & Affordances — hide vs disable (updated 1.8)
 
-As the portal gained real role-based capabilities, a consistent rule emerged for *how the UI reflects what you can and can't do*. (The capability ids themselves are product logic — see Appendix A.)
+> **New in 1.8 — permissions are strictly role-derived (supersedes the 1.5 per-user model).** There are **no per-user permission overrides.** A single **role → capability matrix** is the source of truth, edited **only** in **Settings → Roles & Permissions** (§ Settings · Roles & Permissions); saving a role **re-syncs every user holding it**, so a user's `permissions` array is always a **mirror** of its role's caps. The user-detail page is **read-only** about permissions (§ Users). *This replaces the 1.5 model that edited a per-user, disabled-by-capability Role + Permission matrix on the user-detail page.*
+
+A consistent rule governs *how the UI reflects what you can and can't do*. (The capability ids themselves are product logic — see Appendix A.)
 
 1. **HIDE** an affordance the user has **no capability to use at all**:
    - **Nav destinations** — e.g. the **Users** nav item disappears without `users.view`; the **Accounts** group without `acct.view`.
    - **Page-level create / destructive actions** — **New**, **Batch Actions**, **Save**, **Deactivate / Reactivate**.
-2. **DISABLE + lock-state** a control inside a surface the user *can* see but not change *in that dimension* (use the §Disabled/locked states + a §capability-lock banner explaining why). Example: a Department Manager can edit a user's profile, but the **Role** selector and **Permission** toggles are disabled.
+   - The **Settings → Roles & Permissions** tab requires **`users.roles`**; without it, render a **locked empty state** (*"Roles & Permissions are restricted… Ask an administrator if you need access."*).
+2. **DISABLE + lock-state** a control inside a surface the user *can* see but not change *in that dimension* (use the §Disabled/locked states + a §capability-lock banner explaining why). Example: a Department Manager can edit a user's profile fields but not their warehouse access. *(Permissions are no longer an example here — they aren't editable on the user page at all; see rule 6.)*
 3. **"View only" surface label.** A whole card the user can read but not edit shows a muted **"View only"** label where its save/status indicator would be (e.g. the Account *App Requirements* card without `acct.edit`).
-4. **Self-guard.** Users can **never** edit their **own** role / permissions / warehouse access (anti privilege-escalation), even if they otherwise hold the capability; surface it with the self-variant capability-lock banner.
-5. **Backend is the source of truth.** Hiding / disabling is **UX only**; the API still enforces (403 / silently drops locked fields). **Never rely on the UI alone.**
+4. **Self-guard.** Users can **never** perform destructive self-actions / edit their **own** warehouse access (anti privilege-escalation), even if they hold the capability; surface it with the self-variant capability-lock banner.
+5. **Backend is the source of truth.** Hiding / disabling is **UX only**; the API still enforces (`require_cap` → 403 / silently drops locked fields). **Never rely on the UI alone.**
+6. **Permissions are role-level, edited only in Settings (1.8).** The user-detail *Access* tab shows a **read-only** permission matrix (a mirror of the role) + a Settings pointer; there is **no** editable permission control on the user page for anyone. Editing happens once, on the role, in Settings → Roles & Permissions, and propagates to every user of that role.
 
-> **Rule of thumb.** *No capability at all → hide. Capability but not in this dimension (or self-guarded) → show it disabled + locked, and say why.* Mirror the disabled control with a §capability-lock banner so the read-only state never reads as a bug.
+> **Rule of thumb.** *No capability at all → hide. Capability but not in this dimension (or self-guarded) → show it disabled + locked, and say why. Permissions → role-level, edited only in Settings; the user page mirrors them read-only.*
+
+---
+
+### Settings · Roles & Permissions (1.8)
+
+The **single source of truth** for permissions: a **role → capability matrix** edited here, nowhere else. Saving a role **re-syncs every user holding it**. Requires the **`users.roles`** capability (else a locked empty state). Reference: `ui_kits/portal/SCREENS-1.8.md`.
+
+**Layout.** A **272px role rail** (left) + a **permission editor** (right), under a blue `InfoBanner tone="info"`:
+> *"Select a role, then edit the permissions associated with that role. Changes will be applied to all users with that role."*
+
+**Role rail** — one selectable card per role:
+- Card: a `RolePill` + a muted "N users" line. Selected = `--p-primary` border + `--p-primary-tint` bg + a trailing `chevron_right` (`--p-primary`).
+- **Per-role unsaved dot:** a 7px `--p-warning` dot on any role whose draft differs from saved — so switching roles never hides pending edits elsewhere.
+- testids: `role-select-<role>`, `role-dirty-dot-<role>`.
+
+**Permission editor** — a header (role label + an **"Unsaved changes"** amber pill when dirty) over a **Masonry card grid** (§ Masonry card packing) of capability sections:
+- Each section card: header (icon chip + section name + a mono `granted/total` count) over capability rows; each row = label + `Toggle`.
+- **A toggled-but-unsaved row tints `--g-gold-10`** (amber = pending edit — the §Amber/Red editing law). Header buttons: **`Reset`** (ghost, `sm`) · **`Save Changes`** (primary, `sm`, Title Case).
+- testids: `role-section-<key>`, `role-cap-<capId>`, `roles-save-btn`, `roles-reset-btn`, `roles-dirty`, `roles-info`.
+
+**Per-role drafts (state rule — document it).** Keep a `drafts` map (`roleId → Set(caps)`); a role enters it only once touched. Switching roles **must not** wipe another role's in-progress edits. "Any dirty across all roles" drives the §Unsaved-changes guard. Re-baseline (drop the role's draft) after a successful save.
+
+**Save confirmation** (`variant="confirm" tone="warning" icon="group"`): title *"Update {Role} permissions?"*; body explains it updates **all N users** with that role; confirm label **"Apply to N users"**. testids: `roles-confirm-modal`, `roles-confirm-save`.
+
+**Backend contract:** see Appendix A (`role_permissions` collection + `GET /api/roles` + `PUT /api/roles/{role}/permissions`) — a user's `permissions` is always a mirror of its role's caps.
 
 ---
 
@@ -1573,7 +1612,9 @@ The Account type icon (52px) replaces the initials avatar. The Account Type Pill
 
 ### Permission Cards
 
-Used on the Role & Permissions tab to display and override a user's capability grants.
+The shared **capability-section card** of the role → capability matrix, used in **two modes**: **editable** (toggles) in **Settings → Roles & Permissions** (§), and **read-only** (static checkmarks) on the **Users → Access** tab (§ Users). Both pack with **Masonry** (§ Masonry card packing) so the two screens read as one system.
+
+> **1.8 — no per-user overrides (supersedes 1.5).** Permissions are role-derived, so there is **no "deviation from role baseline" badge / status** anymore. The old per-user *override badge* + *N overrides* indicator were removed; the editable mode now uses the **amber pending-edit** tint (§Amber/Red editing law), and the user page is purely read-only.
 
 ```css
 /* Card shell */
@@ -1581,47 +1622,19 @@ border: 1px solid var(--p-border);
 border-radius: 10px;
 overflow: hidden;
 
-/* Section header */
+/* Section header — 28×28 icon chip (radius 7, bg #F3F4F6) + section name + a mono granted/total count */
 padding: 11px 14px;
 background: #FBFCFD;
 border-bottom: 1px solid #F0F1F3;
-
-/* Section icon chip: 28×28px, border-radius: 7px, bg: #F3F4F6 */
 
 /* Row */
 padding: 9px 14px;
 border-top: 1px solid #F4F5F7;
 ```
 
-Capability rows each contain: label (500 13px when on, 400/muted when off), an optional override badge, and a small toggle.
-
-#### Override badge
-
-Appears inline when a capability differs from the role baseline.
-
-```css
-font: 500 9px/1 Inter;
-letter-spacing: .04em;
-text-transform: uppercase;
-border-radius: 999px;
-padding: 2px 6px;
-border: 1px solid;
-
-/* Added */   color: #C2410C; background: #FFF7ED; border-color: #FCD9B6;
-/* Removed */ color: #1447E6; background: #EFF6FF; border-color: #BFDBFE;
-```
-
-Override rows get a subtle warm tint: `background: rgba(219,158,3,.05)`.
-
-#### Status indicator
-
-Sits above the card grid; shows how many capabilities deviate from the role baseline.
-
-```css
-/* Matches role */ background: #F3F4F6; color: #6A7282;
-/* N overrides  */ background: #FFF7ED; color: #C2410C;
-padding: 6px 11px; border-radius: 8px; font: 500 12px/1 Inter;
-```
+**Row content by mode:**
+- **Editable (Settings):** `label` + a **`Toggle`**. A **toggled-but-unsaved** row tints **`--g-gold-10`** (amber = pending edit); the header shows the live `granted/total`, and an **"Unsaved changes"** amber pill drives the §Unsaved-changes guard.
+- **Read-only (Users → Access):** `label` + a static **`check`** (granted) or muted dash (not granted) — no toggle, no edit — plus a one-line pointer: *roles are managed in Settings → Roles & Permissions.*
 
 #### Empty state (no role selected)
 
@@ -1661,6 +1674,8 @@ New-entity state: Avatar placeholder is a 52px gray circle (`#F3F4F6`) with `per
 ### App Shell & Navigation Sidebar
 
 The portal frame: a persistent left navigation sidebar + a scrolling content area. Reference: `ui_kits/portal/AppShell.jsx`.
+
+> **New in 1.8 — the sidebar navigates through the guard.** The sidebar calls `navigate()` **programmatically** (not via `<a>`/`<Link>`); swap that one hook for **`useGuardedNavigate()`** (`ui_kits/portal/NavGuard.jsx`) and every nav routes through the global unsaved-changes guard (§ Unsaved-changes guard). No other App Shell change is needed.
 
 #### Shell layout
 
@@ -1902,6 +1917,19 @@ A full-bleed geographic view of store coverage, in two scopes: **single product*
 
 > **Multivariate choropleth encoding rule (publish).** When a map/visualization shows **two** variables per cell, encode the **categorical / health** variable as **color** (from a fixed semantic palette) and a **magnitude** variable as **fill *area*** (scale the inner shape by `sqrt(value/max)` so area ≈ value) — **not** as opacity (opacity reads as uncertainty and muddies the color). The legend must explain **both** channels. Allow **spotlighting a single category** (click-to-isolate) as a lightweight filter, with a "Show all" reset. The **headline metric follows the encoding** — surface the same magnitude the fill encodes as a top `SummaryStat`.
 
+#### Live preview of staged edits (1.8)
+
+Edit surfaces that affect a map/route **render a live preview that reflects the staged (unsaved) edits in real time**, clearly labelled. In the Edit Assignment modal the right pane recomputes as date / rep / sequence change — the edited stop is inserted at `seq`, the day renumbered `1..n`, and the edited pin highlighted (`activeId`). The preview header shows `{date} · {rep}` and, **while dirty, an amber `(preview)`** suffix (`--p-warning`, weight 600); a pop-out rep-day map shows a **"· Preview"** amber chip in its subtitle.
+
+**Rule:** a preview must (1) be **visually distinct** from the committed state via the amber preview label (the §Color Rules amber = "unsaved" law — here it means "unsaved *view*"), and (2) be **non-destructive** — it only renders staged state; nothing persists until the user applies.
+
+#### Pin interaction — hover-to-reveal + in-popup deep-link (1.8)
+
+Route-map pins use **hover-to-reveal**, not click-to-edit: hovering a pin opens its popup; the popup **stays open while the cursor is over it** (so its action link is clickable) and closes after a **~180ms grace timer** on leave. The popup carries an **"Edit Assignment"** text link (`.g-map-popup-edit`) that **deep-links back to the list and opens that stop's edit modal** — the canonical **map → list → modal** hand-off, so a map never embeds a second copy of an editor.
+
+- **Rule:** for **map markers** that also need a click target for selection, prefer **hover-to-reveal** over click-to-open, and always add a **grace timer** so the popup's actions are reachable.
+- In-popup actions that **navigate** are **links (blue)** — `.g-map-popup-edit` stays `--p-primary` per the ink/blue law; in-popup actions that **commit** would be buttons.
+
 ---
 
 ### Toast
@@ -2009,23 +2037,30 @@ box-shadow: var(--shadow-float);
 - **Motion:** modal — 180ms ease-out, scale `0.98 → 1` + scrim fade. Drawer — 180ms ease-out `translateX(16px → 0)` (transform-only). Honor `prefers-reduced-motion`.
 - **Behavior:** trap focus while open; restore focus to the trigger on close. `default` and `Drawer` close on scrim-click, `✕`, and `Escape`. `confirm` closes on **Cancel** or `Escape` only — never scrim-click — to prevent accidental dismissal of a consequential choice.
 
-#### Unsaved-changes "Discard" guard (1.5)
+#### Unsaved-changes "Discard" guard — global (1.8)
 
-Any **edit surface** (detail editor, wizard step with local edits) guards navigation away when there are unsaved changes.
+> **New in 1.8 — supersedes the 1.5 data-router caveat.** The guard now covers **every in-app navigation** — sidebar links, programmatic `navigate()`, in-page tab switches, hard reload, and tab close — **under the existing declarative `<BrowserRouter>`, with no data router.** Reference kit: `ui_kits/portal/NavGuard.jsx`.
 
-**Pattern:**
-- Track **dirty** = a JSON snapshot of the editable fields differs from the loaded / last-saved snapshot.
-- Intercept the in-page **Back link / exit** affordance → open a **`confirm`** Modal (danger).
-- Add a `window` **`beforeunload`** guard while dirty (covers refresh / tab close / browser-back-out-of-app).
-- **Re-baseline** the snapshot after a successful save so it doesn't false-trigger.
+Any **edit surface** (detail editor, wizard step, settings tab with local edits) guards navigation away when there are unsaved changes.
 
-**Modal (danger `confirm`; Title-Case header, sentence-case body):**
+**Why it works without `useBlocker`.** React Router's `useBlocker` needs `createBrowserRouter`. Instead of blocking *router transitions*, we **gate the navigation call itself**: the sidebar navigates programmatically (not via `<a>`/`<Link>`), so wrapping that one call site is enough. A dirty screen **registers a predicate**; the guard consults it before proceeding.
+
+**Pattern (a tiny `register` / `guard` context):**
+- Track **dirty** = a JSON snapshot of the editable fields differs from the loaded / last-saved snapshot; **re-baseline** after a successful save so it doesn't false-trigger.
+- **`NavGuardProvider`** wraps the authenticated `<AppShell>` subtree (inside the router, outside the routed screens); it renders the discard Modal **and** a live `window` `beforeunload` handler.
+- **Three adopter obligations:**
+  1. **Wrap the shell** — `<NavGuardProvider>` around `<AppShell>`.
+  2. **Sidebar uses the guarded navigate** — `const navigate = useGuardedNavigate()` (drop-in for `useNavigate`); every existing `navigate(path)` now auto-prompts.
+  3. **A dirty screen registers + guards its own in-page leaves** — `useEffect(() => register(() => dirty), [register, dirty])` (covers sidebar + unload) and wrap in-page tab switches with `guard(() => setTab(t))`.
+- `useNavGuard()` returns a **safe no-op** when rendered outside the provider.
+
+**Modal contract (danger `confirm`; Title-Case header, sentence-case body):**
 - **Title:** "Discard Unsaved Changes?"
 - **Body:** *"You have unsaved changes that haven't been saved yet. Leave this page anyway?"*
-- **Footer:** **Keep Editing** (ghost) · **Discard & Leave** (warning/danger).
-- testids: `…-leave-modal`, `…-keep-editing`, `…-confirm-leave`.
+- **Footer:** **Keep Editing** (ghost) · **Discard & Leave** (warning).
+- testids: `discard-changes-modal`, `discard-cancel`, `discard-confirm`.
 
-> **Documented limitation (important for adopters).** With a **declarative** `<BrowserRouter>` + `<Routes>`, React Router's **`useBlocker` is unavailable** (it requires a *data router* via `createBrowserRouter`). So the guard covers the explicit back link + hard unloads, **not** in-app sidebar-link navigation. Apps that want full coverage of every in-app transition should adopt a **data router** so `useBlocker` can intercept all navigations — note this trade-off so the next implementer chooses deliberately.
+**Adopted by:** Settings (Roles tab + tab-switch), Users detail editor, Planned Assignments edit mode, and the Store Layout editor.
 
 ---
 
@@ -2160,6 +2195,37 @@ Endpoints are solid primary circles; the span between fills a `--p-primary-tint`
 The calendar is **portaled to `<body>`** with `position: fixed`, so it escapes `overflow: hidden` on modals and table cells, and it **opens upward (`dropUp`)** when there isn't room below — so an in-modal picker never covers the modal's Save button. Treat portaled + auto-flip as **required** for any picker used inside a modal.
 
 - **Behavior:** close on outside-click and `Escape`.
+
+#### Legend — legend-as-mini-cell (1.8)
+
+When a calendar (or any chart) carries a legend, **each legend swatch must be a literal miniature of the thing it labels**, not an abstract dot. The Assignment-Edit calendar legend renders **22px mini calendar cells** with the **same radius, fill token, and dot** as the grid:
+- **Delivery** → a cell with the same center dot as a delivery day.
+- **Buffer violation** → a `--p-danger-soft` cell (matches the red-warning day, §Color Rules).
+- **Unavailable** → a faded cell (`opacity: .45`).
+
+**Rule:** the key always mirrors the grid — same radius, same fill token, same dot — so a user maps legend ↔ grid at a glance. Don't draw legends as generic color chips when the real mark has structure (a dot, a strike, a fade).
+
+---
+
+### Assignment-Edit (staged-edit surface · 1.8)
+
+The canonical **wide split-pane editor**: a `Modal width={1040}` with a 5-column grid — **detail / controls · divider · month calendar · divider · live route preview** — and a bottom **"Changes to save"** ledger. It is the reference example of the **Amber = edit / Red = conflict** law (§Color Rules). Reference: `ui_kits/portal/SCREENS-1.8.md`.
+
+**Amber = staged edit:**
+- A changed **Service Date** flips to `--p-warning` weight 600.
+- The **Sales Rep** `Select` and the **Sequence** input take a `--p-warning` border + `--g-gold-10` fill when their value differs from the loaded stop.
+- A changed cell in a table row tints `--g-gold-10` (same as the §Settings permission rows).
+
+**Red = real-world conflict:**
+- A calendar day that **violates the delivery buffer** renders `--p-danger-soft` bg + `--p-danger` text (selectable but flagged).
+- A **buffer-violation callout** (`3px var(--p-danger)` left border) explains the conflict in words.
+
+**"Changes to save" ledger** (only when ≥1 field changed):
+- Header: `difference` icon + "Changes to save" + a mono count pill + a neutral **"Reset all"** text-button (**not** blue — § Buttons / Cancel rule).
+- One **`ChangeRow`** per changed field (`from → to`) with a per-row **Undo** icon button wrapped in a portal `Tooltip` (§Tooltip), e.g. *"Undo date change"*.
+- testids: `ea-modal`, `ea-changes`, `ea-revert-<key>`, `ea-reset-all`, `ea-cancel`, `ea-apply`.
+
+**Live route preview + map hand-off:** the right pane reflects staged edits in real time with an amber **`(preview)`** label (§Maps · Live preview of staged edits); the full-screen map's in-popup **"Edit Assignment"** deep-links back here (§Maps · hover-reveal pins). Radii follow the scale (§Foundations → Radii); the modal is `position:fixed` and must be invoked from a clean (non-`sticky` / non-`transform`) ancestor (§7 z-index ladder).
 
 ---
 
@@ -2542,6 +2608,20 @@ These named keyframes ship in `colors_and_type.css` and back every entrance / lo
 
 No gradients on surfaces. No full-bleed imagery. Backgrounds are flat white with `#F9FAFB` for table headers and `#F3F4F6` for tab-strip wells.
 
+### Masonry card packing (1.8)
+
+For a set of **read-mostly, variable-height cards** that don't need to align row-by-row (permission sections, summary cards), pack them with **CSS multi-column masonry** instead of a fixed grid, so short and tall cards interleave with no stretched dead space.
+
+```css
+/* container */            column-count: 2; column-gap: 14px;
+/* EVERY child card */     break-inside: avoid; margin-bottom: 14px;  /* or it splits across the gap */
+```
+
+- **Only** for read-mostly, variable-height cards. **Do not** use it for tables, ordered lists, or anything drag-reorderable — column flow is top-to-bottom-then-wrap, which breaks logical order.
+- **Every** child needs `break-inside: avoid` (and avoid fixed heights).
+- `column-gap` is the horizontal gutter; per-card `margin-bottom` is the vertical gutter (there is no `row-gap` in column layout).
+- Used by the Settings role editor and the Users read-only matrix (§ Permission Cards) so the two read as one system.
+
 ---
 
 ## 13. CSS Token Reference
@@ -2637,6 +2717,8 @@ All tokens are defined in `colors_and_type.css`. Load it first, then optionally 
   --p-warning: #DB9E03;
   --p-danger: #E5484D;
   --p-danger-strong: #DC2626;
+  --p-danger-soft: #FCEBEC;            /* 1.8 — red wash for conflict cells (dark: rgba(239,68,68,.16)) */
+  --g-gold-04: rgba(219,158,3,.05);    /* 1.8 — faintest amber row tint (dark: rgba(245,158,11,.08)) */
 
   /* Intelligence gradient — AI / confidence / predictive */
   --g-intel-gradient: linear-gradient(90deg, #007CFF 0%, #5359F1 50%, #F153A9 100%);
@@ -2784,14 +2866,20 @@ So the affordance rules in §Permissions & Affordances have a shared vocabulary,
 | Supervisor | `users.view`, `acct.view` (view-only on Users) |
 | Sales Rep | `acct.view`, `sales.*` — **no** `users.*` (no Users nav) |
 
-**Mapping to §Permissions & Affordances:**
+**Role-derived model (1.8 — supersedes the 1.5 per-user model).** Permissions are **strictly role-derived**; there are **no per-user overrides**. A `role_permissions` collection (`{ id: role, roleId, caps: [...], updatedAt }`) is **idempotently seeded** from `ROLE_CAPS` defaults and is the editable, DB-backed source of truth; a user's `permissions` array is always a **mirror** of its role's caps. `CAPS` groups capabilities into **sections** (`{ key, section, icon, items: [{ id, label }] }`) — this is what renders the matrix.
+- `GET /api/roles` → `{ roles, roleOrder, caps, allCaps, roleCaps, counts }` (gated by `users.roles`).
+- `PUT /api/roles/{role}/permissions` body `{ caps: [...] }` → validates caps against the catalog, writes the role row, **`update_many({role}, {permissions: caps})`** to re-sync users, writes a `role_audit` record, returns `{ roleCaps, counts, usersUpdated }`.
+
+**Mapping to §Permissions & Affordances (updated 1.8):**
 - No `users.view` → Users nav **hidden** (Reps); own profile still reachable via the user menu.
 - `users.view` only → Users list visible, **no** New / Batch / Save / Deactivate.
-- `users.edit` w/o `users.roles` → can edit profile + warehouses; **Role + Permissions disabled** (+ capability-lock banner).
+- No `users.roles` → **Settings → Roles & Permissions** is a **locked empty state**.
+- Permissions are **never editable on the user page** for anyone — it's a **read-only matrix** (§Users), a mirror of the role. Editing happens **only** in Settings → Roles & Permissions.
 - No `acct.edit` → Account *App Requirements* card is **"View only."**
+- **Backend is still the source of truth** — UI gating is UX only; the API enforces `require_cap`.
 
 *(Informational only — it lives here to give the visual affordance rules a vocabulary.)*
 
 ---
 
-*Greater Design System · Portal 1.5 · Exported June 2026*
+*Greater Design System · Portal 1.8 · Exported June 2026*

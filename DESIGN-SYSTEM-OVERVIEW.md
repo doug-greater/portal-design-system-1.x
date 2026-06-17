@@ -350,6 +350,16 @@ coverage:
   **Arrangement Board** tray kebab (Add to Section / Discontinue), `Adding` / `Discontinuing` badges,
   single-indicator **purple** General Stock, and the "Suggested →" nudge; the **Section Picker**; and
   the z-index ladder + the fixed-inside-`sticky`/`transform` rule.
+- **New in Portal 1.8 (Governed RBAC · Global Nav Guard · Assignment-Edit)** — the unsaved-changes
+  "Discard" guard goes **global** (sidebar + programmatic + in-page tabs + hard unload under the
+  declarative router; new **`NavGuard.jsx`**) *(supersedes the 1.5 data-router caveat)*; **role-derived
+  RBAC** — one role→capability matrix in **Settings → Roles & Permissions** that re-syncs every user of
+  a role on save, with the user page now **read-only** about permissions *(supersedes the 1.5 per-user
+  editor)*; **Masonry** packing for variable-height cards; the **Assignment-Edit** modal codifying the
+  **Amber = your edit / Red = real-world conflict** color law, **legend-as-mini-cell**, and an amber
+  **"(preview)"** label; Maps **hover-to-reveal** pins + an in-popup **"Edit Assignment"** deep-link;
+  native **`title=` retired** for the portal `Tooltip`; **Cancel = ghost / neutral** (blue links
+  retired); new tokens `--p-danger-soft` / `--g-gold-04`; and **`SCREENS-1.8.md`**.
 
 **Terminology (1.1 canon).** "Store Promotions" (short "Store Promos", `/store-promotions`),
 "POD Planner" (`/pod-planner`), "Audit Log" (events Created / Updated / Restored / Deleted;
