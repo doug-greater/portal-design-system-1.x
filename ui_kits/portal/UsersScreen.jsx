@@ -352,7 +352,7 @@ function UserDetail({ user, isNew, onBack }) {
       {/* body — internal scroll */}
       <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', margin: '0 -24px', padding: '24px 24px 0' }}>
         {tab === 'profile' && <ProfileTab u={u} isNew={isNew} />}
-        {tab === 'access' && <AccessTab u={u} isNew={isNew} role={role} setRole={setRole} />}
+        {tab === 'access' && <AccessTab u={u} isNew={isNew} role={role} />}
         {tab === 'team' && <TeamTab u={u} isNew={isNew} reports={reports} />}
       </div>
 
@@ -420,23 +420,21 @@ function RoleSelect({ role, onChange }) {
   );
 }
 
-function AccessTab({ u, isNew, role, setRole }) {
-  const base = role ? U_roleGrants(role) : new Set();
-  const [granted, setGranted] = useState(() => new Set(base));
+// 1.8: Access tab is READ-ONLY about permissions — a mirror of the role's caps.
+// Role + capabilities are edited only in Settings → Roles & Permissions (§C).
+function AccessTab({ u, isNew, role }) {
+  const granted = role ? U_roleGrants(role) : new Set();
   const [wh, setWh] = useState(() => new Set(u.warehouses));
-  const setRoleReset = (r) => { setRole(r); setGranted(new Set(U_roleGrants(r))); };
-  const flip = (id) => setGranted((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
-  const overrides = role ? U_ALL_CAPS.filter((id) => granted.has(id) !== base.has(id)) : [];
   const isRep = role === 'rep';
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 40, paddingBottom: 28 }}>
-      {/* left — role & scope */}
+      {/* left — role (read-only) & scope */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <div>
-          <USectionTitle style={{ marginBottom: 12 }}>Role *</USectionTitle>
-          <RoleSelect role={role} onChange={setRoleReset} />
-          <p style={{ margin: '8px 2px 0', font: '400 13px/1.5 Inter', color: 'var(--p-muted)' }}>Sets the baseline capabilities. Override any item per user.</p>
+          <USectionTitle style={{ marginBottom: 12 }}>Role</USectionTitle>
+          <div style={{ display: 'inline-flex' }}>{role ? <URolePill role={role} /> : <span style={{ color: 'var(--p-muted)' }}>—</span>}</div>
+          <p style={{ margin: '10px 2px 0', font: '400 13px/1.5 Inter', color: 'var(--p-muted)' }}>Permissions are set by role in <b style={{ color: 'var(--p-text-2)' }}>Settings → Roles &amp; Permissions</b>. This view is read-only.</p>
         </div>
         <div>
           <USectionTitle style={{ marginBottom: 12 }}>Job Title <span style={{ textTransform: 'none', letterSpacing: 0, fontWeight: 400, color: 'var(--p-placeholder)' }}>(optional)</span></USectionTitle>
@@ -460,44 +458,35 @@ function AccessTab({ u, isNew, role, setRole }) {
         </div>
       </div>
 
-      {/* right — permissions */}
+      {/* right — permissions (READ-ONLY matrix, a mirror of the role; edited only in Settings) */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <USectionTitle>Permissions</USectionTitle>
-          {role && <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '6px 11px', borderRadius: 8, background: overrides.length ? '#FFF7ED' : 'var(--p-surface-tint)', color: overrides.length ? '#C2410C' : 'var(--p-muted)', font: '500 12px/1 Inter' }}><Icon name={overrides.length ? 'tune' : 'check'} size={15} color={overrides.length ? '#C2410C' : 'var(--p-muted)'} />{overrides.length ? `${overrides.length} override${overrides.length > 1 ? 's' : ''}` : 'Matches role'}</span>}
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '6px 11px', borderRadius: 8, background: 'var(--p-surface-tint)', color: 'var(--p-muted)', font: '500 12px/1 Inter' }}><Icon name="lock" size={15} color="var(--p-muted)" />Read-only · set by role</span>
         </div>
-        {role ? (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-            {U_CAPS.map((sec) => {
-              const gc = sec.items.filter((it) => granted.has(it.id)).length;
-              return (
-                <div key={sec.key} style={{ border: '1px solid var(--p-border)', borderRadius: 10, overflow: 'hidden', background: '#fff' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 14px', borderBottom: '1px solid #F0F1F3', background: '#FBFCFD' }}>
-                    <span style={{ width: 28, height: 28, borderRadius: 7, background: 'var(--p-surface-tint)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={sec.icon} size={17} color="var(--p-text-2)" /></span>
-                    <span style={{ flex: 1, font: '600 13px/1 Inter', color: 'var(--p-ink)' }}>{sec.section}</span>
-                    <span style={{ font: "500 11px 'Geist Mono', monospace", color: 'var(--p-muted)' }}>{gc}/{sec.items.length}</span>
-                  </div>
-                  {sec.items.map((it, i) => {
-                    const on = granted.has(it.id); const ov = on !== base.has(it.id);
-                    return (
-                      <div key={it.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 14px', borderTop: i ? '1px solid #F4F5F7' : 'none', background: ov ? 'rgba(219,158,3,.05)' : '#fff' }}>
-                        <span style={{ flex: 1, font: `${on ? 500 : 400} 13px/1.3 Inter`, color: on ? 'var(--p-ink)' : 'var(--p-muted)' }}>{it.label}</span>
-                        {ov && <span style={{ font: '500 9px/1 Inter', letterSpacing: '.04em', textTransform: 'uppercase', color: on ? '#C2410C' : '#1447E6', background: on ? '#FFF7ED' : '#EFF6FF', border: `1px solid ${on ? '#FCD9B6' : '#BFDBFE'}`, borderRadius: 999, padding: '2px 6px' }}>{on ? 'Added' : 'Removed'}</span>}
-                        <Toggle on={on} onChange={() => flip(it.id)} />
-                      </div>
-                    );
-                  })}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          {U_CAPS.map((sec) => {
+            const gc = sec.items.filter((it) => granted.has(it.id)).length;
+            return (
+              <div key={sec.key} style={{ border: '1px solid var(--p-border)', borderRadius: 10, overflow: 'hidden', background: '#fff' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 14px', borderBottom: '1px solid #F0F1F3', background: '#FBFCFD' }}>
+                  <span style={{ width: 28, height: 28, borderRadius: 7, background: 'var(--p-surface-tint)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={sec.icon} size={17} color="var(--p-text-2)" /></span>
+                  <span style={{ flex: 1, font: '600 13px/1 Inter', color: 'var(--p-ink)' }}>{sec.section}</span>
+                  <span style={{ font: "500 11px 'Geist Mono', monospace", color: 'var(--p-muted)' }}>{gc}/{sec.items.length}</span>
                 </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div style={{ border: '1px dashed var(--p-border-strong)', borderRadius: 10, padding: '48px 24px', textAlign: 'center', background: '#FBFCFD' }}>
-            <span style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--p-primary-tint)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}><Icon name="lock_open" size={24} color="var(--p-primary)" /></span>
-            <div style={{ font: '600 15px/1.3 Inter', color: 'var(--p-ink)' }}>Choose a role to set permissions</div>
-            <div style={{ font: '400 13px/1.5 Inter', color: 'var(--p-placeholder)', marginTop: 4, maxWidth: 340, marginLeft: 'auto', marginRight: 'auto' }}>Pick a role above to load its default capabilities, then fine-tune any of them for this user.</div>
-          </div>
-        )}
+                {sec.items.map((it, i) => {
+                  const on = granted.has(it.id);
+                  return (
+                    <div key={it.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 14px', borderTop: i ? '1px solid #F4F5F7' : 'none' }}>
+                      <span style={{ flex: 1, font: `${on ? 500 : 400} 13px/1.3 Inter`, color: on ? 'var(--p-ink)' : 'var(--p-muted)' }}>{it.label}</span>
+                      <Icon name={on ? 'check' : 'remove'} size={16} color={on ? 'var(--p-success)' : 'var(--p-placeholder)'} />
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
