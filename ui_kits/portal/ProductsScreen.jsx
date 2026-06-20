@@ -43,7 +43,6 @@ function ProductsScreen() {
   const [tab, setTab] = useState('market');
   const [query, setQuery] = useState('');
   const [filters, setFilters] = useState({});
-  const [selected, setSelected] = useState(new Set());
   const [page, setPage] = useState(1);
 
   const coverageBucket = (n) => (n >= 20 ? 'High (20+ accounts)' : n >= 10 ? 'Medium (10–19 accounts)' : 'Low (under 10)');
@@ -79,14 +78,6 @@ function ProductsScreen() {
   const rangeStart = footerTotal === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const rangeEnd = Math.min((page - 1) * PAGE_SIZE + rows.length, footerTotal);
   useEffect(() => { setPage(1); }, [tab, query, filters]);
-
-  const toggleRow = (id) => {
-    setSelected((prev) => {
-      const n = new Set(prev);
-      n.has(id) ? n.delete(id) : n.add(id);
-      return n;
-    });
-  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 1280, height: '100%', minHeight: 0 }}>
@@ -126,8 +117,7 @@ function ProductsScreen() {
       {/* table */}
       <div style={{ background: '#fff', border: '1px solid var(--p-border)', borderRadius: 8, overflow: 'hidden', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         {/* header */}
-        <div style={{ display: 'grid', gridTemplateColumns: '40px 1.6fr 90px 110px 1fr 130px 140px 40px', alignItems: 'center', height: 40, flexShrink: 0, padding: '0 20px', background: 'var(--p-surface-alt)', borderBottom: '1px solid var(--p-border)', font: '500 11px/1 Inter', letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--p-muted)' }}>
-          <Checkbox on={selected.size === rows.length && rows.length > 0} onChange={() => setSelected(selected.size === rows.length ? new Set() : new Set(rows.map((r) => r.id)))} />
+        <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 90px 110px 1fr 130px 140px 40px', alignItems: 'center', height: 40, flexShrink: 0, padding: '0 20px', background: 'var(--p-surface-alt)', borderBottom: '1px solid var(--p-border)', font: '500 11px/1 Inter', letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--p-muted)' }}>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: 'var(--p-primary)' }}>PRODUCT <Icon name="arrow_upward" size={11} /></span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>ACCOUNTS <Icon name="unfold_more" size={11} /></span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>IN MARKET <Icon name="unfold_more" size={11} /></span>
@@ -139,16 +129,13 @@ function ProductsScreen() {
         {/* rows */}
         <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
         {rows.map((r) => {
-          const on = selected.has(r.id);
           return (
-            <div key={r.id} onClick={() => toggleRow(r.id)} style={{
-              display: 'grid', gridTemplateColumns: '40px 1.6fr 90px 110px 1fr 130px 140px 40px',
+            <div key={r.id} style={{
+              display: 'grid', gridTemplateColumns: '1.6fr 90px 110px 1fr 130px 140px 40px',
               alignItems: 'center', height: 56, padding: '0 20px',
               borderBottom: '1px solid var(--p-border)',
-              background: on ? 'var(--p-primary-tint)' : '#fff', cursor: 'pointer',
-              transition: 'background .1s',
+              background: '#fff',
             }}>
-              <Checkbox on={on} onChange={() => toggleRow(r.id)} />
               <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
                 <span style={{ font: "400 11px 'Geist Mono', monospace", color: 'var(--p-muted)' }}>{r.id}</span>
                 <span style={{ font: '500 14px Inter', color: 'var(--p-ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</span>
@@ -179,14 +166,6 @@ function ProductsScreen() {
         </div>
       </div>
 
-      {/* floating selection bar — live count of selected rows */}
-      {selected.size > 0 && (
-        <div style={{ position: 'sticky', bottom: 16, alignSelf: 'flex-end', background: '#fff', border: '1px solid var(--p-border)', borderRadius: 10, boxShadow: 'var(--shadow-float)', padding: '10px 14px', display: 'inline-flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ font: '500 14px Inter', color: 'var(--p-ink)' }}>{selected.size} selected</span>
-          <span style={{ width: 1, height: 20, background: 'var(--p-border)' }} />
-          <Button variant="ghost" onClick={() => setSelected(new Set())}>Clear</Button>
-        </div>
-      )}
     </div>
   );
 }

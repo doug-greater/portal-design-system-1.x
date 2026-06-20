@@ -21,7 +21,7 @@ Everything in this repo — `colors_and_type.css`, the `preview/` spec cards, an
 
 The system has since been **extended well beyond that origin** with
 net-new components designed from first principles: the consolidated Filter
-Menu, the floating Selection Bar, User Avatars & Role Pills, the Account
+Menu, User Avatars & Role Pills, the Account
 Type Icon, Permission Cards, the Confirmation Dialog (now the Modal
 `confirm` variant), the Page Detail Header, and a full app shell with a
 collapsible Navigation Sidebar.
@@ -75,13 +75,13 @@ Two visual languages coexist and the system supports both:
   (`#007CFF`) for links/selection (primary actions are ink — `--p-action`),
   14/16px Inter, tight headlines (−0.025em), `E5E7EB` borders,
   colored category pills (Beer=amber, Wine=purple, Spirits=orange…).
-- **Foundation** — the Figma token/spec page. Pure `#007CFF` primary,
-  absolute black headings, a five-accent palette plus a "seldom sky"
-  escape hatch, and a distinctive **neo-brutalist** button treatment
-  (1px black border + `2px 2px 0 #000` offset shadow) seen on the login
-  Next button.
+- **Brand moments** — a small, deliberate set of louder surfaces: the login
+  Next / Sign In button and the post-auth Echo Pulse. The only brand-specific
+  elements are the **neo-brutalist** button (1px black border + `2px 2px 0`
+  offset shadow) and the **intelligence gradient** — everything else is Portal.
 
-Prefer Portal values for product; Foundation for brand/marketing moments.
+Use Portal tokens for everything; the neutral ramp is the ink-forward ramp (no
+separate gray scale) and there is a single brand blue.
 
 ---
 
@@ -140,10 +140,10 @@ Examples taken verbatim from the Figma scrape:
 
 **Colors.** Black / dark-gray / medium-gray / light-gray / off-white /
 white forms the neutral spine. The brand blue is a single `#007CFF`
-(`--p-primary` / `--g-primary-blue`), reserved for links / selection / focus;
+(`--p-primary`), reserved for links / selection / focus;
 primary actions & active nav are **ink** (`--p-action`, see ink-forward).
-Five accents (green/red/gold/purple) plus "seldom sky" cover feedback and
-category pills. Tints are always computed as 25%/10%/5% of the accent over
+The feedback accents (green/red/gold) and the brand blue cover state; the
+10-color pill palette covers categories and roles. Tints are always computed as 25%/10%/5% of the accent over
 white, never ad-hoc.
 
 **Type.** Inter is the only UI family (Regular/Medium/Semibold/Bold/Light),
@@ -291,7 +291,7 @@ coverage:
 - **Data display** — Tables (incl. **grid-row** read-only ledgers), **Pagination** (footer count + page-size + pager),
   **Stat Cards** (with drill-in `active` state + Show / Hide Stats), **Pills** (one tinted-label component for Category *and* Role on the
   shared 10-color palette), the **Status Badge** (soft pill + dot, 6 tones),
-  Info Banners, two selection patterns — the header **Batch Actions** dropdown (default for tables) and the floating **Selection Bar** (canvas surfaces) — and the **Date Picker** (single + range, context-aware preset rails, min/max, drop-up).
+  Info Banners, the header **Batch Actions** dropdown for multi-select, and the **Date Picker** (single + range, context-aware preset rails, min/max, drop-up).
 - **Identity & detail** — **User Avatars & Role Pills** (dotless; ring = the role's
   text color; both via the shared `.g-avatar` / `.g-role-pill` classes), the
   **Account Type Icon + Pill** (`AccountTypeIcon` / `AccountTypePill` primitives), and the **Page Detail Header**.
@@ -399,7 +399,7 @@ No slide template was attached, so `slides/` is intentionally empty.
 - **For prototypes / mocks / slides:** import the CSS, copy the logo,
   load Material Symbols from Google Fonts. Stick to Portal tokens
   unless you're doing a brand-forward moment (then reach for the
-  Foundation quintet + the brutal shadow).
+  neo button + the intelligence gradient).
 - **For new components:** match the spacing base (4px), use
   `--p-border` / `--p-primary` / `--p-ink`, and prefer 14px Inter Medium
   for interactive labels.
