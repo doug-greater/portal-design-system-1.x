@@ -26,7 +26,7 @@
    - [Status Badge](#status-badge)
    - [Stat Cards](#stat-cards)
    - [Tables](#tables) · [Pagination](#pagination)
-   - [Info Banners](#info-banners) · [Selection Bar](#selection-bar-floating)
+   - [Info Banners](#info-banners) · [Batch Actions](#batch-actions-multi-select)
    - [User Avatars](#user-avatars) · [Role Pills](#role-pills-the-pill-applied-to-roles) · [Account Type Icon](#account-type-icon)
    - [Permission Cards](#permission-cards)
    - [Modal & Drawer](#modal--drawer) (incl. the `confirm` variant — formerly Confirmation Dialog)
@@ -35,7 +35,7 @@
    - [Page Detail Header](#page-detail-header)
    - [App Shell & Navigation Sidebar](#app-shell--navigation-sidebar)
    - [Maps](#maps)
-   - **New in 1.1:** [Wizard (multi-step flow)](#wizard-multi-step-flow) · [Audit Log, Change Row & Restore](#audit-log-change-row--restore) · [Echo Pulse](#echo-pulse-brand-moment) · [Expandable Rows](#expandable-rows) · [Batch Actions](#batch-actions-header-dropdown)
+   - **New in 1.1:** [Wizard (multi-step flow)](#wizard-multi-step-flow) · [Audit Log, Change Row & Restore](#audit-log-change-row--restore) · [Echo Pulse](#echo-pulse-brand-moment) · [Expandable Rows](#expandable-rows) · [Batch Actions](#batch-actions-multi-select)
    - **New in Phase 3 (Store Layouts):** [Chip](#chip-micro-status) · [Tooltip](#tooltip) · [MenuButton](#menubutton-off-table-disclosure) · [Arrangement Board](#arrangement-board-drag-and-drop) · [Meta Row](#meta-row-progressive-disclosure) · [General Stock Area](#general-stock-area-arrangement-board-sub-pattern) · [Inline Quantity Control](#inline-quantity-control) · [Add-items Picker](#add-items-picker-grouped-multi-select) · [CSV Import](#csv-import)
    - **New in 1.3 (shell + motion):** [Deep-linking (URL facets)](#deep-linking-url-facets) · StatCard count-up + informational variant (§9 Stat Cards) · `--p-shell` / `--shadow-surface` (§3 / §7) · pending-delta count cell (§9 Tables) · App Shell collapse motion (§9 App Shell)
    - **New in 1.4 (Coverage Map + unified filters):** [Inventory Conditions](#inventory-conditions-data-viz--domain-palette) · Coverage Map (§9 Maps) · [Account Type](#account-type-icon) primitives · `atrisk` Chip tone (§9 Chip) · Filter Menu `daterange` + related-record facet (§9 Filter Menu) · conditional/write-only-secret & async-uniqueness forms (§9 Inputs) · **Sharp icons** (§8) & **portal Tooltip** (§9) *supersede* prior specs
@@ -56,12 +56,12 @@
 
 The Portal design system supports two coexisting visual languages:
 
-| Language | Where Used | Primary Color | Character |
+| Layer | Where Used | Primary Color | Character |
 |---|---|---|---|
-| **Portal** | Shipping product UI | `#007CFF` (blue) + `--p-action` ink | Cool-gray neutrals, 14–16px Inter, tight headlines |
-| **Foundation** | Brand / marketing / onboarding moments | `#007CFF` | Black headings, five-accent palette, neo-brutalist button |
+| **Portal** | The entire shipping product UI (~99% of surface) | `#007CFF` (blue) + `--p-action` ink | Cool-gray neutrals, 14–16px Inter, tight headlines, ink-forward actions |
+| **Brand moments** | Login + the post-auth Echo Pulse — rare, deliberate | `#007CFF` + intelligence gradient | The neo-brutalist login button + the intelligence gradient; everything else is Portal |
 
-**Prefer Portal tokens for all product work.** Fall back to Foundation tokens for brand-forward moments (login, landing pages, onboarding).
+**Use Portal tokens for all product work.** The neutral ramp is the ink-forward ramp (no separate gray scale) and there is a single brand blue; the only deliberately branded elements are the neo login button and the intelligence gradient — keep them rare.
 
 The portal is information-dense — big data tables, filter chips, stat cards, comparison charts. It is designed for operators who live in the tool all day, not marketing surfaces.
 
@@ -88,16 +88,18 @@ The portal is information-dense — big data tables, filter chips, stat cards, c
 
 ## 3. Colors
 
-### Foundation Neutrals
+### Neutrals — the ink-forward ramp
 
-| Token | Hex | Role |
-|---|---|---|
-| `--g-black` | `#000000` | Absolute black, headlines |
-| `--g-dark-gray` | `#5F5E5E` | Secondary text |
-| `--g-medium-gray` | `#8A8A8A` | Placeholder text |
-| `--g-light-gray` | `#DADADA` | Inactive / dividers |
-| `--g-off-white` | `#F5F5F5` | Surface backgrounds |
-| `--g-white` | `#FFFFFF` | Pure white |
+There is **one** neutral ramp: the Portal ink-forward ramp. Use the `--p-*` names directly. The legacy `--g-*` neutral tokens are kept only as **aliases** of it, so older usages resolve to ink:
+
+| Alias | Resolves to |
+|---|---|
+| `--g-black` | `--p-ink` |
+| `--g-dark-gray` | `--p-text-2` |
+| `--g-medium-gray` | `--p-muted` |
+| `--g-light-gray` | `--p-border-strong` |
+| `--g-off-white` | `--p-surface-tint` |
+| `--g-white` | `#FFFFFF` (constant — inverted foreground) |
 
 ### Foundation Transparency Ladder (overlays on black)
 
@@ -108,18 +110,7 @@ The portal is information-dense — big data tables, filter chips, stat cards, c
 | `--g-black-10` | `rgba(0,0,0,.10)` | Label-tag backgrounds |
 | `--g-black-05` | `rgba(0,0,0,.05)` | Selected row backgrounds |
 
-### Foundation Accent Quintet
-
-| Token | Hex | Name | Role |
-|---|---|---|---|
-| `--g-primary-blue` | `#007CFF` | Primary blue | Primary actions, links |
-| `--g-secondary-green` | `#00BC57` | Secondary green | Success, positive feedback |
-| `--g-secondary-red` | `#E5484D` | Secondary red (True Red) | Errors, danger, destructive actions |
-| `--g-tertiary-gold` | `#DB9E03` | Tertiary gold | Warnings, draining states |
-| `--g-tertiary-purple` | `#7B68EE` | Tertiary purple | Accent use |
-| `--g-seldom-sky` | `#55A7FF` | Seldom sky | Escape hatch; use sparingly |
-
-### Foundation Tinted Surfaces (25% / 10% / 5% of accent over white)
+### Tinted Surfaces (25% / 10% / 5% of accent over white)
 
 | Token | Value |
 |---|---|
@@ -1434,45 +1425,13 @@ The **single source of truth** for permissions: a **role → capability matrix**
 
 ---
 
-### Selection Bar (floating)
+### Batch Actions (multi-select)
 
-> **One of two selection patterns.** For operator **list / table pages with a footer + pager, the [Batch Actions header dropdown](#batch-actions-header-dropdown) is the default** — it sits with the data-table chrome instead of floating over it. Reserve this **floating** Selection Bar for **canvas / non-tabular surfaces** (maps, boards, galleries) where there is no table footer to anchor to.
-
-A floating bar that appears when one or more rows are selected, showing the live count and batch actions. Sticks to the bottom of the viewport, right-aligned, and floats above content. Reference: the selection bar in `ProductsScreen.jsx`.
-
-```css
-position: sticky;
-bottom: 16px;
-align-self: flex-end;          /* right-aligned in a flex column */
-display: inline-flex;
-align-items: center;
-gap: 10px;
-padding: 10px 14px;
-background: #fff;
-border: 1px solid var(--p-border);
-border-radius: 10px;
-box-shadow: var(--shadow-float);
-```
-
-**Contents (left → right)**
-
-- **Count** — `{n} selected`, `500 14px Inter`, `--p-ink`. This is the core of the component and always present.
-- **Divider** — `1px × 20px`, `--p-border`.
-- **Actions** — start with a `Clear` ghost button (deselects all). Append context-specific batch actions (e.g. Deactivate, Export) as the surrounding feature requires — but only actions that belong to *this* page's job. Do not stuff cross-flow steps (a "Continue to a multi-step wizard" CTA, etc.) into a list page's selection bar; route those from their own flow.
-
-**Rules**
-
-- Renders only when `selected.size > 0`; animates in/out is optional (none by default — the portal reads as static).
-- The count + Clear pairing is the reusable minimum. Everything else is feature-specific and should be justified per screen.
-
-#### Batch Actions (header dropdown)
-
-The **default** multi-select pattern for operator list / table pages. Batch Actions live in a persistent header control rather than a floating bar, so they sit with the table footer (count + pager) instead of fighting it. Reference: `screens/PodPlanner.js`, `screens/Promotions.js`, `screens/Users.js`.
+The multi-select pattern for operator list / table pages. Batch Actions live in a persistent **header control**, sitting with the table footer (count + pager) instead of floating over the data. Reference: `screens/PodPlanner.js`, `screens/Promotions.js`, `screens/Users.js`, `screens/StoreLayouts.js`.
 
 - A **Neutral** Button labeled **"Batch Actions"** with a trailing `expand_more`, placed in the page header **to the left of the primary "New …" CTA**.
 - **Always present**, but **disabled** until `selected > 0`. When active it opens the standard **Menu** popover of batch actions (e.g. *Edit Dates*, *Edit Qty*, *Delete*); destructive items go **last**, in `--p-danger`.
 - Pairs with a **header-checkbox select-all (visible page)** and the standard table footer (`Showing X–Y of Z` + `RowsSelect` + Pagination).
-- **Do not** also float a Selection Bar on the same surface — pick one. On tables, that's Batch Actions.
 
 **Row-checkbox tables (the full pattern).** Store Layouts is the reference (`screens/StoreLayouts.js`): a header **select-all** + a per-row checkbox whose cell **stops propagation** (ticking it never triggers the row's navigate-to-detail). A **"{n} selected" chip** (`--p-primary-tint` pill, hidden at 0) sits left of the Batch Actions button.
 
@@ -2638,27 +2597,19 @@ All tokens are defined in `colors_and_type.css`. Load it first, then optionally 
 
 ```css
 :root {
-  /* Foundation neutrals */
-  --g-black: #000000;
-  --g-dark-gray: #5F5E5E;
-  --g-medium-gray: #8A8A8A;
-  --g-light-gray: #DADADA;
-  --g-off-white: #F5F5F5;
+  /* Neutrals — alias the ink-forward ramp (no separate gray scale) */
+  --g-black: var(--p-ink);
+  --g-dark-gray: var(--p-text-2);
+  --g-medium-gray: var(--p-muted);
+  --g-light-gray: var(--p-border-strong);
+  --g-off-white: var(--p-surface-tint);
   --g-white: #FFFFFF;
 
-  /* Foundation transparency */
+  /* Transparency ladder — subtle overlays */
   --g-black-100: rgba(0,0,0,1);
   --g-black-25: rgba(0,0,0,.25);
   --g-black-10: rgba(0,0,0,.10);
   --g-black-05: rgba(0,0,0,.05);
-
-  /* Foundation accents */
-  --g-primary-blue: #007CFF;
-  --g-secondary-green: #00BC57;
-  --g-secondary-red: #E5484D;
-  --g-tertiary-gold: #DB9E03;
-  --g-tertiary-purple: #7B68EE;
-  --g-seldom-sky: #55A7FF;
 
   /* Accent tints */
   --g-blue-25: rgba(0,124,255,.25);
@@ -2721,7 +2672,7 @@ All tokens are defined in `colors_and_type.css`. Load it first, then optionally 
   --g-gold-04: rgba(219,158,3,.05);    /* 1.8 — faintest amber row tint (dark: rgba(245,158,11,.08)) */
 
   /* Intelligence gradient — AI / confidence / predictive */
-  --g-intel-gradient: linear-gradient(90deg, #007CFF 0%, #5359F1 50%, #F153A9 100%);
+  --p-intel-gradient: linear-gradient(90deg, #007CFF 0%, #5359F1 50%, #F153A9 100%);
 
   /* Restore / audit action accents */
   --p-restore: #0D9488;             /* teal — restore / revert + `restored` audit state */
@@ -2833,13 +2784,13 @@ Lift tokens from `colors_and_type.css`. Consume components from `ui_kits/portal/
 
 Import `colors_and_type.css`, copy the logo assets, load Material Symbols from Google Fonts. Stick to Portal tokens unless you are designing a brand-forward moment (then use the Foundation quintet and `--shadow-brutal`).
 
-### When to use Foundation vs Portal
+### Portal everywhere; brand moments are the exception
 
 | Scenario | Use |
 |---|---|
-| Data tables, filters, stat cards, forms | Portal tokens |
-| Login screen, onboarding, marketing pages | Foundation tokens |
-| Brand moments (hero buttons, launch screens) | Foundation + `--shadow-brutal` |
+| Everything in the product — tables, filters, stat cards, forms, app shell | Portal tokens |
+| The login "Next" / "Sign In" CTA | the neo button (`--shadow-brutal`) |
+| Post-auth Echo Pulse + AI / predictive moments | the intelligence gradient (`--p-intel-gradient`) |
 | Any doubt | Portal tokens |
 
 ### Substitution notes
