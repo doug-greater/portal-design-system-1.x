@@ -101,3 +101,14 @@ This repository is our **shared design system** — the single source of truth f
 - **Assignment-Edit pattern.** A wide calendar + **live route preview** editor that codifies the **Amber = your edit / Red = real-world conflict** color law, a **legend-as-mini-cell** rule, and an amber **"(preview)"** label for staged views.
 - **Maps.** Pins moved to **hover-to-reveal** (with a grace timer) and carry an in-popup **"Edit Assignment"** deep-link back to the list editor.
 - **Hardening.** **Masonry** packing for variable-height cards, **native `title=` retired** in favor of the portal `Tooltip`, and **Cancel is ghost/neutral** (blue "Cancel" links retired). New tokens `--p-danger-soft` / `--g-gold-04`; new `NavGuard.jsx` kit + `SCREENS-1.8.md`.
+
+## What's new in Portal 1.9
+
+> *the "Home + shareable URLs + real-anchor navigation" pass.*
+
+- **AppLink — navigation as real anchors.** Every navigating element now renders a real `<a href>`, so the browser's **Open in new tab / ⌘-click / middle-click** all work; a plain left-click is still intercepted and routed through the SPA + the unsaved-changes NavGuard. Applies to the sidebar (incl. flyout), bottom rows, Saved-View cards, list rows, back links, ⌘K results, and count-delta chips — plus a **stretched-link row** pattern for clickable table rows.
+- **URL filter-state.** A list's search, facets, sort, and date range live in the **URL query string** (`urlFilters.js`) — copy-paste shareable and reload-safe; relative date presets persist as a **key** (`?range=last-week`). *Supersedes `sessionStorage` / `filterPersist`.*
+- **Saved Views.** A `SaveViewButton` in every list / report header bookmarks the page + its exact filters to the Home grid (per-user).
+- **Home dashboard.** The post-login landing: role-gated, drag-to-reorder **Health Stat Cards**, a **Saved Views** grid, and a hover-reveal **Crow Fact** easter egg.
+- **Login → single page.** One screen (email + password + Sign In), generic "Incorrect email or password" error; dev quick sign-in retained. *Supersedes the 1.5 two-step.*
+- **Animated, collapsible nav.** Parent groups **start collapsed** (only the active group auto-expands) and **animate** open / closed (grid-rows + staggered children); the landing item is **Home** (`home`). External Help Center is a real `<a target="_blank">`.
