@@ -1,0 +1,84 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,400,0..1,0">
+<style>
+body { margin: 0; padding: 24px 32px; background: var(--p-shell); font: 400 14px Inter; color: var(--p-ink); }
+.mi { font-family: 'Material Symbols Sharp'; line-height: 1; display: inline-flex; align-items: center; vertical-align: middle; }
+.home { max-width: 1600px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; min-height: 80vh; }
+.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px }
+.greet { margin: 0; font: 600 24px/1.2 Inter; letter-spacing: -.02em; color: var(--p-ink) }
+.sub { margin: 4px 0 0; font: 400 14px Inter; color: var(--p-muted) }
+.btn-neutral { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 16px; border-radius: 4px; font: 500 14px/1 Inter; cursor: pointer; background: var(--p-surface); color: var(--p-text); border: 1px solid var(--p-border-strong) }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px }
+.tile { border: 1px solid var(--p-border); border-radius: 10px; background: var(--p-surface); box-shadow: var(--shadow-card); padding: 14px 16px }
+.tlabel { display: flex; align-items: center; gap: 8px; font: 500 12px Inter; color: var(--p-muted) }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0 }
+.tval { font: 600 26px/1.1 'Geist Mono', monospace; color: var(--p-ink); margin: 6px 0 2px }
+.thint { font: 400 12px/1.4 Inter; color: var(--p-muted) }
+.sec-title { display: flex; align-items: center; gap: 6px; margin: 0 0 10px; font: 600 15px Inter; color: var(--p-ink) }
+.vgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px }
+.vcard { position: relative; border: 1px solid var(--p-border); border-radius: 10px; background: var(--p-surface); box-shadow: var(--shadow-card); padding: 14px 16px; text-decoration: none; color: inherit; display: block }
+.vcard .vh { display: flex; align-items: center; gap: 8px; font: 600 14px Inter; color: var(--p-ink) }
+.vcard .vnote { font: 400 12px/1.4 Inter; color: var(--p-muted); margin-top: 4px }
+.vcard .vsec { font: 400 11px Inter; color: var(--p-placeholder); margin-top: 6px }
+.vkebab { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; color: var(--p-muted); cursor: pointer; background: transparent; border: none }
+.crow { margin-top: auto; height: 28px; display: flex; align-items: center; justify-content: center; color: var(--p-placeholder); position: relative; cursor: default }
+.crow .fact { position: absolute; opacity: 0; transition: opacity .25s; font: 400 13px/1.4 Inter; color: var(--p-muted); text-align: center }
+.crow .bird { transition: opacity .25s }
+.crow:hover .bird { opacity: 0 } .crow:hover .fact { opacity: 1 }
+.notes { font: 400 13px/1.6 Inter; color: var(--p-text-2); max-width: 1000px; margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--p-border) }
+.notes b { color: var(--p-ink) } code { font: 400 12px 'Geist Mono', monospace; background: var(--p-surface-tint); padding: 1px 5px; border-radius: 4px }
+</style></head>
+<body>
+<div class="home">
+  <div class="head">
+    <div>
+      <h1 class="greet">Good morning, Antonio.</h1>
+      <p class="sub">Here's where things stand today.</p>
+    </div>
+    <button class="btn-neutral" data-testid="customize-cards-btn"><span class="mi" style="font-size:18px">tune</span> Customize</button>
+  </div>
+
+  <div class="grid">
+    <div class="tile"><div class="tlabel"><span class="dot" style="background:var(--p-success)"></span>Cases Shipped This Week</div><div class="tval">14.2k</div><div class="thint">Cases shipped from the warehouse so far this week.</div></div>
+    <div class="tile"><div class="tlabel"><span class="dot" style="background:var(--p-warning)"></span>Out for Delivery Today</div><div class="tval">312</div><div class="thint">Stops still en route on today's routes.</div></div>
+    <div class="tile"><div class="tlabel"><span class="dot" style="background:var(--p-danger)"></span>Accounts at Risk</div><div class="tval">7</div><div class="thint">Accounts with a SKU projected out-of-stock this week.</div></div>
+    <div class="tile"><div class="tlabel"><span class="dot" style="background:var(--p-placeholder)"></span>Layouts Set</div><div class="tval">128 / 190</div><div class="thint">Of service stops this week, how many have a layout set.</div></div>
+  </div>
+
+  <div>
+    <div class="sec-title">Saved Views <span class="mi" title="On any report or list, apply the filters you like and press 'Save View' to create a card here." style="font-size:15px;color:var(--p-placeholder);cursor:help">info</span></div>
+    <div class="vgrid">
+      <a class="vcard" href="/in-the-market?range=last-week&account=A0011" data-testid="fav-open-link-1">
+        <div class="vh"><span class="mi" style="font-size:18px;color:var(--p-text-2)">category</span>Harbor Foods — last week</div>
+        <div class="vnote">In the Market, filtered to Harbor Foods</div>
+        <div class="vsec">In the Market</div>
+        <button class="vkebab" data-testid="fav-menu-1"><span class="mi" style="font-size:18px">more_horiz</span></button>
+      </a>
+      <a class="vcard" href="/users?role=rep&warehouse=Elizabeth%20City" data-testid="fav-open-link-2">
+        <div class="vh"><span class="mi" style="font-size:18px;color:var(--p-text-2)">person</span>EC Sales Reps</div>
+        <div class="vnote">Users · Role = Rep · Warehouse = Elizabeth City</div>
+        <div class="vsec">Users</div>
+        <button class="vkebab" data-testid="fav-menu-2"><span class="mi" style="font-size:18px">more_horiz</span></button>
+      </a>
+      <a class="vcard" href="/pod-planner?range=this-month" data-testid="fav-open-link-3">
+        <div class="vh"><span class="mi" style="font-size:18px;color:var(--p-text-2)">blur_medium</span>This month's plans</div>
+        <div class="vnote">POD Planner · range = this-month</div>
+        <div class="vsec">POD Planner</div>
+        <button class="vkebab" data-testid="fav-menu-3"><span class="mi" style="font-size:18px">more_horiz</span></button>
+      </a>
+    </div>
+  </div>
+
+  <div class="crow" data-testid="crow-fact">
+    <span class="bird"><span class="mi" style="font-size:20px">raven</span></span>
+    <span class="fact">Crows can recognize and remember individual human faces — for years.</span>
+  </div>
+</div>
+
+<div class="notes">
+  <p><b>Home dashboard (1.9).</b> The post-login landing (<code>/home</code>). Container is <code>maxWidth:1600; margin:0 auto</code> inside the shell's 24/32 padding. Greeting + a <b>Neutral</b> Customize button (<code>tune</code>) · Health Stat Card grid (<code>minmax(320px,1fr)</code>, status dots) · Saved Views grid · the <b>Crow Fact</b> easter egg (hover the bird).</p>
+  <p><b>Role-gated &amp; orderable.</b> Tiles are gated by real role ids (<code>exec/deptmgr/itadmin/supervisor/rep</code>) and reorder / toggle via the <b>Customize</b> dropdown (@dnd-kit), persisted per-user. Live tiles stay clean; the <code>sample</code> label lives only in the customizer list. Each <b>ViewCard</b> is an <code>AppLink</code> to <code>path + search</code> (open-in-new-tab friendly).</p>
+</div>
+</body></html>

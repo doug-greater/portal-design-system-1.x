@@ -1,5 +1,5 @@
 # Greater Design System
-### Portal 1.8 · June 2026
+### Portal 1.9 · June 2026
 
 > Greater Industries builds AI that helps wholesalers and distributors make the smartest, most efficient, most profitable decisions across their entire business. From warehouse workers and truck drivers to sales reps and owners — Greater's portal is the cockpit that connects the people who power local economies.
 
@@ -43,6 +43,7 @@
    - **New in 1.6 (Ink-Forward):** primary actions & active navigation move **blue → ink** via the new `--p-action` family (§3) — primary buttons, active nav row / tab / wizard step / pagination page, view-mode toggles · **dark-mode action inversion** (white surface, near-black text) · **blue narrowed** to selection / state / focus inside content · adaptive `--shadow-brutal` + neo press (§7 / §9 Buttons) · single **ink wizard track** (green reserved for genuine success) · **ink spinner** (§9 Loading) · illustrated **EmptyArt** empty states with state-accent dot (§9 Empty States) · neutral **row-action icon button** (§9 Row Actions) · squared **crow icon** for square slots (§2 Brand)
    - **New in 1.7 (Search · ⌘K · General Stock):** [Command Palette (⌘K)](#command-palette-k--17) + portal-wide [Search Query Grammar & Highlight](#search--highlight-17) (`AND` default · uppercase `OR` · `"phrase"` · accent-insensitive) · search-highlight token `--p-highlight` (the only sanctioned yellow) + **General Stock purple** concept tokens `--p-genstock*` (§3) · **Entity-icon canon** (§8 — POD Planner `blur_medium`, Store Promotions `award_star`) · `Input` clearable ✕ + `?` hint · `Toggle.color` · `Chip.iconRight` · `Tooltip.z` · `Modal tone="general"` (§9) · **Arrangement Board** tray kebab (Add to Section / Discontinue), `Adding` / `Discontinuing` badges, single-indicator purple General Stock, "Suggested →" + **Section Picker** (§9) · z-index ladder + the fixed-inside-`sticky`/`transform` rule (§7)
    - **New in 1.8 (Governed RBAC · Global Nav Guard · Assignment-Edit):** the unsaved-changes guard goes **global** — sidebar + programmatic + in-page tabs + hard unload under the declarative router (new `NavGuard.jsx`) *[supersedes the 1.5 data-router caveat]* · **role-derived RBAC** — one role→capability matrix in **Settings → Roles & Permissions** that re-syncs all users on save; the user page is **read-only** *[supersedes the 1.5 per-user editor]* · **Masonry** card packing (§12) · the **Assignment-Edit** modal + the **Amber = edit / Red = conflict** color law + **legend-as-mini-cell** + amber **"(preview)"** (§9 / §3 / Maps) · Maps **hover-reveal pins** + in-popup **Edit** deep-link (`.g-map-popup-edit`) · native **`title=` → portal Tooltip** · **Cancel = ghost / neutral** (retire blue links) · tokens `--p-danger-soft` / `--g-gold-04` (§6) · icon adds (§8) · `SCREENS-1.8.md`
+   - **New in 1.9 (Home + shareable URLs + anchor navigation):** **AppLink** — navigation renders a real `<a href>` (open-in-new-tab / ⌘-click) while routing plain clicks through the NavGuard; the **anchor-navigation law** (§9 / §12 / §15) · **stretched-link rows** for clickable table rows (§9 Tables) · `BackLink` gains `to`; external links are real `<a target=_blank>` · **URL filter-state** (`urlFilters.js`) is the single source of truth, relative presets persist as a key *[supersedes `sessionStorage`/`filterPersist`]* (§ Deep-linking / State & URLs) · **Saved Views** + `SaveViewButton` (§9) · **Home dashboard** — role-gated drag-orderable Health Stat Cards + a Saved-Views grid + the Crow Fact easter egg (§9 / §12) · **Login → single page** *[supersedes the 1.5 two-step]* (§9) · App Shell nav **collapsed-by-default + auto-expand-active + animated** (grid-rows + stagger), landing item **Home** (`home`) (§8 / §9 / §10) · role-gating keys off **real role ids** (§15)
 10. [Motion](#motion)
 11. [Voice & Copy](#voice--copy)
 12. [Layout](#layout)
@@ -527,6 +528,7 @@ Each first-class Portal entity has exactly **one** canonical Material Symbol (Sh
 | **Users** | `person` | People / roles. |
 | **Audit Log** | `history` | Immutable ledger. |
 | Settings | `settings` | — |
+| **Home** (landing) | `home` | Post-login dashboard — the sidebar's first item (§ Home dashboard, 1.9). |
 | **General Stock Area** | `shuffle` | The variable / unmerchandised section type — used **consistently** for the meta-row toggle, the confirm-modal icon badge, *and* the body empty-state (a prior bug used `inventory_2`; corrected to `shuffle`). See §9 Arrangement Board. |
 
 **Dual-emitter rule.** Changing an entity glyph means updating **both** emitters — the frontend `CommandPalette.js` `PAGES` table *and* the backend `search_router.py` `related` / group `icon` fields — or the deep-link chips and the page-jumps diverge.
@@ -544,6 +546,20 @@ Each first-class Portal entity has exactly **one** canonical Material Symbol (Sh
 ---
 
 ## 9. Components
+
+### Navigation & links — AppLink (1.9)
+
+> **Anchor-navigation law.** Every element whose purpose is to **navigate to a route renders as a real `<a href>`** (via **`AppLink`**, a router `Link`, or a plain `<a>` for external) — **never** a `<button onClick={navigate}>`. A `button` gives the browser no link target, so its context menu offers only text actions — no "Open in new tab", no ⌘/Ctrl-click, no middle-click. Buttons stay buttons for **actions** (Sign Out, Save, toggles, expanders, kebab items).
+
+**`AppLink`** — the navigation primitive. Renders a real `<a href={to}>` so the browser's "Open in new tab" / ⌘-click / middle-click all work, but intercepts a **plain left-click** and routes it through the **NavGuard** `useGuardedNavigate` (§ Unsaved-changes guard) — instant SPA routing **and** the unsaved-changes prompt. Modifier / non-left clicks fall through to the browser untouched. Reference: `ui_kits/portal/primitives.jsx`.
+
+- Default style **resets** `text-decoration: none; color: inherit`, so an anchor looks like the element it replaced (no stray blue underline).
+- `to` is a same-origin path, query string allowed (e.g. `/accounts?market=…`); `to={undefined}` renders no `href`.
+- **Applies to:** the sidebar (expanded leaf, nested children, **collapsed flyout** children), the bottom utility rows (Audit Log / Settings / Account), **Saved-View cards**, **list rows** (see Stretched-link rows under Tables), **back links** (`BackLink`), **⌘K results**, and the pending **count-delta chips** (`+N`/`−N` → `/pod-planner?account=…`).
+
+**`BackLink` gains `to` (1.9).** With a `to` prop it renders a real `<a href>` (modifier-click opens a new tab; plain left-click runs the guarded `onClick`); it falls back to a `<button>` when only `onClick` is given. Call sites pass **both** — the `onClick` carries any query-preserving logic (e.g. `to={`/in-the-market${backQS}`}`). The anchor sets `text-decoration: none` and the ink/blue link color.
+
+**External links** (e.g. Help Center) are a **real** `<a href="…" target="_blank" rel="noopener noreferrer">` — *not* `onClick={() => window.open(...)}`. Because shared wrappers (e.g. the bottom nav rows) set the link reset, that wrapper style **must** include `text-decoration: none; color: inherit` or the external anchor inherits the default blue underline. *(Learning: a plain `<a>` that doesn't go through `AppLink` doesn't get the reset for free.)*
 
 ### Buttons
 
@@ -1333,6 +1349,16 @@ Distinct from **Chip** (status flags): this is a fixed green/red **signed-delta*
 
 > **Pending-change tint language — unified (1.5).** All "pending change" cues share **one** visual language so the `CountDeltaCell`, the PlanBadge ("Adds Aug 1" / "Disc."), the "New to store" badge, and the map pending pin read the same: **Add = green, Remove/Discontinue = red, Soft-required/attention = amber** — always a **soft tint pill** with a `+`/`−` prefix and **Geist Mono** numerals, **never bold black strokes**. (The PlanBadge pills were redrawn to match the POD Planner action pills + the CountDeltaCell; "New to store" uses the same green soft-tint.) The **pending-add map pin** is a **hollow dashed ring + center dot** (`.g-cov-pin.is-pending`, `stroke-dasharray: 2 2`), colored `--cond-pending` — distinct from a solid placed pin.
 
+#### Stretched-link rows — clickable rows that open in a new tab (1.9)
+
+A data-table row often must both **navigate to a detail page on click** *and* hold its own interactive controls (selection checkbox, count-delta chips). You can't nest those inside an `<a>` (invalid + click hijacking), so use the **stretched-link overlay**:
+
+- The row stays a `div` with `position: relative` and keeps its existing `onClick` navigate (the fallback for clicks on raised cells).
+- Insert an absolutely-positioned **`AppLink` overlay as the first child** — `position: absolute; inset: 0; zIndex: 1`, `tabIndex={-1}`, `aria-label={rowTitle}`, `onClick={(e) => e.stopPropagation()}` (so a left-click doesn't double-navigate via the row's own handler), `data-testid="…-row-link-{id}"`.
+- Raise every **interactive** cell above the overlay with `position: relative; zIndex: 2` (the selection checkbox, the count-delta cell, layout pills). Plain text cells stay **below** the overlay so right-click anywhere on them offers "Open in new tab".
+
+Result: right-click / ⌘-click anywhere on the row → new tab; the checkbox & chips still work. Shipped on Accounts, Users, and Store-Layouts rows.
+
 ---
 
 ### Info Banners
@@ -1661,7 +1687,8 @@ The sidebar must sit **outside** the scroll region (a sibling of `main`), never 
 | Collapse toggle | 26×26px circle, `right: -13px`, `top: 28px`, floats on the divider edge; chevron icon flips |
 
 - **Org header** — wordmark (collapsed: crow mark) + company name + a global **Search** field (`search` icon + "Search…" placeholder + a `⌘K` hint) that opens the **Command Palette** (see §Command Palette). When the rail is collapsed the field becomes a single search-icon button. *(Replaces the former city/location selector, which has been removed.)*
-- **Primary nav** — parent rows (40px, icon + 15px label + `expand_more` chevron when it has children) with expandable child lists. **Active leaf** row: solid `--p-action` fill with `--p-action-fg` label + icon (ink — inverts to white-on-near-black in dark). **Open group** (parent of an active child): neutral `--p-surface-tint`. **Hover** (any row): neutral `--p-surface-tint` — never blue. Active **child** row: solid `--p-action`, `--p-action-fg`, `30px` min-height. Keyboard focus-visible outlines stay `--p-primary` (blue).
+- **Primary nav** — parent rows (40px, icon + 15px label + `expand_more` chevron when it has children) with expandable child lists. The first row is **Home** (`home` glyph, the landing leaf). **Active leaf** row: solid `--p-action` fill with `--p-action-fg` label + icon (ink — inverts to white-on-near-black in dark). **Open group** (parent of an active child): neutral `--p-surface-tint`. **Hover** (any row): neutral `--p-surface-tint` — never blue. Active **child** row: solid `--p-action`, `--p-action-fg`, `30px` min-height. Keyboard focus-visible outlines stay `--p-primary` (blue). Every navigating row is an **`AppLink`** (incl. flyout children) — see § Navigation & links.
+- **Nav groups start collapsed; only the active group auto-expands (1.9).** On load **all** parent groups are **collapsed** (the fully-expanded default overflowed the viewport and hid the scope of sections); the group owning the current route **auto-expands** so a deep-link / reload still reveals your location. Nothing is auto-closed — manual toggles persist for the session; on `/home` (a leaf) everything is collapsed. Open / close is **animated** (grid-rows `0fr ↔ 1fr` + a staggered child reveal — see §10 Motion); collapsed children stay mounted but get `tabIndex={-1}`. Implementation: initialize the open-map to `{}` and, on path change, `const active = NAV.find(it => it.children && routeActive(it)); if (active) setExpanded(s => s[active.id] ? s : {...s, [active.id]: true});`.
 - **Navigation IA (groups → routes).** Parent groups expand to child routes; **Users** navigates directly. Entity glyphs follow the §8 canon:
   - **Insights** (`line_axis`) · **Sales** (`ballot`) — analytics & planning groups.
   - **Orchestration** (`graph_7`) → View Plans · Visualize Impact.
@@ -1730,6 +1757,57 @@ function LegacyProductsRedirect() {
 ```
 
 **IA note — `/in-the-market`.** The "In the Market" catalog page route is **`/in-the-market`** (was `/products`); the home, post-login, and catch-all redirects point to it, and `/products` 301s to it (query preserved). **Back-end API paths are unchanged** — only the front-end route was renamed; calls like `GET /api/products…` stay as-is.
+
+#### State & URLs — `urlFilters.js` (expanded, 1.9)
+
+> **URL search params are the single source of truth — supersedes `sessionStorage` / `filterPersist`.** A list's full view state — search text, facet selections, sort, date range, group-by, pagination — lives in the **URL query string**, so any view is copy-paste shareable, reload-safe, and captured verbatim by **Save View** (§ Saved Views). `sessionStorage` is retained **only** for genuinely ephemeral, non-shareable state (e.g. a list's scroll position across a full-screen-map round-trip) — **never** for filters.
+
+A shared helper module, **`lib/urlFilters.js`**:
+
+| Helper | Purpose |
+|---|---|
+| `readUrlParam(search, key, fallback)` | scalar param read |
+| `readUrlSort(search, defaultKey, defaultDir)` | `?sort=key:dir` |
+| `readUrlRange(search, key)` | `{from,to}` from `?{key}From` / `{key}To` |
+| `readUrlFacets(search, map)` | `{FacetLabel: Set(values)}` from short param names |
+| `readUrlFilterMap(search)` | every non-reserved param → `Set` (generic facets) |
+| `syncUrl(obj)` | writes the object to the URL via `history.replaceState` (omits empty / default; serializes `{from,to}` → `*From` / `*To`) |
+| `humanizeSearch(search)` | turns the query string into labeled chips (for the Save-View modal) |
+
+**Authoring rules:**
+- Seed state once from `location.search` in the `useState` initializers; drive a `syncUrl(...)` effect on the state deps. **Omit defaults** (only write `range` when ≠ the page default; only write a tab when ≠ the first tab).
+- `PARAM_LABELS` maps short param keys → human labels for `humanizeSearch` — extend it when you add a facet (`rep`, `chain`, `account`, `warehouse`, `source`, `reportsTo`, `tasks`, `license`, `accountType`, `range`, `groupBy`, `date`, …).
+- **Relative date presets persist as a KEY, not resolved dates (C2).** When a relative preset is chosen ("Last Week", "This Month"), persist the **preset key** (`?range=last-week`) rather than the absolute `…From` / `…To` it resolves to. On load a known `range` key **re-resolves live** to the current period — so a saved "Last Week" still means *last week* — while a truly custom calendar selection persists as absolute `…From` / `…To`. Reverse-match `{from,to}` against the preset table (`matchPresetKey`) at `syncUrl` time.
+- **Filter-less pages must not inherit carried facet params (C3).** A multi-page screen that keeps one component mounted across sub-routes (e.g. Insights, where filters carry across report pages) must **not** serialize date / facet params onto a sub-page that declares **no** filters (e.g. the *Explore* chat page). Gate serialization on `const hasFacets = (cfg.filters||[]).length > 0;` and pass facet values to `syncUrl` only when `hasFacets`. State is preserved (filters reappear on a filterable page); the filter-less page's URL stays clean.
+
+---
+
+### Saved Views (1.9)
+
+A **Saved View** bookmarks the current page path **+ its exact URL query string** (hence the URL-state requirement above), so a user can jump straight back to a configured list / report. Persisted per-user; surfaced as cards on the **Home** dashboard (§ Home dashboard).
+
+- **`SaveViewButton`** sits in the page header (`section`, `icon`, `defaultName` props). It captures `window.location.search` and opens a modal showing the captured filters as labeled chips (via `humanizeSearch`, `data-testid="save-view-chip"`), a name, and an optional note. Modal copy points the user home: *"Find this anytime under **Home** in the sidebar."*
+- Persisted to a per-user `favorites` store: `{ id, user_id, name, note, section, icon, path, search, snapshot }`. Each Home **ViewCard** is an **`AppLink`** to `path + search` (open-in-new-tab friendly) with a `more_horiz` kebab (Rename / Delete).
+- Testids: `save-view-btn`, `save-view-chip`, `fav-card-{id}`, `fav-open-{id}`, `fav-open-link-{id}`, `fav-menu-{id}`.
+
+---
+
+### Home dashboard (1.9)
+
+The post-login landing route (`/home`, sidebar label **Home**). The container matches every other screen — `maxWidth: 1600; margin: 0 auto` inside the shell's `24px 32px` padding (don't special-case its padding). Reference: `ui_kits/portal/HomeDashboard.jsx`.
+
+**Structure (top → bottom):**
+1. **Header row** — a time-of-day greeting (`Good morning, {firstName}.`) + a one-line subtitle on the left; the **Customize** control on the **right** — a **Neutral**, square secondary `Button` with the `tune` icon (*not* a ghost / text button).
+2. **Health Stat Card grid** (below).
+3. **Saved Views grid** (§ Saved Views) with an inline help `Tooltip` on the section title; the empty state mirrors that copy.
+4. **Crow Fact** easter egg pinned to the bottom (§10 Motion).
+
+**Health Stat Card grid** (a variant of §Stat Cards) — a responsive grid of small status tiles: `display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12`. **320px is deliberate** — it caps the row at ~4 cards on the standard width so labels like "Out for Delivery Today" don't wrap (220px produced 6-up and frequent two-line labels). Each tile = label + big value + a status **dot** (`green` / `yellow` / `red` / `neutral`) + a one-line explanation. Tiles are **role-gated** (§Governed UI — real role ids) and **persisted / orderable**.
+- **"sample" label rule:** demo / sample tiles do **not** show a "SAMPLE" badge on the dashboard tile itself. Instead the **Customizer list** shows a small `sample` label on **every** row (a blanket reminder that the Home metrics are illustrative), keeping the live tiles clean.
+
+**Stat Card Customizer** — the **Customize** button opens a dropdown of all role-permitted cards. Each row: a **drag handle** (`drag_indicator`, `cursor: grab`, `touchAction: none`), a checkbox to toggle visibility, the label, and the blanket `sample` label. Built on the existing `@dnd-kit` stack (§Arrangement Board): `DndContext` + `SortableContext` (vertical), `useSortable` per row, `arrayMove` on drop. **Menu order = tile render order.** Both reorder and toggle **persist immediately** to a per-user prefs store (`user_prefs → { cards: [orderedEnabledIds] }`). Testids: `customize-cards-btn`, `customize-cards-menu`, `card-row-{id}`, `card-drag-{id}`, `card-toggle-{id}`, `tile-{id}`.
+
+**Crow Fact easter egg** — see §10 Motion (a hover-swap micro-delight pinned to the bottom).
 
 ---
 
@@ -2272,14 +2350,18 @@ The shared diff primitive used by the audit modal **and** the wizard Review step
 
 ---
 
-### Login (two-step auth) (1.5)
+### Login (single page) (updated 1.9)
 
 The authentication screen: the raven centered on `--p-shell` (the restraint *is* the brand — see §3 Color Rules).
 
-- **Two-step flow.** **Step 1** = email lookup → **Step 2** = greeting (*"Good evening, {First}."*) + masked password + an **Edit** link back to step 1. Directional step transitions (`gr-step-fwd` / `gr-step-back`); staggered entrance via `gr-rise` (`--i` index → ~80ms stagger; ease-out-quint `cubic-bezier(0.22,1,0.36,1)`).
-- **Auth inputs** are **56px tall, `--radius-sm` (4px)** (§H) — taller than in-app 36px controls.
-- **Dev quick sign-in (development only).** Below the form, render **one dashed secondary button per dev account**, labelled **"Sign in as {Role} ({email})"** with a leading **`bolt`** icon. Clicking it **prefills email + password and advances through the real two-step flow** — it must **not** one-shot-bypass auth (the point is to exercise the genuine flow). Contract: a public `GET /auth/config` returns `{ devLoginEnabled, devAccounts: [{ label, email, password }] }` (only when enabled); the screen renders the list dynamically, so adding a role is a **config/data** change, not a UI change. `data-testid="dev-login-<slug>"`. **Clearly dev-only** — never ship enabled to production.
-- **Theme toggle** sits **flat, bottom-left**, no card chrome (the same control as the App-Shell utility nav, §A / §3 Theming).
+> **New in 1.9 — single page; supersedes the 1.5 two-step (email → Next → password).** The lookup / greeting step is removed; the per-user greeting now lives on the **Home** dashboard (§ Home dashboard).
+
+- **One screen.** Logo, "Sign in to your account", an **email** field (`autoComplete="email"`) and a **password** field (`autoComplete="current-password"`) shown **together**, a full-width **Sign In** button, and the legal line. Submitting posts both to the existing login endpoint. (The backend `lookup` endpoint may remain but is no longer used by the UI.)
+- **Auth inputs** are **56px tall, `--radius-sm` (4px)** (§6) — taller than in-app 36px controls. Staggered entrance via `gr-rise`.
+- **Error handling:** a single **generic** message — *"Incorrect email or password."* — never revealing which field was wrong (don't leak account existence).
+- **Dev quick sign-in (development only).** Below the form, **one dashed secondary button per dev account**, labelled **"Sign in as {Role} ({email})"** with a leading **`bolt`** icon — it **prefills email + password and submits the real form** (never a one-shot auth bypass). Contract: a public `GET /auth/config` returns `{ devLoginEnabled, devAccounts: [{ label, email, password }] }` (only when enabled); adding a role is a **config/data** change, not a UI change. **Clearly dev-only** — never ship enabled to production.
+- **Theme toggle** sits **flat, bottom-left**, no card chrome (the same control as the App-Shell utility nav, §3 Theming).
+- Testids: `login-email`, `login-password`, `login-signin-btn`, `dev-login-{slug}`, `login-theme-toggle`.
 
 ---
 
@@ -2496,6 +2578,11 @@ These named keyframes ship in `colors_and_type.css` and back every entrance / lo
 - **Asymmetric enter/exit timing is an approved technique.** When an element should *leave* quickly but *arrive* gently (or arrive only after a sibling settles), set different transition delays / durations per state (read the `transition` string from the current state). Documented examples: the StatCard opacity ramp and the sidebar company-name reveal (§9 App Shell).
 - **Reduced motion covers JS too.** The global `prefers-reduced-motion` rule neutralizes CSS transitions; JS animations additionally **check `matchMedia` and snap to the final value** (see `useCountUp`). New motion must keep both safeties.
 
+### Navigation & micro-delight motion (1.9)
+
+- **Nav-group expand / collapse — the grid-rows trick.** The children wrapper uses `display: grid; grid-template-rows: {open ? "1fr" : "0fr"}; transition: grid-template-rows 280ms cubic-bezier(.32,.72,0,1)` with an inner `<ul style="overflow:hidden; min-height:0">`. Each child link **staggers** in: `opacity 0→1` + `translateY(-6px)→0`, `transition: opacity 240ms ease {delay}ms, transform 300ms cubic-bezier(.32,.72,0,1) {delay}ms`, with `delay = open ? 50 + i*38 : 0` (cascade on open, collapse together). Children stay **mounted** (the grid collapses to height 0); set `tabIndex={isOpen ? 0 : -1}` so collapsed children aren't keyboard-focusable. The chevron keeps its 200ms rotation. (See §App Shell.)
+- **Crow Fact (easter egg).** A subtle brand micro-delight pinned to the bottom of Home (`margin-top: auto`). By default it shows only the small, low-opacity **`raven`** glyph (weight 300, `--p-placeholder`). The bird and the fact share **one centered "stage"**; on `:hover` the bird **fades out** and a randomized "Crow Fact" **fades in *in its place*** (absolutely centered, so the layout never grows and the fact can't clip below the fold). Each hover rolls a fresh fact (never repeating the current one). Honor `prefers-reduced-motion` (bird bob off). Intent to record: *an easter egg should be discoverable but not load-bearing — miss the bird and you miss nothing; hover, and you reliably get the payoff in the same spot.* Testid `crow-fact`.
+
 ---
 
 ## 11. Voice & Copy
@@ -2512,6 +2599,14 @@ These named keyframes ship in `colors_and_type.css` and back every entrance / lo
 - **Verb-first** for actions, in Title Case: "Save Changes", "Finalize for Simulation", "Go Back".
 - **No emoji in product.** Emoji-free.
 - **Inline status words are colored** — not bolded, not badged. The color conveys the meaning.
+
+### Home, Saved-Views & auth copy (1.9)
+
+- **Greeting (Home):** time-of-day + first name, period — `Good morning, {first}.`
+- **Save View modal:** "Find this anytime under **Home** in the sidebar."
+- **Saved Views help / empty state:** *"On any report or list in the Portal, apply the filters you like and press 'Save View' to create a card here."* (tooltip) / *"…and tap 'Save View'. It'll show up here so you can quickly jump straight to the things you care about."* (empty state).
+- **Login error:** the single, non-disclosive **"Incorrect email or password."** — never name which field was wrong.
+- **Stat-card explanations:** one plain, unit-aware line (e.g. "Cases shipped from the warehouse so far this week"; "X of Y service stops this week have a layout set" — when a coverage metric is framed around service stops, compute X/Y from stops so the headline % and the sentence agree).
 
 ### Search & staged-action copy (1.7)
 
@@ -2775,6 +2870,8 @@ Or directly in HTML:
 - Prefer `14px Inter Medium` for interactive labels.
 - Use `Geist Mono` for any numeric / tabular / ID data.
 - **Concept-accent principle (1.7).** When a feature needs a distinct identity (like General Stock purple), introduce it as **semantic tokens** (light + dark), never inline hex — so it themes and can be reused. Keep the palette legible: **blue = action / link / selection**, **green = add**, **red = remove / destructive**, **amber = warning / suggestion**, **yellow = search-highlight only**, **purple = General Stock**. Add concept colors **sparingly**, and document what each means next to the token (§3).
+- **Role-gating keys off real role ids (1.9).** When gating a component by role (e.g. which Home stat cards a user sees), the `roles` whitelist must use the **actual role ids the auth layer emits — `exec` · `deptmgr` · `itadmin` · `supervisor` · `rep`** — **never** invented friendly names like `admin` / `manager`. (Bug we hit: cards keyed to `["admin","manager"]` silently never rendered for the executive account.) This is the canonical role-id list; reference it from any role-gated component (and see §Permissions & Affordances / Appendix A).
+- **Navigate with anchors (1.9).** Anything whose job is to go to a route renders as a real `<a href>` (via `AppLink` / router `Link` / external `<a>`), never a `<button onClick={navigate}>` — so "Open in new tab" / ⌘-click / middle-click work (see § Navigation & links). Buttons stay buttons for *actions*.
 
 ### For production code
 
@@ -2833,4 +2930,4 @@ So the affordance rules in §Permissions & Affordances have a shared vocabulary,
 
 ---
 
-*Greater Design System · Portal 1.8 · Exported June 2026*
+*Greater Design System · Portal 1.9 · Exported June 2026*

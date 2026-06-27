@@ -360,6 +360,15 @@ coverage:
   **"(preview)"** label; Maps **hover-to-reveal** pins + an in-popup **"Edit Assignment"** deep-link;
   native **`title=` retired** for the portal `Tooltip`; **Cancel = ghost / neutral** (blue links
   retired); new tokens `--p-danger-soft` / `--g-gold-04`; and **`SCREENS-1.8.md`**.
+- **New in Portal 1.9 (Home + shareable URLs + anchor navigation)** — **`AppLink`**, the navigation
+  primitive: a real `<a href>` (open-in-new-tab / ⌘-click) whose plain left-click routes through the
+  NavGuard; the **anchor-navigation law** (sidebar incl. flyout, bottom rows, Saved-View cards, list rows
+  via a **stretched-link** overlay, back links, ⌘K results, count-delta chips); **URL filter-state**
+  (`urlFilters.js`) as the single source of truth with relative presets persisted as a key *(supersedes
+  `sessionStorage`)*; **Saved Views** + `SaveViewButton`; the **Home dashboard** (role-gated,
+  drag-orderable Health Stat Cards + a Saved-Views grid + the Crow Fact easter egg); **Login → single
+  page** *(supersedes the 1.5 two-step)*; and App Shell nav that **starts collapsed, auto-expands the
+  active group, and animates** (grid-rows + stagger) with **Home** (`home`) as the landing item.
 
 **Terminology (1.1 canon).** "Store Promotions" (short "Store Promos", `/store-promotions`),
 "POD Planner" (`/pod-planner`), "Audit Log" (events Created / Updated / Restored / Deleted;

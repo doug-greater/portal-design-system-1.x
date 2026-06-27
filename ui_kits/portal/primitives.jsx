@@ -18,6 +18,49 @@ function Icon({ name, size = 16, color, fill = 0, style }) {
   );
 }
 
+/* ---------------- AppLink — navigation primitive (1.9) ----------------
+   Renders a REAL <a href> so the browser's "Open in new tab" / ⌘-click / middle-click
+   all work, but intercepts a plain left-click and routes it through NavGuard's
+   useGuardedNavigate (DS 1.8) — instant SPA routing + the unsaved-changes guard.
+   Modifier / non-left clicks fall through to the browser untouched. The default style
+   resets text-decoration/color so the anchor looks like the element it replaced.
+   Production import: `import { useGuardedNavigate } from "@/contexts/NavGuard"`. */
+const AppLink = React.forwardRef(function AppLink({ to, onClick, style, children, ...rest }, ref) {
+  const navigate = useGuardedNavigate();
+  const handleClick = (e) => {
+    onClick?.(e);
+    if (e.defaultPrevented) return;
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // let the browser open a new tab
+    e.preventDefault();
+    navigate(to);
+  };
+  return (
+    <a href={to} onClick={handleClick} ref={ref}
+       style={{ textDecoration: 'none', color: 'inherit', ...style }} {...rest}>
+      {children}
+    </a>
+  );
+});
+
+/* ---------------- BackLink (1.9: gains `to` → real <a href>) ----------------
+   With `to`, renders a real <a href> (modifier-click opens a new tab; plain left-click
+   runs the guarded onClick — pass both, the onClick carries any query-preserving logic).
+   Falls back to a <button> when only onClick is given. */
+function BackLink({ label, onClick, to, testid, style }) {
+  const handle = (e) => {
+    if (!onClick) return;
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault(); onClick(e);
+  };
+  const css = { display: 'inline-flex', alignItems: 'center', gap: 3, border: 'none',
+    background: 'transparent', padding: '2px 6px 2px 2px', marginLeft: -2, cursor: 'pointer',
+    font: '500 13px/1 Inter', color: 'var(--p-primary)', textDecoration: 'none', ...style };
+  const inner = <><Icon name="chevron_left" size={18} color="currentColor" /> <span className="gr-back-label">{label}</span></>;
+  return to
+    ? <a href={to} onClick={handle} className="gr-back" data-testid={testid} style={css}>{inner}</a>
+    : <button onClick={onClick} className="gr-back" data-testid={testid} style={css}>{inner}</button>;
+}
+
 /* ---------------- Logo ---------------- */
 // In-product logo = wordmark only (never the full crow+wordmark lockup).
 function Logo({ width = 110 }) {
